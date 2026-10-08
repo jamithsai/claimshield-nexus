@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Network, ShieldAlert, Users, Building, Activity, RefreshCw, Info } from 'lucide-react';
 import { api } from '../services/api';
-import { RelationshipGraphViewer } from '../components/RelationshipGraphViewer';
+import { IntelligenceStudio3D } from '../components/3d/IntelligenceStudio3D';
 
 interface NetworkExplorerViewProps {
   onSelectCaseByNpi: (npi: string) => void;
@@ -97,9 +97,9 @@ export const NetworkExplorerView: React.FC<NetworkExplorerViewProps> = ({ onSele
         </div>
       )}
 
-      {/* Global Subgraph Visualization */}
-      <div className="health-panel p-5 rounded-xl">
-        <RelationshipGraphViewer 
+      {/* 3D WebGL Intelligence Studio Visualizer */}
+      <div className="w-full">
+        <IntelligenceStudio3D 
           nodes={graphData.sampled_nodes} 
           edges={graphData.sampled_edges} 
           onSelectCaseByNpi={onSelectCaseByNpi}

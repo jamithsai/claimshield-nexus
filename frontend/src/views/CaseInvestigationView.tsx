@@ -36,6 +36,7 @@ import { EvidenceGraphViewer } from '../components/EvidenceGraphViewer';
 import { RelationshipGraphViewer } from '../components/RelationshipGraphViewer';
 import { DecisionModal } from '../components/DecisionModal';
 import { useCurrency } from '../context/CurrencyContext';
+import { IntelligenceStudio3D } from '../components/3d/IntelligenceStudio3D';
 
 interface CaseInvestigationViewProps {
   caseId: string;
@@ -654,9 +655,14 @@ export const CaseInvestigationView: React.FC<CaseInvestigationViewProps> = ({
             </div>
           </div>
 
-          <div className="w-full min-h-[480px]">
+          <div className="w-full">
             {subgraph ? (
-              <RelationshipGraphViewer graphData={subgraph} onSelectCaseByNpi={onSelectCaseByNpi} />
+              <IntelligenceStudio3D 
+                nodes={subgraph.nodes} 
+                edges={subgraph.edges} 
+                onSelectCaseByNpi={onSelectCaseByNpi} 
+                defaultMode="GALAXY"
+              />
             ) : (
               <div className="p-12 text-center text-[#042126]/40">Loading network graph...</div>
             )}
@@ -729,8 +735,11 @@ export const CaseInvestigationView: React.FC<CaseInvestigationViewProps> = ({
             </div>
           </div>
 
-          <div className="w-full min-h-[420px]">
-            <SchemeEvolutionTimeline history={caseData.evolution_history} />
+          <div className="w-full">
+            <IntelligenceStudio3D 
+              history={caseData.evolution_history} 
+              defaultMode="SPIRAL" 
+            />
           </div>
         </div>
       )}
