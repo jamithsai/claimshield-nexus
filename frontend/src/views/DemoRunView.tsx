@@ -46,8 +46,8 @@ export const DemoRunView: React.FC<DemoRunViewProps> = ({
 }) => {
   const { currencySymbol, formatMoney, formatCompactMoney } = useCurrency();
 
-  // Active Stage State (1 to 5)
-  const [currentStage, setCurrentStage] = useState<number>(1);
+  // Active Stage State (null = no stage selected, 1 to 5 = active stage)
+  const [currentStage, setCurrentStage] = useState<number | null>(null);
   const [isAutoPlaying, setIsAutoPlaying] = useState<boolean>(false);
   const [autoPlayTimer, setAutoPlayTimer] = useState<number>(25);
 
@@ -109,7 +109,7 @@ export const DemoRunView: React.FC<DemoRunViewProps> = ({
       interval = setInterval(() => {
         setAutoPlayTimer((prev) => {
           if (prev <= 1) {
-            setCurrentStage((curr) => (curr < 5 ? curr + 1 : 1));
+            setCurrentStage((curr) => (curr !== null && curr < 5 ? curr + 1 : 1));
             return 25;
           }
           return prev - 1;
@@ -259,7 +259,16 @@ export const DemoRunView: React.FC<DemoRunViewProps> = ({
           {/* Master Walkthrough Playback Controls */}
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 bg-[#001D21]/80 p-3 rounded-2xl border border-[#005F68]/50 backdrop-blur-md self-start lg:self-auto">
             <button
-              onClick={() => setIsAutoPlaying(!isAutoPlaying)}
+              onClick={() => {
+                if (isAutoPlaying) {
+                  setIsAutoPlaying(false);
+                } else {
+                  if (currentStage === null) {
+                    setCurrentStage(1);
+                  }
+                  setIsAutoPlaying(true);
+                }
+              }}
               className={`flex items-center justify-center space-x-2 px-4 py-2.5 rounded-xl font-semibold text-xs transition-all cursor-pointer shadow-xs ${
                 isAutoPlaying 
                   ? 'bg-[#D97706] hover:bg-[#B45309] text-white animate-pulse' 
@@ -274,22 +283,33 @@ export const DemoRunView: React.FC<DemoRunViewProps> = ({
               <button
                 onClick={() => {
                   setIsAutoPlaying(false);
-                  setCurrentStage((prev) => (prev > 1 ? prev - 1 : 5));
+                  if (currentStage !== null) {
+                    setCurrentStage((prev) => (prev && prev > 1 ? prev - 1 : 5));
+                  }
                 }}
-                className="p-2 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer"
+                disabled={currentStage === null}
+                className={`p-2 rounded-lg text-white transition-colors ${
+                  currentStage === null
+                    ? 'bg-white/5 text-white/30 cursor-not-allowed'
+                    : 'bg-white/10 hover:bg-white/20 cursor-pointer'
+                }`}
                 title="Previous Stage"
               >
                 <ArrowLeft className="w-4 h-4" />
               </button>
 
               <span className="text-xs font-mono font-bold px-2 text-[#ACF2E5]">
-                {currentStage} / 5
+                {currentStage === null ? '— / 05' : `0${currentStage} / 05`}
               </span>
 
               <button
                 onClick={() => {
                   setIsAutoPlaying(false);
-                  setCurrentStage((prev) => (prev < 5 ? prev + 1 : 1));
+                  if (currentStage === null) {
+                    setCurrentStage(1);
+                  } else {
+                    setCurrentStage((prev) => (prev && prev < 5 ? prev + 1 : 1));
+                  }
                 }}
                 className="p-2 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer"
                 title="Next Stage"
@@ -300,11 +320,11 @@ export const DemoRunView: React.FC<DemoRunViewProps> = ({
               <button
                 onClick={() => {
                   setIsAutoPlaying(false);
-                  setCurrentStage(1);
+                  setCurrentStage(null);
                   setAutoPlayTimer(25);
                 }}
                 className="p-2 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer ml-1"
-                title="Reset to Stage 1"
+                title="Reset Demo Walkthrough"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
               </button>
@@ -317,7 +337,7 @@ export const DemoRunView: React.FC<DemoRunViewProps> = ({
           {stages.map((stg) => {
             const Icon = stg.icon;
             const isActive = currentStage === stg.num;
-            const isCompleted = currentStage > stg.num;
+            const isCompleted = currentStage !== null && currentStage > stg.num;
 
             return (
               <button
@@ -331,7 +351,7 @@ export const DemoRunView: React.FC<DemoRunViewProps> = ({
                     ? 'bg-[#209B47] text-white border-white/40 shadow-lg scale-[1.02]' 
                     : isCompleted
                     ? 'bg-white/10 text-white/90 border-[#209B47]/40 hover:bg-white/15'
-                    : 'bg-white/5 text-white/60 border-transparent hover:bg-white/10'
+                    : 'bg-white/5 text-white/70 border-white/10 hover:bg-white/15 hover:border-[#209B47]/30'
                 }`}
               >
                 <div className="flex items-center justify-between mb-1.5">
@@ -359,85 +379,202 @@ export const DemoRunView: React.FC<DemoRunViewProps> = ({
       </div>
 
       {/* ========================================================================= */}
-      {/* 2. STAGE HEADER & QUICK-JUMP ACTION BANNER                                */}
+      {/* 2. INITIAL LANDING / WELCOME OVERVIEW PANEL (When currentStage === null)   */}
       {/* ========================================================================= */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-[#042126]/10 shadow-xs">
-        <div className="flex items-center space-x-3.5">
-          <div className="w-10 h-10 rounded-xl bg-[#E8F8EE] border border-[#209B47]/30 flex items-center justify-center flex-shrink-0">
-            <span className="font-mono font-extrabold text-[#209B47] text-sm">
-              0{currentStage}
-            </span>
-          </div>
-          <div>
-            <div className="flex items-center space-x-2">
-              <span className="text-[10px] font-bold tracking-wider text-[#005F68] uppercase font-mono">
-                STAGE {currentStage} OF 5
-              </span>
-              <span className="w-1 h-1 rounded-full bg-[#042126]/30" />
-              <span className="text-[11px] text-[#209B47] font-semibold">Active Demonstration</span>
+      {currentStage === null && (
+        <div className="space-y-6">
+          {/* Welcome Card */}
+          <div className="bg-white p-6 sm:p-8 rounded-2xl border border-[#042126]/10 shadow-xs relative overflow-hidden">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div className="space-y-3 max-w-2xl">
+                <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-[#E8F8EE] border border-[#209B47]/30 text-[#1B843C] text-xs font-bold">
+                  <Sparkles className="w-3.5 h-3.5 text-[#209B47]" />
+                  <span>Welcome to ClaimShield Nexus Demonstration</span>
+                </div>
+                <h2 className="text-xl sm:text-2xl font-extrabold text-[#042126]">
+                  Select a Demonstration Stage to Begin
+                </h2>
+                <p className="text-xs sm:text-sm text-[#042126]/70 leading-relaxed">
+                  ClaimShield Nexus is an autonomous, explainable Medicaid integrity platform. Explore the 5-stage lifecycle from synthetic ingestion through cryptographic audit ledger sealing below, or launch an automated tour.
+                </p>
+              </div>
+
+              <div className="flex flex-col sm:flex-row items-center gap-3">
+                <button
+                  onClick={() => {
+                    setCurrentStage(1);
+                    setIsAutoPlaying(true);
+                  }}
+                  className="w-full sm:w-auto flex items-center justify-center space-x-2 px-5 py-3 rounded-xl bg-[#209B47] hover:bg-[#1B843C] text-white font-bold text-xs shadow-md transition-all cursor-pointer"
+                >
+                  <Play className="w-4 h-4 fill-white" />
+                  <span>Start Guided Auto Tour</span>
+                </button>
+                <button
+                  onClick={() => setCurrentStage(1)}
+                  className="w-full sm:w-auto flex items-center justify-center space-x-2 px-5 py-3 rounded-xl bg-[#F2FCFF] hover:bg-[#E0F7FA] text-[#005F68] border border-[#005F68]/30 font-bold text-xs transition-all cursor-pointer"
+                >
+                  <span>Begin Stage 01</span>
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
             </div>
-            <h2 className="text-lg sm:text-xl font-extrabold text-[#042126]">
-              {stages[currentStage - 1].title}
-            </h2>
-            <p className="text-xs text-[#042126]/70 mt-0.5">
-              {stages[currentStage - 1].subtitle}
-            </p>
+          </div>
+
+          {/* 5 Stage Overview Cards Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {stages.map((stg) => {
+              const Icon = stg.icon;
+              return (
+                <div
+                  key={stg.num}
+                  onClick={() => {
+                    setIsAutoPlaying(false);
+                    setCurrentStage(stg.num);
+                  }}
+                  className="group bg-white p-5 rounded-2xl border border-[#042126]/10 hover:border-[#209B47]/50 hover:shadow-lg transition-all cursor-pointer flex flex-col justify-between"
+                >
+                  <div>
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="w-9 h-9 rounded-xl bg-[#E8F8EE] border border-[#209B47]/30 flex items-center justify-center text-[#209B47] group-hover:bg-[#209B47] group-hover:text-white transition-colors">
+                        <Icon className="w-4 h-4" />
+                      </div>
+                      <span className="font-mono text-xs font-bold text-[#005F68] bg-[#F2FCFF] px-2 py-0.5 rounded border border-[#005F68]/20">
+                        STAGE 0{stg.num}
+                      </span>
+                    </div>
+                    <h3 className="font-extrabold text-sm text-[#042126] group-hover:text-[#209B47] transition-colors">
+                      {stg.title}
+                    </h3>
+                    <p className="text-xs text-[#042126]/70 mt-1.5 leading-relaxed">
+                      {stg.subtitle}
+                    </p>
+                  </div>
+
+                  <div className="mt-4 pt-3 border-t border-[#042126]/10 flex items-center justify-between text-xs font-semibold text-[#005F68] group-hover:text-[#209B47]">
+                    <span>Explore Stage 0{stg.num}</span>
+                    <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                  </div>
+                </div>
+              );
+            })}
+
+            {/* Live Navigation Quick Shortcut Card */}
+            <div className="bg-gradient-to-br from-[#042126] to-[#00383F] p-5 rounded-2xl border border-[#005F68]/40 text-white flex flex-col justify-between">
+              <div>
+                <div className="flex items-center space-x-2 text-[#ACF2E5] mb-3">
+                  <ShieldCheck className="w-5 h-5 text-[#28C840]" />
+                  <span className="text-xs font-bold font-mono uppercase tracking-wider">Direct System Jump</span>
+                </div>
+                <h3 className="font-extrabold text-sm text-white">
+                  Inspect Live Production Views
+                </h3>
+                <p className="text-xs text-[#ACF2E5]/80 mt-1.5 leading-relaxed">
+                  Jump directly to live Executive Surveillance, SIU Queue, Graph Network, or Merkle Audit at any time.
+                </p>
+              </div>
+
+              <div className="mt-4 pt-3 border-t border-[#005F68]/40 grid grid-cols-2 gap-2">
+                <button
+                  onClick={() => onNavigateTo('overview')}
+                  className="p-2 rounded-lg bg-white/10 hover:bg-white/20 text-white text-[11px] font-semibold text-center transition-colors cursor-pointer"
+                >
+                  Overview
+                </button>
+                <button
+                  onClick={() => onNavigateTo('queue')}
+                  className="p-2 rounded-lg bg-white/10 hover:bg-white/20 text-white text-[11px] font-semibold text-center transition-colors cursor-pointer"
+                >
+                  SIU Queue
+                </button>
+              </div>
+            </div>
           </div>
         </div>
+      )}
 
-        {/* Quick Link into Actual Live System Workspace */}
-        <div className="flex items-center space-x-2 self-start sm:self-auto">
-          {currentStage === 1 && (
-            <button
-              onClick={() => onNavigateTo('overview')}
-              className="flex items-center space-x-1.5 px-4 py-2 rounded-xl bg-[#F2FCFF] hover:bg-[#E0F7FA] text-[#005F68] border border-[#005F68]/30 text-xs font-semibold transition-all cursor-pointer"
-            >
-              <span>Jump to Live Overview</span>
-              <ExternalLink className="w-3.5 h-3.5" />
-            </button>
-          )}
+      {/* ========================================================================= */}
+      {/* 3. STAGE HEADER & QUICK-JUMP ACTION BANNER (When currentStage !== null)   */}
+      {/* ========================================================================= */}
+      {currentStage !== null && (
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-[#042126]/10 shadow-xs">
+          <div className="flex items-center space-x-3.5">
+            <div className="w-10 h-10 rounded-xl bg-[#E8F8EE] border border-[#209B47]/30 flex items-center justify-center flex-shrink-0">
+              <span className="font-mono font-extrabold text-[#209B47] text-sm">
+                0{currentStage}
+              </span>
+            </div>
+            <div>
+              <div className="flex items-center space-x-2">
+                <span className="text-[10px] font-bold tracking-wider text-[#005F68] uppercase font-mono">
+                  STAGE {currentStage} OF 5
+                </span>
+                <span className="w-1 h-1 rounded-full bg-[#042126]/30" />
+                <span className="text-[11px] text-[#209B47] font-semibold">Active Demonstration</span>
+              </div>
+              <h2 className="text-lg sm:text-xl font-extrabold text-[#042126]">
+                {stages[currentStage - 1].title}
+              </h2>
+              <p className="text-xs text-[#042126]/70 mt-0.5">
+                {stages[currentStage - 1].subtitle}
+              </p>
+            </div>
+          </div>
 
-          {currentStage === 2 && (
-            <button
-              onClick={() => onNavigateTo('queue')}
-              className="flex items-center space-x-1.5 px-4 py-2 rounded-xl bg-[#F2FCFF] hover:bg-[#E0F7FA] text-[#005F68] border border-[#005F68]/30 text-xs font-semibold transition-all cursor-pointer"
-            >
-              <span>Jump to Live SIU Queue</span>
-              <ExternalLink className="w-3.5 h-3.5" />
-            </button>
-          )}
+          {/* Quick Link into Actual Live System Workspace */}
+          <div className="flex items-center space-x-2 self-start sm:self-auto">
+            {currentStage === 1 && (
+              <button
+                onClick={() => onNavigateTo('overview')}
+                className="flex items-center space-x-1.5 px-4 py-2 rounded-xl bg-[#F2FCFF] hover:bg-[#E0F7FA] text-[#005F68] border border-[#005F68]/30 text-xs font-semibold transition-all cursor-pointer"
+              >
+                <span>Jump to Live Overview</span>
+                <ExternalLink className="w-3.5 h-3.5" />
+              </button>
+            )}
 
-          {currentStage === 3 && selectedCase && (
-            <button
-              onClick={() => onSelectCase(selectedCase.case_id)}
-              className="flex items-center space-x-1.5 px-4 py-2 rounded-xl bg-[#F2FCFF] hover:bg-[#E0F7FA] text-[#005F68] border border-[#005F68]/30 text-xs font-semibold transition-all cursor-pointer"
-            >
-              <span>Open Case {selectedCase.case_id} File</span>
-              <ExternalLink className="w-3.5 h-3.5" />
-            </button>
-          )}
+            {currentStage === 2 && (
+              <button
+                onClick={() => onNavigateTo('queue')}
+                className="flex items-center space-x-1.5 px-4 py-2 rounded-xl bg-[#F2FCFF] hover:bg-[#E0F7FA] text-[#005F68] border border-[#005F68]/30 text-xs font-semibold transition-all cursor-pointer"
+              >
+                <span>Jump to Live SIU Queue</span>
+                <ExternalLink className="w-3.5 h-3.5" />
+              </button>
+            )}
 
-          {currentStage === 4 && (
-            <button
-              onClick={() => onNavigateTo('network')}
-              className="flex items-center space-x-1.5 px-4 py-2 rounded-xl bg-[#F2FCFF] hover:bg-[#E0F7FA] text-[#005F68] border border-[#005F68]/30 text-xs font-semibold transition-all cursor-pointer"
-            >
-              <span>Jump to Live 3D Network Explorer</span>
-              <ExternalLink className="w-3.5 h-3.5" />
-            </button>
-          )}
+            {currentStage === 3 && selectedCase && (
+              <button
+                onClick={() => onSelectCase(selectedCase.case_id)}
+                className="flex items-center space-x-1.5 px-4 py-2 rounded-xl bg-[#F2FCFF] hover:bg-[#E0F7FA] text-[#005F68] border border-[#005F68]/30 text-xs font-semibold transition-all cursor-pointer"
+              >
+                <span>Open Case {selectedCase.case_id} File</span>
+                <ExternalLink className="w-3.5 h-3.5" />
+              </button>
+            )}
 
-          {currentStage === 5 && (
-            <button
-              onClick={() => onNavigateTo('audit')}
-              className="flex items-center space-x-1.5 px-4 py-2 rounded-xl bg-[#F2FCFF] hover:bg-[#E0F7FA] text-[#005F68] border border-[#005F68]/30 text-xs font-semibold transition-all cursor-pointer"
-            >
-              <span>Jump to Live Merkle Audit Trail</span>
-              <ExternalLink className="w-3.5 h-3.5" />
-            </button>
-          )}
+            {currentStage === 4 && (
+              <button
+                onClick={() => onNavigateTo('network')}
+                className="flex items-center space-x-1.5 px-4 py-2 rounded-xl bg-[#F2FCFF] hover:bg-[#E0F7FA] text-[#005F68] border border-[#005F68]/30 text-xs font-semibold transition-all cursor-pointer"
+              >
+                <span>Jump to Live 3D Network Explorer</span>
+                <ExternalLink className="w-3.5 h-3.5" />
+              </button>
+            )}
+
+            {currentStage === 5 && (
+              <button
+                onClick={() => onNavigateTo('audit')}
+                className="flex items-center space-x-1.5 px-4 py-2 rounded-xl bg-[#F2FCFF] hover:bg-[#E0F7FA] text-[#005F68] border border-[#005F68]/30 text-xs font-semibold transition-all cursor-pointer"
+              >
+                <span>Jump to Live Merkle Audit Trail</span>
+                <ExternalLink className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* ========================================================================= */}
       {/* 3. DYNAMIC STAGE CONTENT CONTAINER                                        */}
