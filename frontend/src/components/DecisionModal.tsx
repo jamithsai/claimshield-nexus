@@ -15,7 +15,7 @@ interface DecisionModalProps {
   caseId: string;
   currentUser: User | null;
   onClose: () => void;
-  onSuccess: () => void;
+  onSuccess: (receipt?: any) => void;
 }
 
 export const DecisionModal: React.FC<DecisionModalProps> = ({
@@ -38,13 +38,17 @@ export const DecisionModal: React.FC<DecisionModalProps> = ({
     }
     setIsSubmitting(true);
     try {
-      await api.submitDecision(caseId, {
+      const res = await api.submitDecision(caseId, {
         decision,
         disposition,
         investigator_notes: notes,
         recommended_action: recommendedAction,
       });
-      onSuccess();
+      onSuccess({
+        logId: res.audit_log_id,
+        hash: res.merkle_current_hash,
+        status: res.updated_case_status
+      });
     } catch (err: any) {
       alert(`Submission failed: ${err.message}`);
     } finally {

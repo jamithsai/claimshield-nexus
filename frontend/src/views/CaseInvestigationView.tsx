@@ -63,6 +63,7 @@ export const CaseInvestigationView: React.FC<CaseInvestigationViewProps> = ({
   const [isLoading, setIsLoading] = useState(true);
   const [isDecisionModalOpen, setIsDecisionModalOpen] = useState(false);
   const [copiedBrief, setCopiedBrief] = useState(false);
+  const [decisionReceipt, setDecisionReceipt] = useState<{ logId: string; hash: string; status: string } | null>(null);
 
   // Trace Evidence Interactive Drawer State
   const [expandedTraceDetector, setExpandedTraceDetector] = useState<string | null>('rule');
@@ -170,6 +171,29 @@ export const CaseInvestigationView: React.FC<CaseInvestigationViewProps> = ({
 
   return (
     <div className="space-y-6 font-sans">
+      {/* Decision Receipt Notification Banner */}
+      {decisionReceipt && (
+        <div className="p-4 rounded-xl bg-[#E8F8EE] border border-[#ACF2E5] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-[#1B843C] shadow-xs animate-fadeIn">
+          <div className="flex items-center space-x-2.5">
+            <CheckCircle2 className="w-5 h-5 text-[#209B47] flex-shrink-0" />
+            <div>
+              <div className="font-bold text-sm text-[#042126]">
+                Enforcement Decision Signed &amp; Sealed to Cryptographic Ledger
+              </div>
+              <div className="text-[11px] text-[#042126]/80 mt-0.5 font-mono">
+                Log ID: <strong className="text-[#005F68]">{decisionReceipt.logId}</strong> • Updated Status: <strong className="text-[#1B843C]">{decisionReceipt.status}</strong> • SHA-256 Hash: <span className="text-[#042126]/60 truncate">{decisionReceipt.hash.substring(0, 24)}...</span>
+              </div>
+            </div>
+          </div>
+          <button
+            onClick={() => setDecisionReceipt(null)}
+            className="px-3 py-1.5 rounded-lg bg-white border border-[#209B47]/30 text-[#1B843C] hover:bg-[#E8F8EE] font-semibold transition-colors cursor-pointer self-start sm:self-auto"
+          >
+            Dismiss
+          </button>
+        </div>
+      )}
+
       {/* Persistent Top Case Header */}
       <div className="health-panel p-5 rounded-xl space-y-4">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
@@ -1118,8 +1142,11 @@ export const CaseInvestigationView: React.FC<CaseInvestigationViewProps> = ({
           caseId={caseData.case_id}
           currentUser={currentUser}
           onClose={() => setIsDecisionModalOpen(false)}
-          onSuccess={() => {
+          onSuccess={(receipt) => {
             setIsDecisionModalOpen(false);
+            if (receipt) {
+              setDecisionReceipt(receipt);
+            }
             api.getCaseDetails(caseId).then((res) => setCaseData(res.case));
           }}
         />

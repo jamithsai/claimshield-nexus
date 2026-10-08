@@ -155,7 +155,7 @@ export function App() {
           )}
 
           {activeView === 'audit' && (
-            <AuditTrailView />
+            <AuditTrailView onSelectCase={handleSelectCase} />
           )}
         </main>
 
