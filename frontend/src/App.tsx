@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Navbar } from './components/Navbar';
+import { Sidebar } from './components/Sidebar';
+import { TopHeader } from './components/TopHeader';
 import { ExecutiveOverviewView } from './views/ExecutiveOverviewView';
 import { SIUQueueView } from './views/SIUQueueView';
 import { CaseInvestigationView } from './views/CaseInvestigationView';
@@ -13,6 +14,10 @@ export function App() {
   const [activeView, setActiveView] = useState<string>('overview');
   const [selectedCaseId, setSelectedCaseId] = useState<string | null>(null);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(() => {
+    return localStorage.getItem('cs_sidebar_collapsed') === 'true';
+  });
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState<boolean>(false);
 
   useEffect(() => {
     // Initial login as default investigator
@@ -26,6 +31,22 @@ export function App() {
     }
     initUser();
   }, []);
+
+  // Handle ESC key to close mobile drawer
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isMobileSidebarOpen) {
+        setIsMobileSidebarOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isMobileSidebarOpen]);
+
+  const handleToggleCollapse = (collapsed: boolean) => {
+    setIsSidebarCollapsed(collapsed);
+    localStorage.setItem('cs_sidebar_collapsed', String(collapsed));
+  };
 
   const handleRoleChange = async (username: string) => {
     try {
@@ -55,69 +76,95 @@ export function App() {
     }
   };
 
+  const handleNavigateView = (view: string) => {
+    setActiveView(view);
+    if (view !== 'case-detail') {
+      setSelectedCaseId(null);
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-[#F2FCFF] text-[#042126] flex flex-col font-sans">
-      {/* Top Healthcare Navigation Bar */}
-      <Navbar
-        currentUser={currentUser}
+    <div className="min-h-screen bg-[#F2FCFF] text-[#042126] flex font-sans">
+      {/* 1. Persistent Left Sidebar Navigation */}
+      <Sidebar
         activeView={activeView}
-        setActiveView={(v) => {
-          setActiveView(v);
-          if (v !== 'case-detail') setSelectedCaseId(null);
-        }}
+        setActiveView={handleNavigateView}
+        selectedCaseId={selectedCaseId}
+        currentUser={currentUser}
         onRoleChange={handleRoleChange}
+        isCollapsed={isSidebarCollapsed}
+        setIsCollapsed={handleToggleCollapse}
+        isMobileOpen={isMobileSidebarOpen}
+        setIsMobileOpen={setIsMobileSidebarOpen}
       />
 
-      {/* Main Content Area */}
-      <main className="flex-1 max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        {activeView === 'overview' && (
-          <ExecutiveOverviewView
-            onSelectCase={handleSelectCase}
-            onNavigateToQueue={() => setActiveView('queue')}
-          />
-        )}
+      {/* 2. Main Content Wrapper */}
+      <div 
+        className={`flex-1 flex flex-col min-w-0 transition-all duration-250 ease-in-out ${
+          isSidebarCollapsed ? 'md:ml-[72px]' : 'md:ml-64'
+        }`}
+      >
+        {/* Simplified Top Header */}
+        <TopHeader
+          activeView={activeView}
+          selectedCaseId={selectedCaseId}
+          currentUser={currentUser}
+          onToggleMobileSidebar={() => setIsMobileSidebarOpen(true)}
+          onNavigateToQueue={() => handleNavigateView('queue')}
+          onBackToOverview={() => handleNavigateView('overview')}
+        />
 
-        {activeView === 'queue' && (
-          <SIUQueueView onSelectCase={handleSelectCase} />
-        )}
+        {/* Dynamic Workspace Content */}
+        <main className="flex-1 max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          {activeView === 'overview' && (
+            <ExecutiveOverviewView
+              onSelectCase={handleSelectCase}
+              onNavigateToQueue={() => handleNavigateView('queue')}
+            />
+          )}
 
-        {activeView === 'case-detail' && selectedCaseId && (
-          <CaseInvestigationView
-            caseId={selectedCaseId}
-            currentUser={currentUser}
-            onBackToQueue={() => setActiveView('queue')}
-            onSelectCaseByNpi={handleSelectCaseByNpi}
-          />
-        )}
+          {activeView === 'queue' && (
+            <SIUQueueView onSelectCase={handleSelectCase} />
+          )}
 
-        {activeView === 'network' && (
-          <NetworkExplorerView
-            onSelectCaseByNpi={handleSelectCaseByNpi}
-          />
-        )}
+          {activeView === 'case-detail' && selectedCaseId && (
+            <CaseInvestigationView
+              caseId={selectedCaseId}
+              currentUser={currentUser}
+              onBackToQueue={() => handleNavigateView('queue')}
+              onSelectCaseByNpi={handleSelectCaseByNpi}
+            />
+          )}
 
-        {activeView === 'performance' && (
-          <DetectorPerformanceView />
-        )}
+          {activeView === 'network' && (
+            <NetworkExplorerView
+              onSelectCaseByNpi={handleSelectCaseByNpi}
+            />
+          )}
 
-        {activeView === 'audit' && (
-          <AuditTrailView />
-        )}
-      </main>
+          {activeView === 'performance' && (
+            <DetectorPerformanceView />
+          )}
 
-      {/* Institutional Healthcare Enterprise Footer */}
-      <footer className="border-t border-[#042126]/10 bg-white py-4 text-center text-xs text-[#042126]/70">
-        <div className="max-w-[1600px] mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-          <div className="flex items-center space-x-2">
-            <span className="font-semibold text-[#042126]">ClaimShield Nexus</span>
-            <span className="text-[#042126]/20">•</span>
-            <span>Healthcare Program Integrity &amp; Payment Integrity Intelligence</span>
+          {activeView === 'audit' && (
+            <AuditTrailView />
+          )}
+        </main>
+
+        {/* Institutional Healthcare Enterprise Footer */}
+        <footer className="border-t border-[#042126]/10 bg-white py-4 text-center text-xs text-[#042126]/70 mt-auto">
+          <div className="max-w-[1600px] mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+            <div className="flex items-center space-x-2">
+              <span className="font-semibold text-[#042126]">ClaimShield Nexus</span>
+              <span className="text-[#042126]/20">•</span>
+              <span>Healthcare Program Integrity &amp; Payment Integrity Intelligence</span>
+            </div>
+            <p className="text-[11px] text-[#042126]/50 font-mono">
+              Synthetic Benchmark Evaluation • Zero PHI Ingestion • Acentra Health PS3
+            </p>
           </div>
-          <p className="text-[11px] text-[#042126]/50 font-mono">
-            Synthetic Benchmark Evaluation • Zero PHI Ingestion • Acentra Health PS3
-          </p>
-        </div>
-      </footer>
+        </footer>
+      </div>
     </div>
   );
 }
