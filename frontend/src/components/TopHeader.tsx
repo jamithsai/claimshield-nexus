@@ -5,8 +5,8 @@ import {
   UserCheck, 
   ArrowRight, 
   ArrowLeft,
-  ShieldCheck,
-  Sparkles
+  ChevronRight,
+  ShieldAlert
 } from 'lucide-react';
 import { User } from '../types';
 
@@ -27,107 +27,109 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
   onNavigateToQueue,
   onBackToOverview,
 }) => {
-  const getHeaderMeta = () => {
+  const getBreadcrumb = () => {
     switch (activeView) {
       case 'overview':
         return {
-          title: 'Program Integrity Overview',
-          desc: 'Portfolio-level surveillance of synthetic claims, dual-engine FWA alerts, and SIU caseload.',
+          workspace: 'OVERVIEW',
+          sub: 'Program Integrity',
         };
       case 'queue':
         return {
-          title: 'SIU Priority Queue',
-          desc: 'Operational case triage and capacity-constrained investigator workload ranking.',
+          workspace: 'INVESTIGATION',
+          sub: 'SIU Priority Queue',
         };
       case 'case-detail':
         return {
-          title: selectedCaseId ? `Case File: ${selectedCaseId}` : 'Case Investigation Console',
-          desc: 'Comprehensive multi-modal evidence review, 10-D behavioral fingerprint, and human disposition.',
+          workspace: 'INVESTIGATION',
+          sub: selectedCaseId ? `Case ${selectedCaseId}` : 'Case File',
         };
       case 'network':
         return {
-          title: 'Healthcare Network Explorer',
-          desc: 'Population relationship topology, provider-facility-member graph, and collusion cluster detection.',
+          workspace: 'INTELLIGENCE',
+          sub: 'Network Explorer',
         };
       case 'performance':
         return {
-          title: 'Detector Lab & Efficacy',
-          desc: 'Multi-modal detector benchmarks, feature attributions, and counterfactual red-team simulation.',
+          workspace: 'INTELLIGENCE',
+          sub: 'Detector Lab',
         };
       case 'audit':
         return {
-          title: 'Cryptographic Audit Trail & Governance',
-          desc: 'Immutable SHA-256 Merkle chain recording every investigator action, disposition, and status change.',
+          workspace: 'GOVERNANCE',
+          sub: 'Audit & Governance',
         };
       default:
         return {
-          title: 'ClaimShield Nexus',
-          desc: 'Healthcare Program Integrity & Payment Integrity Intelligence Platform',
+          workspace: 'CLAIMSHIELD',
+          sub: 'Nexus Platform',
         };
     }
   };
 
-  const meta = getHeaderMeta();
+  const breadcrumb = getBreadcrumb();
 
   return (
-    <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-xs border-b border-[#042126]/10 px-4 sm:px-6 lg:px-8 py-3.5 transition-all">
-      <div className="flex items-center justify-between gap-4">
-        {/* Left Side: Mobile Menu Button + Page Title & Subtitle */}
-        <div className="flex items-center space-x-3 min-w-0">
+    <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-xs border-b border-[#042126]/10 px-4 sm:px-6 lg:px-8 py-2.5 transition-all">
+      <div className="flex items-center justify-between gap-4 h-9">
+        {/* Left Side: Mobile Menu Trigger + Clean Context Breadcrumb */}
+        <div className="flex items-center space-x-2.5 min-w-0">
           <button
             onClick={onToggleMobileSidebar}
-            className="md:hidden p-2 rounded-lg bg-[#F2FCFF] border border-[#042126]/10 text-[#042126] hover:bg-[#042126]/5 cursor-pointer"
+            className="md:hidden p-1.5 rounded-md bg-[#F2FCFF] border border-[#042126]/10 text-[#042126] hover:bg-[#042126]/5 cursor-pointer"
             aria-label="Open Navigation"
           >
-            <Menu className="w-5 h-5" />
+            <Menu className="w-4 h-4" />
           </button>
 
-          <div className="min-w-0">
-            <h1 className="text-base sm:text-lg font-bold text-[#042126] tracking-tight truncate leading-tight">
-              {meta.title}
-            </h1>
-            <p className="text-xs text-[#042126]/60 truncate hidden sm:block mt-0.5">
-              {meta.desc}
-            </p>
-          </div>
+          {/* Contextual Breadcrumb (Where am I?) */}
+          <nav aria-label="Breadcrumb" className="flex items-center space-x-1.5 text-xs">
+            <span className="text-[10px] font-bold tracking-wider text-[#005F68] uppercase font-mono">
+              {breadcrumb.workspace}
+            </span>
+            <ChevronRight className="w-3 h-3 text-[#042126]/30 flex-shrink-0" />
+            <span className="font-semibold text-[#042126] text-xs truncate">
+              {breadcrumb.sub}
+            </span>
+          </nav>
         </div>
 
-        {/* Right Side: Environment Status, Role Badge, Contextual Actions */}
+        {/* Right Side: Synthetic Status Chip, User Persona Pill, Contextual Actions */}
         <div className="flex items-center space-x-3 flex-shrink-0">
-          {/* Synthetic Chip */}
-          <div className="hidden lg:flex items-center space-x-1.5 px-2.5 py-1 rounded-md bg-[#F2FCFF] border border-[#005F68]/20 text-[11px] font-semibold text-[#005F68]">
-            <span className="w-2 h-2 rounded-full bg-[#209B47]"></span>
+          {/* Synthetic Data Environment Status */}
+          <div className="hidden lg:flex items-center space-x-1.5 px-2.5 py-1 rounded-md bg-[#F2FCFF] border border-[#005F68]/15 text-[11px] font-semibold text-[#005F68]">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#209B47]"></span>
             <span>Synthetic Benchmark</span>
-            <span className="text-[#042126]/30">•</span>
-            <span className="text-[#042126]/60">Zero PHI</span>
+            <span className="text-[#042126]/20">•</span>
+            <span className="text-[#042126]/60 text-[10px]">Zero PHI</span>
           </div>
 
           {/* User Persona Pill */}
           <div className="hidden sm:flex items-center space-x-2 px-2.5 py-1 rounded-md bg-[#F2FCFF] border border-[#042126]/10 text-xs">
             <UserCheck className="w-3.5 h-3.5 text-[#209B47]" />
-            <span className="font-semibold text-[#042126]">{currentUser?.full_name || 'Sarah Jenkins, CFE'}</span>
-            <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-[#042126]/5 text-[#005F68] uppercase font-bold">
+            <span className="font-semibold text-[#042126] text-xs">{currentUser?.full_name || 'Sarah Jenkins, CFE'}</span>
+            <span className="text-[9.5px] font-mono px-1.5 py-0.2 rounded bg-[#042126]/5 text-[#005F68] uppercase font-bold">
               {currentUser?.role?.replace(/_/g, ' ') || 'SIU'}
             </span>
           </div>
 
-          {/* Contextual Action Button */}
+          {/* Contextual Action Button (Only where useful) */}
           {activeView === 'overview' && (
             <button
               onClick={onNavigateToQueue}
-              className="flex items-center space-x-1.5 px-3.5 py-1.5 rounded-lg bg-[#209B47] hover:bg-[#1B843C] text-white text-xs font-semibold shadow-xs transition-colors cursor-pointer"
+              className="flex items-center space-x-1 px-3 py-1 rounded-md bg-[#209B47] hover:bg-[#1B843C] text-white text-xs font-semibold shadow-2xs transition-colors cursor-pointer"
             >
               <span>SIU Queue</span>
-              <ArrowRight className="w-3.5 h-3.5" />
+              <ArrowRight className="w-3 h-3" />
             </button>
           )}
 
           {activeView === 'case-detail' && (
             <button
               onClick={onNavigateToQueue}
-              className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-[#F2FCFF] hover:bg-[#042126]/5 text-[#042126] border border-[#042126]/15 text-xs font-semibold transition-colors cursor-pointer"
+              className="flex items-center space-x-1 px-2.5 py-1 rounded-md bg-[#F2FCFF] hover:bg-[#042126]/5 text-[#042126] border border-[#042126]/15 text-xs font-semibold transition-colors cursor-pointer"
             >
-              <ArrowLeft className="w-3.5 h-3.5 text-[#005F68]" />
+              <ArrowLeft className="w-3 h-3 text-[#005F68]" />
               <span>Back to Queue</span>
             </button>
           )}
