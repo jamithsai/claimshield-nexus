@@ -1,7 +1,24 @@
-import React, { useState } from 'react';
-import { Network, UserCheck, Building2, User, RefreshCw, ZoomIn, ZoomOut } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { 
+  Network, 
+  UserCheck, 
+  Building2, 
+  User, 
+  RefreshCw, 
+  ZoomIn, 
+  ZoomOut, 
+  Search, 
+  ArrowRight, 
+  Copy, 
+  Check, 
+  ShieldAlert, 
+  Info,
+  ExternalLink,
+  Layers,
+  Filter
+} from 'lucide-react';
 
-interface GraphNode {
+export interface GraphNode {
   id: string;
   label: string;
   type: string;
@@ -11,80 +28,168 @@ interface GraphNode {
   is_target?: boolean;
 }
 
-interface GraphEdge {
+export interface GraphEdge {
   source: string;
   target: string;
   relationship: string;
   weight?: number;
 }
 
-interface RelationshipGraphViewerProps {
+export interface RelationshipGraphViewerProps {
   graphData?: {
     nodes?: GraphNode[];
     edges?: GraphEdge[];
     sampled_nodes?: GraphNode[];
     sampled_edges?: GraphEdge[];
+    total_nodes?: number;
+    total_edges?: number;
   };
   nodes?: GraphNode[];
   edges?: GraphEdge[];
   highlightLoops?: boolean;
+  onSelectCase?: (caseId: string) => void;
+  onSelectCaseByNpi?: (npi: string) => void;
 }
 
 export const RelationshipGraphViewer: React.FC<RelationshipGraphViewerProps> = ({
   graphData,
   nodes: directNodes,
   edges: directEdges,
-  highlightLoops = true
+  highlightLoops = true,
+  onSelectCase,
+  onSelectCaseByNpi
 }) => {
-  const effectiveNodes = directNodes || graphData?.nodes || graphData?.sampled_nodes || [];
-  const effectiveEdges = directEdges || graphData?.edges || graphData?.sampled_edges || [];
+  const effectiveNodes: GraphNode[] = useMemo(() => {
+    return directNodes || graphData?.nodes || graphData?.sampled_nodes || [];
+  }, [directNodes, graphData]);
 
-  const [selectedNode, setSelectedNode] = useState<GraphNode | null>(effectiveNodes[0] || null);
+  const effectiveEdges: GraphEdge[] = useMemo(() => {
+    return directEdges || graphData?.edges || graphData?.sampled_edges || [];
+  }, [directEdges, graphData]);
 
-  // Position nodes in a clean radial layout
-  const width = 650;
-  const height = 360;
+  // Initial selection: target node if present, or first node
+  const initialTarget = useMemo(() => {
+    return effectiveNodes.find((n) => n.is_target) || effectiveNodes[0] || null;
+  }, [effectiveNodes]);
+
+  const [selectedNode, setSelectedNode] = useState<GraphNode | null>(initialTarget);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filterType, setFilterType] = useState<'ALL' | 'PROVIDER' | 'FACILITY' | 'MEMBER'>('ALL');
+  const [zoomLevel, setZoomLevel] = useState(1.0);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+
+  // SVG dimensions
+  const width = 760;
+  const height = 480;
   const centerX = width / 2;
   const centerY = height / 2;
 
-  const nodePositions: Record<string, { x: number; y: number }> = {};
-  
-  // Place target node at center, others around in concentric circles
-  const targetNode = effectiveNodes.find((n) => n.is_target) || effectiveNodes[0];
-  if (targetNode) {
-    nodePositions[targetNode.id] = { x: centerX, y: centerY };
-  }
+  // Node position map
+  const nodePositions = useMemo(() => {
+    const pos: Record<string, { x: number; y: number }> = {};
+    if (effectiveNodes.length === 0) return pos;
 
-  const otherNodes = effectiveNodes.filter((n) => n.id !== targetNode?.id);
-  otherNodes.forEach((node, i) => {
-    const angle = (i / Math.max(1, otherNodes.length)) * 2 * Math.PI;
-    const radius = node.type === 'FACILITY' ? 120 : (node.type === 'PROVIDER' ? 140 : 110);
-    nodePositions[node.id] = {
-      x: centerX + radius * Math.cos(angle),
-      y: centerY + radius * Math.sin(angle),
-    };
-  });
+    const targetNode = effectiveNodes.find((n) => n.is_target) || effectiveNodes[0];
+    if (targetNode) {
+      pos[targetNode.id] = { x: centerX, y: centerY };
+    }
+
+    const otherNodes = effectiveNodes.filter((n) => n.id !== targetNode?.id);
+    const n = otherNodes.length;
+
+    // Arrange in 2 concentric rings depending on type or count
+    otherNodes.forEach((node, i) => {
+      const isFacility = node.type === 'FACILITY';
+      const isMember = node.type === 'MEMBER';
+      
+      let baseRadius = isFacility ? 145 : isMember ? 190 : 160;
+      if (n > 20) {
+        // Multi-ring distribution for larger graph samples
+        const ring = i % 3;
+        baseRadius = 110 + ring * 55;
+      }
+
+      const angle = (i / Math.max(1, n)) * 2 * Math.PI - Math.PI / 2;
+      pos[node.id] = {
+        x: centerX + baseRadius * Math.cos(angle),
+        y: centerY + baseRadius * Math.sin(angle),
+      };
+    });
+
+    return pos;
+  }, [effectiveNodes, centerX, centerY]);
+
+  // Compute 1-hop connected neighborhood
+  const { neighborNodeIds, incidentEdges } = useMemo(() => {
+    if (!selectedNode) {
+      return { neighborNodeIds: new Set<string>(), incidentEdges: [] };
+    }
+
+    const set = new Set<string>([selectedNode.id]);
+    const incident: GraphEdge[] = [];
+
+    effectiveEdges.forEach((edge) => {
+      if (edge.source === selectedNode.id) {
+        set.add(edge.target);
+        incident.push(edge);
+      } else if (edge.target === selectedNode.id) {
+        set.add(edge.source);
+        incident.push(edge);
+      }
+    });
+
+    return { neighborNodeIds: set, incidentEdges: incident };
+  }, [selectedNode, effectiveEdges]);
+
+  // Filtered nodes for search & type filter
+  const filteredNodes = useMemo(() => {
+    return effectiveNodes.filter((n) => {
+      const matchType = filterType === 'ALL' || n.type === filterType;
+      const matchSearch = searchQuery.trim() === '' || 
+        n.label.toLowerCase().includes(searchQuery.toLowerCase()) || 
+        n.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (n.specialty && n.specialty.toLowerCase().includes(searchQuery.toLowerCase()));
+      return matchType && matchSearch;
+    });
+  }, [effectiveNodes, filterType, searchQuery]);
+
+  const handleCopyId = (id: string) => {
+    navigator.clipboard.writeText(id);
+    setCopiedId(id);
+    setTimeout(() => setCopiedId(null), 1800);
+  };
+
+  const handleInvestigate = (npi: string) => {
+    if (onSelectCaseByNpi) {
+      onSelectCaseByNpi(npi);
+    } else if (onSelectCase) {
+      onSelectCase(npi);
+    }
+  };
 
   return (
     <div className="w-full space-y-4 font-sans">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      {/* Header & Controls Bar */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#042126]/10">
         <div className="flex items-center space-x-2">
           <div className="p-1.5 rounded-lg bg-[#209B47]/10 text-[#005F68] border border-[#209B47]/30">
             <Network className="w-4 h-4 text-[#209B47]" />
           </div>
           <div>
             <h3 className="text-xs font-bold text-[#042126] uppercase tracking-wider">
-              Connected Healthcare Network Topology
+              Healthcare Relationship Network Topology
             </h3>
-            <p className="text-[11px] text-[#042126]/60">Providers, Facilities, Shared Members &amp; Referral Routes</p>
+            <p className="text-[11px] text-[#042126]/60">
+              Interactive 1-hop neighborhood exploration &amp; bipartite provider-facility-member mapping
+            </p>
           </div>
         </div>
 
         {/* Legend */}
-        <div className="flex items-center space-x-3 text-[11px] text-[#042126]/70">
+        <div className="flex flex-wrap items-center gap-3 text-[11px] text-[#042126]/70">
           <span className="flex items-center space-x-1">
             <span className="w-2.5 h-2.5 rounded-full bg-[#B91C1C] inline-block"></span>
-            <span className="font-medium text-[#042126]">Target NPI</span>
+            <span className="font-semibold text-[#042126]">Target Entity</span>
           </span>
           <span className="flex items-center space-x-1">
             <span className="w-2.5 h-2.5 rounded-full bg-[#209B47] inline-block"></span>
@@ -96,26 +201,113 @@ export const RelationshipGraphViewer: React.FC<RelationshipGraphViewerProps> = (
           </span>
           <span className="flex items-center space-x-1">
             <span className="w-3 h-0.5 bg-[#B91C1C] inline-block"></span>
-            <span>Referral Loop</span>
+            <span className="font-semibold text-[#B91C1C]">Referral Loop / Collusion</span>
           </span>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 items-center">
-        {/* SVG Graph Canvas */}
-        <div className="lg:col-span-3 bg-[#F2FCFF] rounded-xl border border-[#042126]/10 overflow-hidden flex items-center justify-center relative min-h-[360px]">
-          <svg width="100%" height={height} viewBox={`0 0 ${width} ${height}`}>
+      {/* Filter & Toolbar */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 bg-[#F2FCFF] p-2.5 rounded-lg border border-[#042126]/10 text-xs">
+        <div className="flex items-center space-x-2 flex-1 max-w-sm">
+          <div className="relative w-full">
+            <Search className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-[#042126]/40" />
+            <input
+              type="text"
+              placeholder="Search by entity name, NPI, or specialty..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-8 pr-3 py-1 bg-white border border-[#042126]/15 rounded-md text-xs text-[#042126] placeholder-[#042126]/40 focus:outline-none focus:border-[#209B47]"
+            />
+          </div>
+        </div>
+
+        <div className="flex items-center space-x-2">
+          {/* Filter Pills */}
+          <div className="flex items-center space-x-1 bg-white p-0.5 rounded-md border border-[#042126]/10">
+            {(['ALL', 'PROVIDER', 'FACILITY'] as const).map((type) => (
+              <button
+                key={type}
+                onClick={() => setFilterType(type)}
+                className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase transition-colors ${
+                  filterType === type 
+                    ? 'bg-[#005F68] text-white' 
+                    : 'text-[#042126]/60 hover:text-[#042126] hover:bg-[#F2FCFF]'
+                }`}
+              >
+                {type === 'ALL' ? 'All' : type.toLowerCase() + 's'}
+              </button>
+            ))}
+          </div>
+
+          {/* Zoom controls */}
+          <div className="flex items-center space-x-1 bg-white p-0.5 rounded-md border border-[#042126]/10">
+            <button
+              onClick={() => setZoomLevel((z) => Math.max(0.7, z - 0.15))}
+              title="Zoom Out"
+              className="p-1 hover:bg-[#F2FCFF] rounded text-[#042126]/70"
+            >
+              <ZoomOut className="w-3.5 h-3.5" />
+            </button>
+            <span className="text-[10px] font-mono px-1 text-[#042126]/70">{Math.round(zoomLevel * 100)}%</span>
+            <button
+              onClick={() => setZoomLevel((z) => Math.min(1.6, z + 0.15))}
+              title="Zoom In"
+              className="p-1 hover:bg-[#F2FCFF] rounded text-[#042126]/70"
+            >
+              <ZoomIn className="w-3.5 h-3.5" />
+            </button>
+            <button
+              onClick={() => setZoomLevel(1.0)}
+              title="Reset Zoom"
+              className="p-1 hover:bg-[#F2FCFF] rounded text-[#042126]/70"
+            >
+              <RefreshCw className="w-3.5 h-3.5" />
+            </button>
+          </div>
+
+          {selectedNode && (
+            <button
+              onClick={() => setSelectedNode(null)}
+              className="px-2 py-1 bg-white border border-[#042126]/15 hover:bg-[#F2FCFF] rounded-md text-[11px] font-semibold text-[#005F68] transition-colors"
+            >
+              Show Entire Network
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Main Canvas & Detail Sidebar Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 items-start">
+        {/* SVG Interactive Canvas */}
+        <div className="lg:col-span-3 bg-[#F2FCFF]/80 rounded-xl border border-[#042126]/10 overflow-hidden relative min-h-[480px] flex items-center justify-center shadow-inner">
+          {selectedNode && (
+            <div className="absolute top-3 left-3 z-10 bg-white/95 backdrop-blur-xs border border-[#209B47]/30 px-2.5 py-1.5 rounded-lg shadow-xs flex items-center space-x-2 text-xs">
+              <span className="w-2 h-2 rounded-full bg-[#209B47] animate-pulse"></span>
+              <span className="text-[#042126] font-semibold">
+                1-Hop Isolated Neighborhood: <span className="font-bold text-[#005F68]">{selectedNode.label}</span>
+              </span>
+              <span className="text-[#042126]/50">({neighborNodeIds.size - 1} neighbors)</span>
+            </div>
+          )}
+
+          <svg 
+            width="100%" 
+            height={height} 
+            viewBox={`0 0 ${width} ${height}`}
+            className="cursor-default select-none"
+            style={{ transform: `scale(${zoomLevel})`, transformOrigin: 'center center', transition: 'transform 0.2s ease-out' }}
+          >
             <defs>
               <marker
                 id="arrow-default"
                 viewBox="0 0 10 10"
-                refX="20"
+                refX="18"
                 refY="5"
-                markerWidth="6"
-                markerHeight="6"
+                markerWidth="5"
+                markerHeight="5"
                 orient="auto-start-reverse"
               >
-                <path d="M 0 0 L 10 5 L 0 10 z" fill="rgba(4, 33, 38, 0.3)" />
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="rgba(4, 33, 38, 0.4)" />
               </marker>
               <marker
                 id="arrow-loop"
@@ -128,6 +320,17 @@ export const RelationshipGraphViewer: React.FC<RelationshipGraphViewerProps> = (
               >
                 <path d="M 0 0 L 10 5 L 0 10 z" fill="#B91C1C" />
               </marker>
+              <marker
+                id="arrow-highlighted"
+                viewBox="0 0 10 10"
+                refX="20"
+                refY="5"
+                markerWidth="6"
+                markerHeight="6"
+                orient="auto-start-reverse"
+              >
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#209B47" />
+              </marker>
             </defs>
 
             {/* Render Edges */}
@@ -136,20 +339,71 @@ export const RelationshipGraphViewer: React.FC<RelationshipGraphViewerProps> = (
               const tgt = nodePositions[edge.target];
               if (!src || !tgt) return null;
 
-              const isLoop = edge.relationship?.toLowerCase().includes('referral') || edge.relationship?.toLowerCase().includes('collusion');
+              const isLoop = edge.relationship?.toLowerCase().includes('referral') || 
+                             edge.relationship?.toLowerCase().includes('loop') ||
+                             edge.relationship?.toLowerCase().includes('collusion');
+
+              const isIncidentToSelected = selectedNode ? 
+                (edge.source === selectedNode.id || edge.target === selectedNode.id) : 
+                true;
+
+              const edgeOpacity = selectedNode 
+                ? (isIncidentToSelected ? 1 : 0.08) 
+                : (isLoop ? 0.9 : 0.35);
+
+              const strokeColor = isLoop 
+                ? '#B91C1C' 
+                : isIncidentToSelected && selectedNode 
+                ? '#209B47' 
+                : 'rgba(4, 33, 38, 0.3)';
+
+              const strokeWidth = isIncidentToSelected && selectedNode 
+                ? (isLoop ? 2.5 : 2) 
+                : (isLoop ? 1.8 : 1.2);
+
+              const marker = isLoop 
+                ? 'url(#arrow-loop)' 
+                : (isIncidentToSelected && selectedNode ? 'url(#arrow-highlighted)' : 'url(#arrow-default)');
 
               return (
-                <g key={`edge-${idx}`}>
+                <g key={`edge-${idx}`} style={{ transition: 'opacity 0.2s ease-out' }}>
                   <line
                     x1={src.x}
                     y1={src.y}
                     x2={tgt.x}
                     y2={tgt.y}
-                    stroke={isLoop ? '#B91C1C' : 'rgba(4, 33, 38, 0.15)'}
-                    strokeWidth={isLoop ? 2 : 1.2}
-                    strokeDasharray={isLoop ? '4 2' : undefined}
-                    markerEnd={isLoop ? 'url(#arrow-loop)' : 'url(#arrow-default)'}
+                    stroke={strokeColor}
+                    strokeWidth={strokeWidth}
+                    strokeOpacity={edgeOpacity}
+                    strokeDasharray={isLoop ? '5 3' : undefined}
+                    markerEnd={marker}
                   />
+                  {/* If selected and incident, render relationship pill label */}
+                  {selectedNode && isIncidentToSelected && (
+                    <g transform={`translate(${(src.x + tgt.x) / 2}, ${(src.y + tgt.y) / 2})`}>
+                      <rect
+                        x="-30"
+                        y="-8"
+                        width="60"
+                        height="16"
+                        rx="3"
+                        fill="#ffffff"
+                        stroke={isLoop ? '#B91C1C' : '#042126'}
+                        strokeOpacity="0.2"
+                        strokeWidth="1"
+                      />
+                      <text
+                        textAnchor="middle"
+                        y="3"
+                        fontSize={8}
+                        fontWeight="bold"
+                        fill={isLoop ? '#B91C1C' : '#042126'}
+                        className="select-none font-mono"
+                      >
+                        {edge.relationship.replace(/_/g, ' ').substring(0, 10)}
+                      </text>
+                    </g>
+                  )}
                 </g>
               );
             })}
@@ -160,12 +414,19 @@ export const RelationshipGraphViewer: React.FC<RelationshipGraphViewerProps> = (
               if (!pos) return null;
 
               const isSelected = selectedNode?.id === node.id;
-              const isTarget = node.is_target || node.id === targetNode?.id;
+              const isTarget = node.is_target || node.id === initialTarget?.id;
+              const isConnectedNeighbor = selectedNode ? neighborNodeIds.has(node.id) : true;
+
+              const nodeOpacity = selectedNode 
+                ? (isConnectedNeighbor ? 1 : 0.18) 
+                : 1;
 
               let nodeFill = '#209B47';
               if (isTarget) nodeFill = '#B91C1C';
               else if (node.type === 'FACILITY') nodeFill = '#005F68';
               else if (node.type === 'MEMBER') nodeFill = '#15497E';
+
+              const radius = isTarget ? 18 : (isSelected ? 16 : 13);
 
               return (
                 <g
@@ -173,78 +434,214 @@ export const RelationshipGraphViewer: React.FC<RelationshipGraphViewerProps> = (
                   transform={`translate(${pos.x}, ${pos.y})`}
                   onClick={() => setSelectedNode(node)}
                   className="cursor-pointer group"
+                  style={{ opacity: nodeOpacity, transition: 'opacity 0.2s ease-out, transform 0.2s ease-out' }}
                 >
+                  {/* Outer active ring for selected node */}
+                  {isSelected && (
+                    <circle
+                      r={radius + 7}
+                      fill="none"
+                      stroke="#209B47"
+                      strokeWidth={2}
+                      strokeDasharray="4 3"
+                      className="animate-spin-slow"
+                    />
+                  )}
+
+                  {/* Node Circle */}
                   <circle
-                    r={isTarget ? 18 : 13}
+                    r={radius}
                     fill={nodeFill}
                     stroke="#ffffff"
                     strokeWidth={isSelected ? 3 : 2}
-                    className="transition-all hover:opacity-90 shadow-sm"
+                    className="transition-all hover:scale-110 shadow-md"
                   />
-                  {isSelected && (
+
+                  {/* Inner Target Badge */}
+                  {isTarget && (
                     <circle
-                      r={isTarget ? 24 : 19}
-                      fill="none"
-                      stroke="#209B47"
-                      strokeWidth={1.5}
-                      strokeDasharray="3 3"
+                      r={6}
+                      fill="#ffffff"
                     />
                   )}
+
+                  {/* Node Label Text */}
                   <text
-                    y={isTarget ? 28 : 22}
+                    y={radius + 12}
                     textAnchor="middle"
                     fill="#042126"
-                    fontSize={10}
-                    fontWeight={isTarget ? 'bold' : 'normal'}
-                    className="select-none"
+                    fontSize={isSelected ? 11 : 9.5}
+                    fontWeight={isSelected || isTarget ? 'bold' : '500'}
+                    className="select-none pointer-events-none"
+                    style={{ textShadow: '0 1px 2px rgba(255,255,255,0.9)' }}
                   >
-                    {node.label.length > 14 ? `${node.label.substring(0, 12)}...` : node.label}
+                    {node.label.length > 15 ? `${node.label.substring(0, 13)}...` : node.label}
                   </text>
+
+                  {/* Subtitle (Specialty or City) */}
+                  {(node.specialty || node.city) && (
+                    <text
+                      y={radius + 22}
+                      textAnchor="middle"
+                      fill="#042126"
+                      fillOpacity={0.6}
+                      fontSize={8}
+                      className="select-none pointer-events-none"
+                    >
+                      {node.specialty || node.city}
+                    </text>
+                  )}
                 </g>
               );
             })}
           </svg>
         </div>
 
-        {/* Selected Node Details Panel */}
-        <div className="lg:col-span-1 p-4 rounded-xl bg-white border border-[#042126]/10 space-y-3 shadow-xs">
-          <div className="flex items-center space-x-2 pb-2 border-b border-[#042126]/10">
-            <UserCheck className="w-4 h-4 text-[#209B47]" />
-            <h4 className="text-xs font-bold text-[#042126] uppercase">Entity Detail</h4>
+        {/* Selected Entity Detail Drawer */}
+        <div className="lg:col-span-1 p-4 rounded-xl bg-white border border-[#042126]/10 space-y-4 shadow-sm">
+          <div className="flex items-center justify-between pb-3 border-b border-[#042126]/10">
+            <div className="flex items-center space-x-2">
+              <UserCheck className="w-4 h-4 text-[#209B47]" />
+              <h4 className="text-xs font-bold text-[#042126] uppercase tracking-wider">Entity Intelligence</h4>
+            </div>
+            {selectedNode && (
+              <span className={`text-[10px] font-bold px-2 py-0.5 rounded uppercase ${
+                selectedNode.is_target || selectedNode.id === initialTarget?.id
+                  ? 'bg-[#FEE2E2] text-[#B91C1C] border border-[#FECACA]'
+                  : selectedNode.type === 'FACILITY'
+                  ? 'bg-[#E0F2FE] text-[#0369A1] border border-[#BAE6FD]'
+                  : 'bg-[#E8F8EE] text-[#1B843C] border border-[#ACF2E5]'
+              }`}>
+                {selectedNode.type}
+              </span>
+            )}
           </div>
 
           {selectedNode ? (
-            <div className="space-y-2 text-xs">
+            <div className="space-y-3.5 text-xs">
               <div>
                 <p className="text-[10px] text-[#042126]/60 uppercase font-semibold">Entity Name</p>
-                <p className="font-bold text-[#042126]">{selectedNode.label}</p>
+                <p className="font-bold text-[#042126] text-sm leading-tight mt-0.5">{selectedNode.label}</p>
               </div>
+
               <div>
                 <p className="text-[10px] text-[#042126]/60 uppercase font-semibold">Identifier (NPI / ID)</p>
-                <p className="font-mono text-[#005F68] font-semibold">{selectedNode.id}</p>
+                <div className="flex items-center justify-between bg-[#F2FCFF] px-2.5 py-1.5 rounded-md border border-[#042126]/10 mt-0.5">
+                  <span className="font-mono text-[#005F68] font-bold">{selectedNode.id}</span>
+                  <button
+                    onClick={() => handleCopyId(selectedNode.id)}
+                    title="Copy ID"
+                    className="text-[#042126]/50 hover:text-[#042126] transition-colors"
+                  >
+                    {copiedId === selectedNode.id ? (
+                      <Check className="w-3.5 h-3.5 text-[#209B47]" />
+                    ) : (
+                      <Copy className="w-3.5 h-3.5" />
+                    )}
+                  </button>
+                </div>
               </div>
-              <div>
-                <p className="text-[10px] text-[#042126]/60 uppercase font-semibold">Entity Type</p>
-                <span className="inline-block px-2 py-0.5 rounded bg-[#042126]/5 text-[#042126] text-[11px] font-medium border border-[#042126]/10 mt-0.5">
-                  {selectedNode.type}
-                </span>
-              </div>
+
               {selectedNode.specialty && (
                 <div>
-                  <p className="text-[10px] text-[#042126]/60 uppercase font-semibold">Specialty</p>
-                  <p className="text-[#042126] font-medium">{selectedNode.specialty}</p>
+                  <p className="text-[10px] text-[#042126]/60 uppercase font-semibold">Medical Specialty</p>
+                  <p className="text-[#042126] font-medium mt-0.5">{selectedNode.specialty}</p>
                 </div>
               )}
+
+              {selectedNode.city && (
+                <div>
+                  <p className="text-[10px] text-[#042126]/60 uppercase font-semibold">Location / Jurisdiction</p>
+                  <p className="text-[#042126] font-medium mt-0.5">{selectedNode.city}</p>
+                </div>
+              )}
+
               {selectedNode.pagerank !== undefined && (
                 <div>
-                  <p className="text-[10px] text-[#042126]/60 uppercase font-semibold">PageRank Centrality</p>
-                  <p className="font-mono font-bold text-[#042126]">{selectedNode.pagerank.toFixed(4)}</p>
+                  <div className="flex items-center justify-between text-[10px] text-[#042126]/60 uppercase font-semibold">
+                    <span>PageRank Centrality</span>
+                    <span className="font-mono font-bold text-[#005F68]">{(selectedNode.pagerank * 100).toFixed(2)}%</span>
+                  </div>
+                  <div className="w-full h-1.5 bg-[#042126]/10 rounded-full overflow-hidden mt-1">
+                    <div 
+                      className="h-full bg-[#005F68] rounded-full" 
+                      style={{ width: `${Math.min(100, selectedNode.pagerank * 400)}%` }}
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* Incident Neighborhood Breakdown */}
+              <div className="pt-2 border-t border-[#042126]/10">
+                <div className="flex items-center justify-between">
+                  <p className="text-[10px] text-[#042126]/60 uppercase font-semibold">
+                    Connected Entities ({incidentEdges.length})
+                  </p>
+                  <span className="text-[10px] text-[#005F68] font-mono font-bold">1-Hop Degree</span>
+                </div>
+                
+                {incidentEdges.length > 0 ? (
+                  <div className="mt-2 space-y-1.5 max-h-36 overflow-y-auto pr-1">
+                    {incidentEdges.map((e, idx) => {
+                      const otherId = e.source === selectedNode.id ? e.target : e.source;
+                      const otherNode = effectiveNodes.find(n => n.id === otherId);
+                      const isLoop = e.relationship?.toLowerCase().includes('referral') || e.relationship?.toLowerCase().includes('collusion');
+
+                      return (
+                        <div 
+                          key={idx}
+                          onClick={() => otherNode && setSelectedNode(otherNode)}
+                          className="p-1.5 rounded bg-[#F2FCFF] hover:bg-[#E8F8EE] border border-[#042126]/10 flex items-center justify-between cursor-pointer text-[11px] transition-colors"
+                        >
+                          <div className="truncate pr-2">
+                            <p className="font-medium text-[#042126] truncate">{otherNode?.label || otherId}</p>
+                            <p className={`text-[9px] font-mono ${isLoop ? 'text-[#B91C1C] font-bold' : 'text-[#042126]/60'}`}>
+                              {e.relationship.replace(/_/g, ' ')}
+                            </p>
+                          </div>
+                          <ArrowRight className="w-3 h-3 text-[#005F68]/40 flex-shrink-0" />
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <p className="text-[11px] text-[#042126]/50 italic mt-1">No direct incident edges in current sample.</p>
+                )}
+              </div>
+
+              {/* Action Button: Investigate Case */}
+              {(onSelectCaseByNpi || onSelectCase) && (selectedNode.type === 'PROVIDER' || selectedNode.is_target) && (
+                <div className="pt-2">
+                  <button
+                    onClick={() => handleInvestigate(selectedNode.id)}
+                    className="w-full py-2 px-3 rounded-lg bg-[#209B47] hover:bg-[#1B843C] text-white font-bold text-xs flex items-center justify-center space-x-2 shadow-xs transition-colors cursor-pointer"
+                  >
+                    <span>Investigate Associated Case</span>
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </button>
+                  <p className="text-[10px] text-center text-[#042126]/50 mt-1">
+                    Opens case file and full behavioral evidence profile
+                  </p>
                 </div>
               )}
             </div>
           ) : (
-            <p className="text-xs text-[#042126]/40">Click any node on the graph to inspect entity attributes.</p>
+            <div className="py-8 text-center text-[#042126]/50 space-y-2">
+              <Network className="w-8 h-8 mx-auto text-[#042126]/20" />
+              <p className="text-xs">Click any node on the graph canvas to inspect entity attributes and isolate 1-hop connections.</p>
+            </div>
           )}
+        </div>
+      </div>
+
+      {/* Investigator Instructional Guidance */}
+      <div className="p-3.5 rounded-xl bg-[#F2FCFF] border border-[#005F68]/20 text-xs text-[#042126] flex items-start space-x-2.5">
+        <Info className="w-4 h-4 text-[#005F68] flex-shrink-0 mt-0.5" />
+        <div className="space-y-0.5">
+          <span className="font-bold text-[#005F68]">Investigative Graph Guidance:</span>
+          <p className="text-[#042126]/80 text-[11px] leading-relaxed">
+            Clicking an entity isolates its immediate 1-hop neighborhood while dimming unrelated network topology. Red dashed lines denote high-risk referral loops, patient-sharing syndicates, or collusion clusters detected across the population graph.
+          </p>
         </div>
       </div>
     </div>

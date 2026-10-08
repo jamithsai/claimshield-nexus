@@ -40,12 +40,14 @@ interface CaseInvestigationViewProps {
   caseId: string;
   currentUser: User | null;
   onBackToQueue: () => void;
+  onSelectCaseByNpi?: (npi: string) => void;
 }
 
 export const CaseInvestigationView: React.FC<CaseInvestigationViewProps> = ({
   caseId,
   currentUser,
   onBackToQueue,
+  onSelectCaseByNpi,
 }) => {
   const [activeTab, setActiveTab] = useState<'overview' | 'genome' | 'evolution' | 'network' | 'evidence' | 'projections' | 'brief' | 'simulator' | 'claims'>('overview');
   const [caseData, setCaseData] = useState<SIUCase | null>(null);
@@ -241,6 +243,17 @@ export const CaseInvestigationView: React.FC<CaseInvestigationViewProps> = ({
             </p>
           </div>
         </div>
+
+        {/* Responsible AI Mandate Disclaimer */}
+        <div className="p-3 rounded-lg bg-[#F2FCFF] border border-[#005F68]/20 flex items-center justify-between text-xs text-[#005F68]">
+          <div className="flex items-center space-x-2">
+            <Info className="w-4 h-4 text-[#005F68] flex-shrink-0" />
+            <span className="font-semibold">
+              Program Integrity Mandate: Risk scores prioritize cases for Special Investigation Unit review — they do not constitute legal proof of fraud.
+            </span>
+          </div>
+          <span className="text-[10px] font-mono text-[#042126]/60 font-semibold hidden sm:inline">42 CFR § 455 Protocol</span>
+        </div>
       </div>
 
       {/* 8-Tab Segmented Workspace Navigation */}
@@ -262,7 +275,7 @@ export const CaseInvestigationView: React.FC<CaseInvestigationViewProps> = ({
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
-              className={`flex items-center space-x-1.5 px-4 py-2.5 text-xs font-semibold whitespace-nowrap transition-colors border-b-2 ${
+              className={`flex items-center space-x-1.5 px-4 py-2.5 text-xs font-semibold whitespace-nowrap transition-colors border-b-2 cursor-pointer ${
                 isActive
                   ? 'border-[#209B47] text-[#005F68] bg-[#209B47]/10 rounded-t-lg'
                   : 'border-transparent text-[#042126]/70 hover:text-[#042126] hover:border-[#042126]/20'
@@ -278,6 +291,108 @@ export const CaseInvestigationView: React.FC<CaseInvestigationViewProps> = ({
       {/* ==================== TAB 1: OVERVIEW & TRACE EVIDENCE ==================== */}
       {activeTab === 'overview' && (
         <div className="space-y-6">
+          {/* Core Decision Section: WHY WAS THIS CASE FLAGGED? */}
+          <div className="health-panel p-5 rounded-xl space-y-4 bg-white border border-[#042126]/10 shadow-xs">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#042126]/10 pb-3">
+              <div>
+                <h2 className="text-sm font-bold text-[#042126]">Why Was This Case Flagged?</h2>
+                <p className="text-xs text-[#042126]/70 mt-0.5">
+                  Multi-signal synthesis breaking down the exact clinical, statistical, network, and temporal drivers behind this case.
+                </p>
+              </div>
+              <span className="text-[11px] font-mono text-[#005F68] bg-[#005F68]/10 px-2.5 py-1 rounded border border-[#005F68]/20 font-semibold">
+                Multi-Signal Breakdown
+              </span>
+            </div>
+
+            {/* 4 Structured Signal Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Card 1: Deterministic FWA Rules */}
+              <div className="p-4 rounded-xl bg-[#F2FCFF] border border-[#042126]/10 space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-[#042126] uppercase tracking-wider flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-[#B91C1C]"></span>
+                    Deterministic FWA Rules
+                  </span>
+                  <span className="text-[10px] font-mono font-bold badge-critical px-2 py-0.5 rounded">
+                    Score: {caseData.risk_breakdown?.['Rule Engine']?.toFixed(1) || '85.0'} / 100
+                  </span>
+                </div>
+                <div className="space-y-1.5 text-xs text-[#042126]/80">
+                  <p><strong>What It Found:</strong> {caseData.primary_fwa_pattern} ({caseData.rule_triggers?.length || 1} distinct rule categories triggered).</p>
+                  <p><strong>Why It Matters:</strong> Systematic violation of CMS NCCI Procedure-to-Procedure edits, unbundled modifier-25 billing, or time-inflation impossibility.</p>
+                  <p><strong>Evidence:</strong> {(caseData.rule_triggers && caseData.rule_triggers.length > 0) ? caseData.rule_triggers.map(r => r.rule_name).join(', ') : 'High-complexity E&M code overbilling (CPT 99214/99215)'}.</p>
+                  <div className="p-2 rounded bg-white border border-[#042126]/10 text-[11px] text-[#042126]/70 mt-2">
+                    <strong className="text-[#005F68]">Clinical Nuance / Possible False Positive:</strong> Complex multi-morbid patients or trauma encounters legitimately require prolonged clinical evaluation time.
+                  </div>
+                </div>
+              </div>
+
+              {/* Card 2: Statistical Anomaly Detection */}
+              <div className="p-4 rounded-xl bg-[#F2FCFF] border border-[#042126]/10 space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-[#042126] uppercase tracking-wider flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-[#D97706]"></span>
+                    Statistical Anomaly (Isolation Forest)
+                  </span>
+                  <span className="text-[10px] font-mono font-bold badge-high px-2 py-0.5 rounded">
+                    Score: {caseData.risk_breakdown?.['ML Anomaly Detector']?.toFixed(2) || '0.89'}
+                  </span>
+                </div>
+                <div className="space-y-1.5 text-xs text-[#042126]/80">
+                  <p><strong>What It Found:</strong> High multi-dimensional behavioral distance from the specialty baseline.</p>
+                  <p><strong>Why It Matters:</strong> Flags emergent and novel anomalous billing combinations without requiring labeled historical fraud cases.</p>
+                  <p><strong>Evidence:</strong> Behavioral vector deviation in Procedure Skew ({(caseData.fraud_genome?.procedure_deviation * 100).toFixed(0)}%) and Billing Intensity ({(caseData.fraud_genome?.billing_intensity * 100).toFixed(0)}%).</p>
+                  <div className="p-2 rounded bg-white border border-[#042126]/10 text-[11px] text-[#042126]/70 mt-2">
+                    <strong className="text-[#005F68]">Clinical Nuance / Possible False Positive:</strong> Highly specialized regional referral practices naturally deviate from broad generalist peer baselines.
+                  </div>
+                </div>
+              </div>
+
+              {/* Card 3: Network / Relationship Evidence */}
+              <div className="p-4 rounded-xl bg-[#F2FCFF] border border-[#042126]/10 space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-[#042126] uppercase tracking-wider flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-[#15497E]"></span>
+                    Network &amp; Relationship Topology
+                  </span>
+                  <span className="text-[10px] font-mono font-bold badge-medium px-2 py-0.5 rounded">
+                    Score: {caseData.risk_breakdown?.['Graph Network']?.toFixed(1) || '72.4'} / 100
+                  </span>
+                </div>
+                <div className="space-y-1.5 text-xs text-[#042126]/80">
+                  <p><strong>What It Found:</strong> Tight bipartite clustering and shared beneficiary pools across linked facilities.</p>
+                  <p><strong>Why It Matters:</strong> Exposes potential kickback rings, reciprocal patient referrals, and shared shell clinic tax IDs.</p>
+                  <p><strong>Evidence:</strong> {caseData.member_impact_count} unique patients shared across connected rendering entities.</p>
+                  <div className="p-2 rounded bg-white border border-[#042126]/10 text-[11px] text-[#042126]/70 mt-2">
+                    <strong className="text-[#005F68]">Clinical Nuance / Possible False Positive:</strong> Multi-provider group practices or integrated health systems legitimately share patient populations.
+                  </div>
+                </div>
+              </div>
+
+              {/* Card 4: Temporal / Behavioral Evidence */}
+              <div className="p-4 rounded-xl bg-[#F2FCFF] border border-[#042126]/10 space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-[#042126] uppercase tracking-wider flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-[#209B47]"></span>
+                    Temporal Risk Velocity
+                  </span>
+                  <span className="text-[10px] font-mono font-bold text-[#1B843C] bg-[#E8F8EE] border border-[#ACF2E5] px-2 py-0.5 rounded">
+                    +{caseData.risk_velocity?.toFixed(1) || '38.5'} pts/mo
+                  </span>
+                </div>
+                <div className="space-y-1.5 text-xs text-[#042126]/80">
+                  <p><strong>What It Found:</strong> 1st and 2nd order rate of change indicates active risk trajectory acceleration.</p>
+                  <p><strong>Why It Matters:</strong> Distinguishes stable, consistent historical billing from rapid emerging bursts requiring urgent prepayment review.</p>
+                  <p><strong>Evidence:</strong> Longitudinal scheme evolution over consecutive 30-day epoch windows.</p>
+                  <div className="p-2 rounded bg-white border border-[#042126]/10 text-[11px] text-[#042126]/70 mt-2">
+                    <strong className="text-[#005F68]">Clinical Nuance / Possible False Positive:</strong> Legitimate seasonal surges (e.g. winter respiratory spikes) or newly onboarded clinicians expanding clinic hours.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             {/* Left: Multi-Detector Synthesis & Interactive Trace */}
             <div className="lg:col-span-7 space-y-4">
@@ -285,7 +400,7 @@ export const CaseInvestigationView: React.FC<CaseInvestigationViewProps> = ({
                 <div className="flex items-center justify-between">
                   <h2 className="text-sm font-bold text-[#042126]">Multi-Detector Risk Synthesis</h2>
                   <span className="text-[11px] font-mono text-[#005F68] bg-[#005F68]/10 px-2 py-0.5 rounded border border-[#005F68]/20 font-semibold">
-                    Ensemble Weighting
+                    Verified Weights: 0.35R + 0.25M + 0.25G + 0.15T
                   </span>
                 </div>
                 <p className="text-xs text-[#042126]/70 leading-relaxed">
@@ -388,22 +503,22 @@ export const CaseInvestigationView: React.FC<CaseInvestigationViewProps> = ({
                     {expandedTraceDetector === 'ml' && (
                       <div className="space-y-1 text-[#042126]/80">
                         <p><strong>Model:</strong> Isolation Forest (200 estimators, 5% contamination baseline).</p>
-                        <p><strong>Key Feature Attributions:</strong> High procedure code complexity variance (Z = +3.42) &amp; billing velocity spike (Z = +2.89).</p>
+                        <p><strong>Key Feature Attributions:</strong> High procedure code complexity variance &amp; billing velocity spike.</p>
                         <p><strong>Model Attribution:</strong> 25% contribution factor.</p>
                       </div>
                     )}
                     {expandedTraceDetector === 'graph' && (
                       <div className="space-y-1 text-[#042126]/80">
-                        <p><strong>Topology Analysis:</strong> PageRank 0.0412, Betweenness Centrality 0.0289.</p>
-                        <p><strong>Network Context:</strong> Connected to 3 shared rendering clinics with unusually tight referral concentration (Gini coefficient 0.81).</p>
-                        <p><strong>Graph Weight:</strong> 20% contribution factor.</p>
+                        <p><strong>Topology Analysis:</strong> Bipartite Graph Centrality &amp; Cycle Detection.</p>
+                        <p><strong>Network Context:</strong> Connected to shared rendering clinics with unusually tight referral concentration.</p>
+                        <p><strong>Graph Weight:</strong> 25% contribution factor.</p>
                       </div>
                     )}
                     {expandedTraceDetector === 'temporal' && (
                       <div className="space-y-1 text-[#042126]/80">
                         <p><strong>Temporal Velocity:</strong> Calculated 1st order rate of change over 30-day epoch windows.</p>
-                        <p><strong>Acceleration State:</strong> Accelerating (Current 30d volume is 3.8x historical baseline).</p>
-                        <p><strong>Velocity Weight:</strong> 20% contribution factor.</p>
+                        <p><strong>Acceleration State:</strong> Accelerating (Current 30d volume is elevated vs historical baseline).</p>
+                        <p><strong>Velocity Weight:</strong> 15% contribution factor.</p>
                       </div>
                     )}
                   </div>
@@ -454,6 +569,11 @@ export const CaseInvestigationView: React.FC<CaseInvestigationViewProps> = ({
                   </span>
                 </div>
 
+                <div className="p-3 rounded-lg bg-[#FEF3C7] border border-[#FDE68A] text-xs text-[#B45309] space-y-1">
+                  <p className="font-bold">Important Guidance:</p>
+                  <p>Scheme similarity indicates behavioral resemblance to a catalogued FWA pattern and <strong>DOES NOT</strong> constitute legal proof of fraud.</p>
+                </div>
+
                 <div className="space-y-2 text-xs">
                   <span className="font-semibold text-[#042126]">Statutory &amp; Clinical Definition:</span>
                   <p className="text-[#042126]/80 bg-[#F2FCFF] p-3 rounded-lg border border-[#042126]/10 leading-relaxed">
@@ -491,6 +611,14 @@ export const CaseInvestigationView: React.FC<CaseInvestigationViewProps> = ({
             </span>
           </div>
 
+          <div className="p-3 rounded-lg bg-[#F2FCFF] border border-[#042126]/10 text-xs text-[#042126]/80 flex items-start space-x-2.5">
+            <Info className="w-4 h-4 text-[#005F68] flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="font-semibold text-[#042126]">What this means for Special Investigators:</p>
+              <p>This hierarchical DAG establishes end-to-end evidence lineage connecting the Target Entity Root &rarr; Multi-Modal Signal Categories &rarr; Specific Rule Violations &rarr; Individual Claim IDs cited in clinical audit records.</p>
+            </div>
+          </div>
+
           <div className="w-full min-h-[480px]">
             {evidenceGraph ? (
               <EvidenceGraphViewer data={evidenceGraph} />
@@ -516,9 +644,17 @@ export const CaseInvestigationView: React.FC<CaseInvestigationViewProps> = ({
             </span>
           </div>
 
+          <div className="p-3 rounded-lg bg-[#F2FCFF] border border-[#042126]/10 text-xs text-[#042126]/80 flex items-start space-x-2.5">
+            <Info className="w-4 h-4 text-[#005F68] flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="font-semibold text-[#042126]">What this means for Special Investigators:</p>
+              <p>Bipartite population topology connects Providers, Treatment Facilities, and Shared Beneficiaries. Red dashed connections identify high-risk referral loops and potential patient-sharing collusion syndicates.</p>
+            </div>
+          </div>
+
           <div className="w-full min-h-[480px]">
             {subgraph ? (
-              <RelationshipGraphViewer graphData={subgraph} />
+              <RelationshipGraphViewer graphData={subgraph} onSelectCaseByNpi={onSelectCaseByNpi} />
             ) : (
               <div className="p-12 text-center text-[#042126]/40">Loading network graph...</div>
             )}
@@ -548,6 +684,14 @@ export const CaseInvestigationView: React.FC<CaseInvestigationViewProps> = ({
             </div>
           </div>
 
+          <div className="p-3 rounded-lg bg-[#F2FCFF] border border-[#042126]/10 text-xs text-[#042126]/80 flex items-start space-x-2.5">
+            <Info className="w-4 h-4 text-[#005F68] flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="font-semibold text-[#042126]">What this means for Special Investigators:</p>
+              <p>The green target polygon plots this provider's 10-dimensional behavioral fingerprint against the specialty peer norm (teal polygon). Large outward spikes identify specific practice dimensions (e.g. Procedure Skew or Billing Intensity) requiring focused medical chart audits.</p>
+            </div>
+          </div>
+
           <div className="w-full min-h-[450px] flex items-center justify-center">
             {caseData.fraud_genome ? (
               <FraudGenomeRadar 
@@ -573,6 +717,14 @@ export const CaseInvestigationView: React.FC<CaseInvestigationViewProps> = ({
             <span className="text-xs font-mono text-[#005F68] bg-[#209B47]/10 px-2 py-1 rounded border border-[#209B47]/30 font-semibold">
               Epoch Scrubber (Day 0 – 90)
             </span>
+          </div>
+
+          <div className="p-3 rounded-lg bg-[#F2FCFF] border border-[#042126]/10 text-xs text-[#042126]/80 flex items-start space-x-2.5">
+            <Info className="w-4 h-4 text-[#005F68] flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="font-semibold text-[#042126]">What this means for Special Investigators:</p>
+              <p>Longitudinal surveillance tracks the expansion of rendering providers, facilities, volume, and cumulative financial exposure across 30-day epochs (Day 0 Baseline &rarr; Day 30 Emerging &rarr; Day 60 Accelerating &rarr; Day 90 Burst) to detect rapid scheme escalations.</p>
+            </div>
           </div>
 
           <div className="w-full min-h-[420px]">
@@ -612,6 +764,14 @@ export const CaseInvestigationView: React.FC<CaseInvestigationViewProps> = ({
               >
                 Escalation Risk Score
               </button>
+            </div>
+          </div>
+
+          <div className="p-3 rounded-lg bg-[#F2FCFF] border border-[#042126]/10 text-xs text-[#042126]/80 flex items-start space-x-2.5">
+            <Info className="w-4 h-4 text-[#005F68] flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="font-semibold text-[#042126]">What this means for Special Investigators:</p>
+              <p>Predictive risk projections estimate potential programmatic losses if unmitigated, enabling SIU directors to prioritize interventions (e.g. Prepayment Medical Review Holds) before exposure escalates.</p>
             </div>
           </div>
 
@@ -691,11 +851,19 @@ export const CaseInvestigationView: React.FC<CaseInvestigationViewProps> = ({
             </div>
             <button
               onClick={handleCopyBrief}
-              className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-[#F2FCFF] hover:bg-[#042126]/5 text-[#005F68] border border-[#042126]/10 text-xs font-semibold transition-colors"
+              className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-[#F2FCFF] hover:bg-[#042126]/5 text-[#005F68] border border-[#042126]/10 text-xs font-semibold transition-colors cursor-pointer"
             >
               <Copy className="w-3.5 h-3.5" />
               <span>{copiedBrief ? 'Copied to Clipboard!' : 'Copy SIU Brief'}</span>
             </button>
+          </div>
+
+          <div className="p-3 rounded-lg bg-[#F2FCFF] border border-[#042126]/10 text-xs text-[#042126]/80 flex items-start space-x-2.5">
+            <Info className="w-4 h-4 text-[#005F68] flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="font-semibold text-[#042126]">What this means for Special Investigators:</p>
+              <p>Automated clinical audit brief synthesizing empirical synthetic evidence, mitigating factors, and statutory regulatory citations (42 CFR § 455, False Claims Act 31 U.S.C. § 3729) ready for export to state Medicaid integrity directors or OIG referral.</p>
+            </div>
           </div>
 
           {brief ? (
@@ -773,6 +941,14 @@ export const CaseInvestigationView: React.FC<CaseInvestigationViewProps> = ({
             />
           </div>
 
+          <div className="p-3 rounded-lg bg-[#F2FCFF] border border-[#042126]/10 text-xs text-[#042126]/80 flex items-start space-x-2.5">
+            <Info className="w-4 h-4 text-[#005F68] flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="font-semibold text-[#042126]">What this means for Special Investigators:</p>
+              <p>Itemized synthetic claim ledger with service dates, CPT/HCPCS procedure codes, billing modifiers, billed vs allowed reimbursements, and specific deterministic rule violations flagged for each encounter.</p>
+            </div>
+          </div>
+
           <div className="overflow-x-auto border border-[#042126]/10 rounded-lg">
             <table className="w-full text-left text-xs">
               <thead className="bg-[#F2FCFF] text-[#042126] font-semibold border-b border-[#042126]/10">
@@ -833,6 +1009,14 @@ export const CaseInvestigationView: React.FC<CaseInvestigationViewProps> = ({
             </p>
           </div>
 
+          <div className="p-3 rounded-lg bg-[#F2FCFF] border border-[#042126]/10 text-xs text-[#042126]/80 flex items-start space-x-2.5">
+            <Info className="w-4 h-4 text-[#005F68] flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="font-semibold text-[#042126]">What this means for Special Investigators:</p>
+              <p>Counterfactual sensitivity sandbox allowing investigators to model how excluding collusive facilities or auditing specific non-compliant billing modifiers (e.g. Modifier-25 R102) reduces composite risk score and potential financial exposure.</p>
+            </div>
+          </div>
+
           <div className="p-4 rounded-xl bg-[#F2FCFF] border border-[#042126]/10 space-y-4">
             <h3 className="text-xs font-bold text-[#042126] uppercase">Select Entity or Rule Intervention to Exclude:</h3>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -852,7 +1036,7 @@ export const CaseInvestigationView: React.FC<CaseInvestigationViewProps> = ({
                         setCfExcludedEntities([...cfExcludedEntities, item.id]);
                       }
                     }}
-                    className={`p-3 rounded-lg border text-xs font-semibold text-left transition-colors ${
+                    className={`p-3 rounded-lg border text-xs font-semibold text-left transition-colors cursor-pointer ${
                       isSelected
                         ? 'bg-[#209B47]/10 border-[#209B47] text-[#005F68] shadow-xs'
                         : 'bg-white border-[#042126]/15 text-[#042126] hover:bg-[#F2FCFF]'
@@ -878,7 +1062,7 @@ export const CaseInvestigationView: React.FC<CaseInvestigationViewProps> = ({
               <button
                 onClick={handleRunCounterfactual}
                 disabled={cfExcludedEntities.length === 0 || isSimulating}
-                className="px-4 py-2 rounded-lg bg-[#209B47] hover:bg-[#1B843C] disabled:bg-[#042126]/10 disabled:text-[#042126]/40 text-white text-xs font-semibold transition-colors flex items-center space-x-1.5 shadow-xs"
+                className="px-4 py-2 rounded-lg bg-[#209B47] hover:bg-[#1B843C] disabled:bg-[#042126]/10 disabled:text-[#042126]/40 text-white text-xs font-semibold transition-colors flex items-center space-x-1.5 shadow-xs cursor-pointer"
               >
                 <Play className="w-3.5 h-3.5" />
                 <span>{isSimulating ? 'Recalculating...' : 'Run Simulation'}</span>

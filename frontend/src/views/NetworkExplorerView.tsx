@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Network, ShieldAlert, Users, Building, Activity, RefreshCw } from 'lucide-react';
+import { Network, ShieldAlert, Users, Building, Activity, RefreshCw, Info } from 'lucide-react';
 import { api } from '../services/api';
 import { RelationshipGraphViewer } from '../components/RelationshipGraphViewer';
 
@@ -99,7 +99,11 @@ export const NetworkExplorerView: React.FC<NetworkExplorerViewProps> = ({ onSele
 
       {/* Global Subgraph Visualization */}
       <div className="health-panel p-5 rounded-xl">
-        <RelationshipGraphViewer nodes={graphData.sampled_nodes} edges={graphData.sampled_edges} />
+        <RelationshipGraphViewer 
+          nodes={graphData.sampled_nodes} 
+          edges={graphData.sampled_edges} 
+          onSelectCaseByNpi={onSelectCaseByNpi}
+        />
       </div>
     </div>
   );

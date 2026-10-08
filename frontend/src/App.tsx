@@ -86,6 +86,7 @@ export function App() {
             caseId={selectedCaseId}
             currentUser={currentUser}
             onBackToQueue={() => setActiveView('queue')}
+            onSelectCaseByNpi={handleSelectCaseByNpi}
           />
         )}
 

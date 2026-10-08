@@ -123,12 +123,167 @@ export const ExecutiveOverviewView: React.FC<ExecutiveOverviewViewProps> = ({
         <div className="flex items-center space-x-3">
           <button
             onClick={onNavigateToQueue}
-            className="flex items-center space-x-2 px-4 py-2 rounded-lg bg-[#209B47] hover:bg-[#1B843C] text-white text-xs font-semibold shadow-xs transition-colors"
+            className="flex items-center space-x-2 px-4 py-2 rounded-lg bg-[#209B47] hover:bg-[#1B843C] text-white text-xs font-semibold shadow-xs transition-colors cursor-pointer"
           >
             <span>Open SIU Priority Queue</span>
             <ArrowRight className="w-4 h-4" />
           </button>
         </div>
+      </div>
+
+      {/* Interactive ClaimShield Intelligence Pipeline */}
+      <div className="health-panel p-4.5 rounded-xl space-y-3 bg-white border border-[#042126]/10 shadow-xs">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <Layers className="w-4 h-4 text-[#209B47]" />
+            <h2 className="text-xs font-bold text-[#042126] uppercase tracking-wider">
+              ClaimShield Nexus Program Integrity Pipeline
+            </h2>
+          </div>
+          <span className="text-[10px] text-[#005F68] font-semibold bg-[#F2FCFF] px-2 py-0.5 rounded border border-[#042126]/10">
+            Click any stage to inspect behavior
+          </span>
+        </div>
+
+        {/* 7-Step Horizontal Pipeline Stepper */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2 pt-1">
+          {[
+            {
+              id: 'ingestion',
+              step: '01',
+              title: 'Claims Intake',
+              desc: 'Batch EDI 837 encounters',
+              details: `Ingests raw synthetic claim records across medical specialties with CPT/HCPCS codes, ICD-10 diagnoses, billing NPIs, and service dates. Currently processing ${metrics.total_claims_analyzed.toLocaleString()} claims.`
+            },
+            {
+              id: 'detection',
+              step: '02',
+              title: 'FWA Detection',
+              desc: 'NCCI rules + ML anomalies',
+              details: 'Dual-engine screening evaluates deterministic clinical rules (upcoding, modifier-25 unbundling, phantom billing) alongside an unsupervised Isolation Forest anomaly detector.'
+            },
+            {
+              id: 'synthesis',
+              step: '03',
+              title: 'Risk Synthesis',
+              desc: 'Weighted 0-100 composite',
+              details: 'Normalizes and synthesizes signals using the multi-modal formula (0.35 Rule + 0.25 ML + 0.25 Graph + 0.15 Velocity) into a single explainable 0–100 composite risk score.'
+            },
+            {
+              id: 'network_temp',
+              step: '04',
+              title: 'Network & Velocity',
+              desc: 'Collusion rings & 30d epochs',
+              details: 'NetworkX bipartite graphs identify shared patient collusion loops and centrality hubs, while the temporal engine calculates 1st and 2nd derivative risk velocity.'
+            },
+            {
+              id: 'prioritization',
+              step: '05',
+              title: 'SIU Prioritization',
+              desc: 'Capacity K=5..50 ranking',
+              details: 'Multi-attribute utility optimization ranks cases by risk, financial exposure, velocity, and network centrality, constrained by investigator team capacity.'
+            },
+            {
+              id: 'evidence',
+              step: '06',
+              title: 'Evidence Review',
+              desc: '9-tab clinical console',
+              details: 'Special Investigators review the 9-tab workspace, including trace evidence DAGs, 10-D Fraud Genome radar, counterfactual simulators, and statutory AI briefs (42 CFR § 455).'
+            },
+            {
+              id: 'decision',
+              step: '07',
+              title: 'Human Decision',
+              desc: 'SHA-256 Merkle ledger',
+              details: 'Human-in-the-loop sign-off logs clinical dispositions to an immutable SHA-256 Merkle chain, requiring secondary authorization for prepayment holds.'
+            }
+          ].map((stage, idx) => {
+            const isSelected = (metrics as any).selectedPipelineStage === stage.id || (!((metrics as any).selectedPipelineStage) && idx === 0);
+            return (
+              <div
+                key={stage.id}
+                onClick={() => setMetrics({ ...metrics, selectedPipelineStage: stage.id } as any)}
+                className={`p-2.5 rounded-lg border text-left cursor-pointer transition-all ${
+                  isSelected
+                    ? 'bg-[#209B47]/10 border-[#209B47] shadow-xs'
+                    : 'bg-[#F2FCFF] border-[#042126]/10 hover:bg-[#042126]/5'
+                }`}
+              >
+                <div className="flex items-center justify-between text-[10px] font-bold text-[#005F68]">
+                  <span>STAGE {stage.step}</span>
+                  {isSelected && <span className="w-1.5 h-1.5 rounded-full bg-[#209B47]" />}
+                </div>
+                <p className="text-xs font-bold text-[#042126] mt-0.5 leading-tight">{stage.title}</p>
+                <p className="text-[10px] text-[#042126]/60 mt-0.5 leading-tight truncate">{stage.desc}</p>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Dynamic Pipeline Stage Explanation Card */}
+        {(() => {
+          const selectedId = (metrics as any).selectedPipelineStage || 'ingestion';
+          const pipelineStages: Record<string, { title: string; step: string; desc: string; details: string }> = {
+            ingestion: {
+              step: '01',
+              title: 'Claims Intake & Benchmark Ingestion',
+              desc: 'Standardized EDI 837 / CMS-1500 Encounter Ingestion',
+              details: `Raw encounter records are ingested and normalized across clinical specialties. Encounters include rendering NPIs, facility identifiers, CPT/HCPCS procedure codes, ICD-10 diagnosis codes, and billed amounts. Currently analyzing ${metrics.total_claims_analyzed.toLocaleString()} synthetic claims with Zero PHI.`
+            },
+            detection: {
+              step: '02',
+              title: 'Multi-Modal FWA Detection Engine',
+              desc: 'Deterministic NCCI Rules + Unsupervised Isolation Forest ML',
+              details: 'Claims are simultaneously screened through deterministic CMS NCCI rules (identifying Level 4/5 upcoding, unbundled modifier-25 procedures, phantom impossible travel, and duplicate submissions) and an unsupervised 10-dimensional Isolation Forest model that isolates statistical anomalies without requiring labeled training fraud.'
+            },
+            synthesis: {
+              step: '03',
+              title: 'Multi-Detector Risk Synthesis',
+              desc: 'Deterministic & Probabilistic Ensemble Consensus',
+              details: 'Multi-modal detection signals are synthesized into a composite 0–100 risk score using verified weighting (0.35 Rule Engine + 0.25 Isolation Forest ML + 0.25 Graph Network + 0.15 Risk Velocity), preventing single-detector false positives while maximizing detection sensitivity.'
+            },
+            network_temp: {
+              step: '04',
+              title: 'Healthcare Network & Temporal Intelligence',
+              desc: 'Bipartite Graph Centrality & 1st/2nd Derivative Risk Velocity',
+              details: 'Constructs bipartite graphs connecting Providers, Billing Facilities, and Beneficiaries to expose hidden collusion rings and shared patient syndicates. The temporal engine calculates the rate of risk escalation (1st derivative) and scheme acceleration (2nd derivative) across 30-day epoch windows.'
+            },
+            prioritization: {
+              step: '05',
+              title: 'SIU Workload Capacity Optimization',
+              desc: 'Multi-Attribute Utility Prioritization (Capacity K=5..50)',
+              details: 'Because Special Investigations Units operate with limited headcount, ClaimShield Nexus ranks cases using a multi-attribute utility function (Risk, Potential Financial Exposure, Velocity, Network Centrality). Toggling investigator capacity (K) dynamically optimizes the caseload for maximum financial recovery.'
+            },
+            evidence: {
+              step: '06',
+              title: 'Clinical Investigation Console & Briefs',
+              desc: '9-Tab Master-Detail Investigation Workspace',
+              details: 'Investigators conduct root-cause analysis through 9 dedicated views: Trace Evidence Accordions, Hierarchical Evidence DAGs, Network Collusion Graphs, 10-D Fraud Genome Radars, 30/60/90-Day Loss Forecasts, Counterfactual What-If Sandboxes, and Automated Clinical Briefs with 42 CFR § 455 citations.'
+            },
+            decision: {
+              step: '07',
+              title: 'Human-in-the-Loop Sign-Off & Merkle Audit Trail',
+              desc: 'Cryptographic SHA-256 Ledger & Dual-Authorization Gates',
+              details: 'Every human finding, chart review note, and operational disposition is cryptographically hashed and sealed to an immutable SHA-256 Merkle chain. High-severity prepayment medical review holds require secondary authorization from a Senior Investigator, ensuring strict regulatory compliance.'
+            }
+          };
+          const currentStage = pipelineStages[selectedId] || pipelineStages.ingestion;
+          return (
+            <div className="p-3.5 rounded-lg bg-[#F2FCFF] border border-[#209B47]/20 flex items-start space-x-3 text-xs">
+              <div className="p-1.5 rounded-md bg-[#209B47]/10 text-[#209B47] font-bold font-mono text-[11px] mt-0.5">
+                {currentStage.step}
+              </div>
+              <div className="space-y-1">
+                <div className="flex items-center space-x-2">
+                  <span className="font-bold text-[#042126]">{currentStage.title}</span>
+                  <span className="text-[#042126]/30">•</span>
+                  <span className="text-[#005F68] font-medium">{currentStage.desc}</span>
+                </div>
+                <p className="text-[#042126]/80 leading-relaxed">{currentStage.details}</p>
+              </div>
+            </div>
+          );
+        })()}
       </div>
 
       {/* 4 Primary KPI Summary Cards */}
