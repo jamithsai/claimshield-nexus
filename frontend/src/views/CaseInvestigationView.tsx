@@ -1075,14 +1075,6 @@ export const CaseInvestigationView: React.FC<CaseInvestigationViewProps> = ({
             )}
           </div>
 
-          <div className="p-3 rounded-lg bg-[#F2FCFF] border border-[#042126]/10 text-xs text-[#042126]/80 flex items-start space-x-2.5">
-            <Info className="w-4 h-4 text-[#005F68] flex-shrink-0 mt-0.5" />
-            <div>
-              <p className="font-semibold text-[#042126]">What this means for Special Investigators:</p>
-              <p>Counterfactual sensitivity sandbox allowing investigators to model how excluding collusive facilities or auditing specific non-compliant billing modifiers (e.g. Modifier-25 R102) reduces composite risk score and potential financial exposure.</p>
-            </div>
-          </div>
-
           <div className="p-4 rounded-xl bg-[#F2FCFF] border border-[#042126]/10 space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="text-xs font-bold text-[#042126] uppercase">Select Entity or Policy Interventions to Simulate:</h3>
