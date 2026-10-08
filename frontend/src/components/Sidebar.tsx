@@ -110,15 +110,19 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 <ShieldCheck className="w-5 h-5 text-white" />
               </div>
               {!isCollapsed && (
-                <div className="overflow-hidden">
-                  <div className="flex items-center space-x-1.5">
-                    <span className="font-bold text-xs tracking-tight text-white uppercase">
-                      ClaimShield <span className="text-[#209B47]">Nexus</span>
-                    </span>
-                  </div>
-                  <p className="text-[10px] text-[#ACF2E5]/70 font-medium leading-tight truncate mt-0.5">
-                    Program Integrity
-                  </p>
+                <div className="flex flex-col justify-center select-none overflow-hidden">
+                  <span 
+                    className="font-semibold text-sm leading-tight tracking-[-0.02em] text-[#28C840]" 
+                    style={{ fontFamily: "'Poppins', sans-serif" }}
+                  >
+                    ClaimShield
+                  </span>
+                  <span 
+                    className="font-semibold text-[9px] leading-tight tracking-[0.38em] text-[#FFFFFF] uppercase text-center mt-0.5" 
+                    style={{ fontFamily: "'Inter', sans-serif" }}
+                  >
+                    NEXUS
+                  </span>
                 </div>
               )}
             </div>
