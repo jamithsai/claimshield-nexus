@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "c3ed5d57-63bd-4cb0-92cf-936f68338c04",
+  "status": "current",
+  "command": "deliver",
+  "type": "lifecycle",
+  "input": "C:\\Users\\jamit\\.gemini\\antigravity\\scratch\\claimshield-nexus\\.archify\\lifecycle-case-state-20261008-173600\\candidate.json",
+  "output": "C:\\Users\\jamit\\.gemini\\antigravity\\scratch\\claimshield-nexus\\.archify\\lifecycle-case-state-20261008-173600\\case-state-lifecycle.html",
+  "specification": {
+    "sha256": "c8e87504e562f5184b030821b0816a1acc4a50ba67ef30f576eb6f3fbd9a9d3a",
+    "bytes": 3828
+  },
+  "artifact": {
+    "sha256": "9933b2b6f147d1fe3da4e5d4508b69b6fdca5fc212192239dbb97e597916475d",
+    "bytes": 766909
+  }
+}

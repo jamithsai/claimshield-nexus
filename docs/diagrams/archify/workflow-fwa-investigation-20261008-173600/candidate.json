@@ -1,0 +1,246 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "ClaimShield Nexus Program Integrity Investigation Workflow",
+    "animation": "trace",
+    "visual_preset": "signal-flow",
+    "quality_profile": "showcase",
+    "output": ".archify/workflow-fwa-investigation-20261008-173600/fwa-investigation-workflow.html"
+  },
+  "lanes": [
+    { "id": "ui", "label": "Investigator Workspace & HITL" },
+    { "id": "scoring", "label": "Multi-Modal Detection & SIU Triage" },
+    { "id": "policy", "label": "Regulatory & Authorization Gates", "variant": "exception" },
+    { "id": "governance", "label": "Merkle Audit & Enforcement" }
+  ],
+  "phases": [
+    { "id": "intake_phase", "label": "Screening & Normalization", "fromCol": 0, "toCol": 1 },
+    { "id": "scoring_phase", "label": "Detection & Dynamic Triage", "fromCol": 2, "toCol": 3, "variant": "emphasis" },
+    { "id": "resolution_phase", "label": "Chart Audit & Dispositions", "fromCol": 4, "toCol": 5, "variant": "dashed" }
+  ],
+  "groups": [
+    { "id": "scoring_group", "label": "Multi-Engine Pipeline", "lane": "scoring", "fromCol": 0, "toCol": 2, "variant": "emphasis" },
+    { "id": "triage_group", "label": "Capacity Queue", "lane": "scoring", "fromCol": 2, "toCol": 3, "variant": "emphasis" },
+    { "id": "gate_group", "label": "Dual-Auth Gate", "lane": "policy", "fromCol": 4, "toCol": 5, "variant": "security" },
+    { "id": "audit_group", "label": "Cryptographic Trust", "lane": "governance", "fromCol": 4, "toCol": 5, "variant": "dashed" }
+  ],
+  "mainPath": [
+    "claims_intake",
+    "feature_norm",
+    "rule_detector",
+    "risk_synth",
+    "siu_triage",
+    "case_console",
+    "brief_gen",
+    "hitl_action",
+    "merkle_chain"
+  ],
+  "nodes": [
+    {
+      "id": "claims_intake",
+      "lane": "ui",
+      "col": 0,
+      "type": "external",
+      "label": "Claims Intake",
+      "sublabel": "EDI 837 batch stream",
+      "width": 145
+    },
+    {
+      "id": "feature_norm",
+      "lane": "scoring",
+      "col": 0,
+      "type": "backend",
+      "label": "Feature Normalizer",
+      "sublabel": "10-D behavioral vector",
+      "width": 145
+    },
+    {
+      "id": "rule_detector",
+      "lane": "scoring",
+      "col": 1,
+      "type": "backend",
+      "label": "Rule & ML Engines",
+      "sublabel": "NCCI + Isolation Forest",
+      "width": 145
+    },
+    {
+      "id": "risk_synth",
+      "lane": "scoring",
+      "col": 2,
+      "type": "backend",
+      "label": "Risk Synthesizer",
+      "sublabel": "0.35R+0.25M+0.25G+0.15T",
+      "tag": "0-100 Score",
+      "width": 145
+    },
+    {
+      "id": "siu_triage",
+      "lane": "scoring",
+      "col": 3,
+      "type": "backend",
+      "label": "SIU Work Queue",
+      "sublabel": "Dynamic K=5..50 rank",
+      "tag": "Multi-Attribute",
+      "width": 145
+    },
+    {
+      "id": "case_console",
+      "lane": "ui",
+      "col": 3,
+      "type": "frontend",
+      "label": "Case Console",
+      "sublabel": "9-tab evidence DAG",
+      "width": 145
+    },
+    {
+      "id": "brief_gen",
+      "lane": "ui",
+      "col": 4,
+      "type": "backend",
+      "label": "Clinical Brief Gen",
+      "sublabel": "42 CFR § 455 citations",
+      "width": 145
+    },
+    {
+      "id": "hitl_action",
+      "lane": "ui",
+      "col": 5,
+      "type": "security",
+      "label": "Investigator Finding",
+      "sublabel": "Clinical chart notes",
+      "tag": "Human Sign-Off",
+      "width": 145
+    },
+    {
+      "id": "hold_gate",
+      "lane": "policy",
+      "col": 4,
+      "type": "security",
+      "label": "Secondary Gate",
+      "sublabel": "Prepayment review hold",
+      "tag": "Policy Lock",
+      "width": 145
+    },
+    {
+      "id": "merkle_chain",
+      "lane": "governance",
+      "col": 5,
+      "type": "security",
+      "label": "Merkle Audit Log",
+      "sublabel": "SHA-256 block seal",
+      "tag": "Immutable",
+      "width": 145
+    },
+    {
+      "id": "oig_dispatch",
+      "lane": "governance",
+      "col": 4,
+      "type": "cloud",
+      "label": "OIG / DOJ Referral",
+      "sublabel": "False Claims Act 31 USC",
+      "width": 145
+    }
+  ],
+  "edges": [
+    {
+      "id": "e_intake_norm",
+      "from": "claims_intake",
+      "to": "feature_norm",
+      "label": "ingest",
+      "variant": "default"
+    },
+    {
+      "id": "e_norm_rules",
+      "from": "feature_norm",
+      "to": "rule_detector",
+      "variant": "default"
+    },
+    {
+      "id": "e_rules_synth",
+      "from": "rule_detector",
+      "to": "risk_synth",
+      "label": "scores",
+      "variant": "emphasis"
+    },
+    {
+      "id": "e_synth_triage",
+      "from": "risk_synth",
+      "to": "siu_triage",
+      "variant": "emphasis"
+    },
+    {
+      "id": "e_triage_console",
+      "from": "siu_triage",
+      "to": "case_console",
+      "label": "triage",
+      "variant": "emphasis"
+    },
+    {
+      "id": "e_console_brief",
+      "from": "case_console",
+      "to": "brief_gen",
+      "variant": "default"
+    },
+    {
+      "id": "e_brief_decision",
+      "from": "brief_gen",
+      "to": "hitl_action",
+      "variant": "emphasis"
+    },
+    {
+      "id": "e_decision_hold",
+      "from": "hitl_action",
+      "to": "hold_gate",
+      "label": "requires hold",
+      "variant": "security"
+    },
+    {
+      "id": "e_hold_merkle",
+      "from": "hold_gate",
+      "to": "merkle_chain",
+      "label": "approved",
+      "variant": "security"
+    },
+    {
+      "id": "e_decision_merkle",
+      "from": "hitl_action",
+      "to": "merkle_chain",
+      "label": "direct commit",
+      "variant": "emphasis"
+    },
+    {
+      "id": "e_merkle_oig",
+      "from": "merkle_chain",
+      "to": "oig_dispatch",
+      "label": "formal referral",
+      "variant": "security"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Continuous Pipeline Flow",
+      "items": [
+        "Ingested claims are normalized into a 10-dimensional behavioral fingerprint",
+        "Deterministic rules and ML anomalies synthesize into a single 0-100 composite risk score"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Interactive Clinical Exploration",
+      "items": [
+        "Investigators explore evidence DAGs, collusion rings, and 30/60/90 financial forecasts",
+        "Automated clinical brief generator grounds findings with 42 CFR § 455 citations"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Governance & Dual-Sign Gate",
+      "items": [
+        "High-severity prepayment holds mandate secondary review by Senior Investigators",
+        "Every decision is sealed to the SHA-256 Merkle audit trail for regulatory compliance"
+      ]
+    }
+  ]
+}

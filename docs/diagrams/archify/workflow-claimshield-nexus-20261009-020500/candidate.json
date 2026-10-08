@@ -1,0 +1,88 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "ClaimShield Nexus SIU Investigation Workflow",
+    "animation": "trace",
+    "visual_preset": "signal-flow",
+    "quality_profile": "showcase",
+    "output": ".archify/workflow-claimshield-nexus-20261009-020500/claimshield-nexus-workflow.html"
+  },
+  "lanes": [
+    { "id": "ingestion", "label": "Ingestion & Zero-PHI Guard" },
+    { "id": "detection", "label": "Dual-Engine & Graph Analytics" },
+    { "id": "investigation", "label": "SIU Capacity & Clinical Review" },
+    { "id": "governance", "label": "Disposition & Merkle Ledger" }
+  ],
+  "phases": [
+    { "id": "phase_intake", "label": "Intake & Screening", "fromCol": 0, "toCol": 1 },
+    { "id": "phase_risk", "label": "Risk & Triage", "fromCol": 2, "toCol": 3, "variant": "emphasis" },
+    { "id": "phase_investigate", "label": "Clinical Review & Sealing", "fromCol": 4, "toCol": 5, "variant": "emphasis" }
+  ],
+  "groups": [
+    { "id": "dual_engine_group", "label": "Dual-Engine AI Screening", "lane": "detection", "fromCol": 2, "toCol": 3, "variant": "emphasis" },
+    { "id": "siu_review_group", "label": "Human-in-the-Loop Investigation", "lane": "investigation", "fromCol": 3, "toCol": 5, "variant": "emphasis" },
+    { "id": "ledger_group", "label": "Tamper-Evident Governance", "lane": "governance", "fromCol": 4, "toCol": 5, "variant": "security" }
+  ],
+  "mainPath": [
+    "stream_intake",
+    "phi_guard",
+    "dual_screen",
+    "graph_collusion",
+    "capacity_triage",
+    "case_file",
+    "disposition_modal",
+    "merkle_seal"
+  ],
+  "nodes": [
+    { "id": "stream_intake", "lane": "ingestion", "col": 0, "type": "external", "label": "Claims Stream", "sublabel": "25k+ encounters", "width": 140 },
+    { "id": "phi_guard", "lane": "ingestion", "col": 1, "type": "security", "label": "Zero-PHI Guard", "sublabel": "synthetic baseline", "tag": "42 CFR § 455", "width": 140 },
+    { "id": "dual_screen", "lane": "detection", "col": 2, "type": "backend", "label": "Dual-Engine Screen", "sublabel": "rules + Isolation Forest", "tag": "sub-second", "width": 140 },
+    { "id": "graph_collusion", "lane": "detection", "col": 3, "type": "database", "label": "Bipartite Graph", "sublabel": "collusion degree", "width": 140 },
+    { "id": "capacity_triage", "lane": "investigation", "col": 3, "type": "backend", "label": "Capacity Triage", "sublabel": "K=5..50 knapsack ROI", "tag": "max exposure", "width": 140 },
+    { "id": "case_file", "lane": "investigation", "col": 4, "type": "frontend", "label": "Case Investigation", "sublabel": "10-D Genome radar", "width": 140 },
+    { "id": "what_if_sim", "lane": "investigation", "col": 5, "type": "backend", "label": "Counterfactual Sim", "sublabel": "policy / loss projection", "width": 140 },
+    { "id": "disposition_modal", "lane": "governance", "col": 4, "type": "frontend", "label": "Investigator Modal", "sublabel": "disposition + notes", "width": 140 },
+    { "id": "merkle_seal", "lane": "governance", "col": 5, "type": "security", "label": "Merkle Hash Seal", "sublabel": "SHA-256 block chain", "tag": "immutable", "width": 140 }
+  ],
+  "edges": [
+    { "id": "intake-to-phi", "from": "stream_intake", "to": "phi_guard", "variant": "default" },
+    { "id": "phi-to-dual", "from": "phi_guard", "to": "dual_screen", "label": "clean stream", "variant": "emphasis" },
+    { "id": "dual-to-graph", "from": "dual_screen", "to": "graph_collusion", "label": "flagged nodes", "variant": "emphasis" },
+    { "id": "graph-to-triage", "from": "graph_collusion", "to": "capacity_triage", "label": "collusion rank", "variant": "emphasis" },
+    { "id": "triage-to-case", "from": "capacity_triage", "to": "case_file", "label": "prioritized queue", "variant": "emphasis" },
+    { "id": "case-to-whatif", "from": "case_file", "to": "what_if_sim", "label": "explore impact", "variant": "default" },
+    { "id": "case-to-modal", "from": "case_file", "to": "disposition_modal", "label": "open decision", "variant": "emphasis" },
+    { "id": "modal-to-merkle", "from": "disposition_modal", "to": "merkle_seal", "label": "seal decision", "variant": "security" },
+    { "id": "whatif-to-merkle", "from": "what_if_sim", "to": "merkle_seal", "label": "policy record", "variant": "dashed" }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Stream to Investigation",
+      "items": [
+        "Continuous 25,000+ claim ingestion without PHI exposure",
+        "Deterministic FWA rules and unsupervised ML screen in parallel",
+        "Bipartite graph topological analysis scores provider collusion"
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "Clinical Case File & What-If",
+      "items": [
+        "10-dimensional Fraud Genome Radar pinpoints scheme anatomy",
+        "Interactive What-If counterfactual simulator projects recovered revenue",
+        "Dynamic capacity slider prioritizes highest-exposure caseloads"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Tamper-Evident Ledger",
+      "items": [
+        "Every investigator action triggers SHA-256 parent hash chaining",
+        "4-tier RBAC verifies authority before recording dispositions",
+        "Cryptographic proof guarantees zero ledger alteration or repudiation"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "94a76514-d83d-4953-9f7f-cdec3a614415",
+  "status": "current",
+  "command": "deliver",
+  "type": "sequence",
+  "input": "C:\\Users\\jamit\\.gemini\\antigravity\\scratch\\claimshield-nexus\\.archify\\sequence-claimshield-nexus-20261009-020500\\candidate.json",
+  "output": "C:\\Users\\jamit\\.gemini\\antigravity\\scratch\\claimshield-nexus\\.archify\\sequence-claimshield-nexus-20261009-020500\\claimshield-nexus-sequence.html",
+  "specification": {
+    "sha256": "3042dec73fc536db88ce77d4dbae782246932dba2d4f723a56a84f7807e32013",
+    "bytes": 4510
+  },
+  "artifact": {
+    "sha256": "dc021aaad56a50adc38b8309b588b39e7fb081458b2ed49bf5c6d739b12a8fab",
+    "bytes": 764976
+  }
+}

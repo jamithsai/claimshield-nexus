@@ -1,0 +1,68 @@
+{
+  "schema_version": 2,
+  "diagram_type": "lifecycle",
+  "meta": {
+    "title": "ClaimShield Nexus Case Investigation & Decision Lifecycle",
+    "output": ".archify/lifecycle-case-state-20261008-173600/case-state-lifecycle.html",
+    "animation": "trace",
+    "visual_preset": "signal-flow",
+    "quality_profile": "showcase"
+  },
+  "lanes": [
+    { "id": "main", "label": "Investigation Stages" },
+    { "id": "waiting", "label": "Clinical Review & Dual-Auth Gate" },
+    { "id": "recovery", "label": "Remediation & Education" },
+    { "id": "terminal", "label": "Terminal Dispositions" }
+  ],
+  "states": [
+    { "id": "ingested", "type": "start", "label": "Ingested", "sublabel": "batch claims loaded", "lane": "main", "col": 0, "step": "01", "tag": "pending" },
+    { "id": "triaged", "type": "active", "label": "SIU Triaged", "sublabel": "capacity ranked", "lane": "main", "col": 1, "step": "02", "tag": "queued" },
+    { "id": "chart_review", "type": "active", "label": "Clinical Audit", "sublabel": "9-tab deep dive", "lane": "main", "col": 2, "step": "03", "tag": "in-review" },
+    { "id": "finding_ready", "type": "decision", "label": "Finding Ready", "sublabel": "rationale drafted", "lane": "main", "col": 3, "step": "04", "tag": "gate" },
+    { "id": "merkle_signed", "type": "success", "label": "Merkle Sealed", "sublabel": "immutable SHA-256", "lane": "main", "col": 4, "step": "05", "tag": "complete" },
+    { "id": "dual_auth_wait", "type": "waiting", "label": "Secondary Review", "sublabel": "prepayment hold gate", "lane": "waiting", "col": 3, "tag": "dual-auth" },
+    { "id": "education_warning", "type": "active", "label": "Provider Warning", "sublabel": "remediation letter", "lane": "recovery", "col": 3, "tag": "remediation" },
+    { "id": "cleared_benign", "type": "success", "label": "Cleared Anomaly", "sublabel": "specialty nuance", "lane": "terminal", "col": 2, "tag": "benign" },
+    { "id": "prepayment_held", "type": "success", "label": "Prepayment Hold", "sublabel": "claims withheld", "lane": "terminal", "col": 3, "tag": "withheld" },
+    { "id": "oig_referred", "type": "failure", "label": "OIG Referred", "sublabel": "False Claims Act", "lane": "terminal", "col": 4, "tag": "enforcement" }
+  ],
+  "transitions": [
+    { "from": "ingested", "to": "triaged" },
+    { "from": "triaged", "to": "chart_review" },
+    { "from": "chart_review", "to": "finding_ready" },
+    { "from": "finding_ready", "to": "merkle_signed" },
+    { "from": "finding_ready", "to": "dual_auth_wait", "variant": "security", "label": "hold requested" },
+    { "from": "dual_auth_wait", "to": "merkle_signed", "label": "approved" },
+    { "from": "finding_ready", "to": "education_warning", "variant": "dashed", "label": "mild abuse" },
+    { "from": "education_warning", "to": "merkle_signed" },
+    { "from": "chart_review", "to": "cleared_benign", "variant": "emphasis", "label": "cleared" },
+    { "from": "merkle_signed", "to": "prepayment_held", "variant": "security" },
+    { "from": "merkle_signed", "to": "oig_referred", "variant": "emphasis" }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Deterministic Promotion Rail",
+      "items": [
+        "Cases advance through systematic clinical audit checkpoints",
+        "Trace evidence DAG links claims to statutory rule violations"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Dual Authorization Lock",
+      "items": [
+        "High-impact prepayment withholding requires secondary senior review",
+        "Unlocks only when dual cryptographic signatures are present"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Immutable SHA-256 Anchoring",
+      "items": [
+        "All terminal dispositions commit to the Merkle audit trail",
+        "Zero PHI stored directly in tamper-evident block headers"
+      ]
+    }
+  ]
+}

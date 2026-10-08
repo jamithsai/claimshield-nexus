@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "5c859395-c010-4f34-8053-789611d04747",
+  "status": "current",
+  "command": "deliver",
+  "type": "workflow",
+  "input": "C:\\Users\\jamit\\.gemini\\antigravity\\scratch\\claimshield-nexus\\.archify\\workflow-fwa-investigation-20261008-173600\\candidate.json",
+  "output": "C:\\Users\\jamit\\.gemini\\antigravity\\scratch\\claimshield-nexus\\.archify\\workflow-fwa-investigation-20261008-173600\\fwa-investigation-workflow.html",
+  "specification": {
+    "sha256": "58028e6347bbe2177709ba1057bf8ea7854bd243432af57d08a75019caecba24",
+    "bytes": 6628
+  },
+  "artifact": {
+    "sha256": "ef096de7fd127cbbc728e50e2a4bb148c5731b0ffec8dc9612aaf62efb309ddc",
+    "bytes": 769190
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "9e12f0ee-916e-47ee-b09d-8f8f9fafdfb1",
+  "status": "current",
+  "command": "deliver",
+  "type": "workflow",
+  "input": "C:\\Users\\jamit\\.gemini\\antigravity\\scratch\\claimshield-nexus\\.archify\\workflow-claimshield-nexus-20261009-020500\\candidate.json",
+  "output": "C:\\Users\\jamit\\.gemini\\antigravity\\scratch\\claimshield-nexus\\.archify\\workflow-claimshield-nexus-20261009-020500\\claimshield-nexus-workflow.html",
+  "specification": {
+    "sha256": "afda380c827f656f7234b592326adf9600b787a63b8403b8f28435537d9ae3ab",
+    "bytes": 5269
+  },
+  "artifact": {
+    "sha256": "f732c356505cce345d444bdd06688ce52324d65aa9606dcfc3ee6ee6848621af",
+    "bytes": 765630
+  }
+}

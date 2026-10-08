@@ -1,0 +1,240 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "ClaimShield Nexus System Architecture",
+    "animation": "trace",
+    "quality_profile": "showcase",
+    "output": ".archify/architecture-claimshield-nexus-20261008-173600/claimshield-nexus-architecture.html",
+    "repository": {
+      "url": "https://github.com/jamithsai/claimshield-nexus.git",
+      "revision": "d029f737dbb25afc8d22f676c0f9b33e9c82bb50"
+    }
+  },
+  "components": [
+    {
+      "id": "claims_feed",
+      "type": "external",
+      "label": "Claims Feed",
+      "sublabel": "EDI 837 / Synthetic Store",
+      "pos": [40, 220],
+      "size": [140, 60],
+      "sources": [{ "path": "backend/data/generator.py", "line": 1 }]
+    },
+    {
+      "id": "api_gateway",
+      "type": "backend",
+      "label": "FastAPI Gateway",
+      "sublabel": "Uvicorn :8000",
+      "pos": [290, 210],
+      "size": [140, 80],
+      "sources": [{ "path": "backend/main.py", "line": 1 }]
+    },
+    {
+      "id": "rule_engine",
+      "type": "backend",
+      "label": "FWA Rule Engine",
+      "sublabel": "NCCI / Upcode / Phantom",
+      "pos": [540, 50],
+      "size": [160, 60],
+      "sources": [{ "path": "backend/engine/rules/engine.py", "line": 1 }]
+    },
+    {
+      "id": "ml_engine",
+      "type": "backend",
+      "label": "ML Anomaly Engine",
+      "sublabel": "Isolation Forest 10-D",
+      "pos": [540, 150],
+      "size": [160, 60],
+      "sources": [{ "path": "backend/engine/ml/isolation_forest.py", "line": 1 }]
+    },
+    {
+      "id": "graph_engine",
+      "type": "backend",
+      "label": "Network Graph Engine",
+      "sublabel": "Collusion Ring Centrality",
+      "pos": [540, 250],
+      "size": [160, 60],
+      "sources": [{ "path": "backend/engine/graph/network_engine.py", "line": 1 }]
+    },
+    {
+      "id": "velocity_engine",
+      "type": "backend",
+      "label": "Risk Velocity Engine",
+      "sublabel": "1st & 2nd Derivatives",
+      "pos": [540, 350],
+      "size": [160, 60],
+      "sources": [{ "path": "backend/engine/temporal/risk_velocity.py", "line": 1 }]
+    },
+    {
+      "id": "risk_synth",
+      "type": "backend",
+      "label": "Risk Synthesizer",
+      "sublabel": "0.35R+0.25M+0.25G+0.15T",
+      "pos": [810, 205],
+      "size": [170, 90],
+      "tag": "10-D Genome",
+      "sources": [{ "path": "backend/engine/risk/risk_engine.py", "line": 1 }]
+    },
+    {
+      "id": "siu_queue",
+      "type": "backend",
+      "label": "SIU Prioritizer",
+      "sublabel": "Capacity K=5..50",
+      "pos": [1080, 215],
+      "size": [150, 70],
+      "tag": "Multi-Attribute",
+      "sources": [{ "path": "backend/engine/siu/prioritizer.py", "line": 1 }]
+    },
+    {
+      "id": "merkle_ledger",
+      "type": "security",
+      "label": "Merkle Audit Ledger",
+      "sublabel": "SHA-256 Hash Chaining",
+      "pos": [1080, 360],
+      "size": [150, 64],
+      "sources": [{ "path": "backend/security/audit.py", "line": 1 }]
+    },
+    {
+      "id": "frontend_ui",
+      "type": "frontend",
+      "label": "Acentra UI Console",
+      "sublabel": "React 19 / Vite / TS",
+      "pos": [1330, 215],
+      "size": [160, 70],
+      "sources": [{ "path": "frontend/src/App.tsx", "line": 1 }]
+    },
+    {
+      "id": "rbac_guard",
+      "type": "security",
+      "label": "RBAC Security Guard",
+      "sublabel": "4-Tier JWT Gatekeeper",
+      "pos": [1330, 65],
+      "size": [160, 60],
+      "sources": [{ "path": "backend/security/auth.py", "line": 1 }]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "Analytics & Intelligence Core",
+      "wraps": ["rule_engine", "ml_engine", "graph_engine", "velocity_engine", "risk_synth"]
+    },
+    {
+      "kind": "security-group",
+      "label": "Governance & Compliance Perimeter",
+      "wraps": ["merkle_ledger", "rbac_guard"]
+    }
+  ],
+  "connections": [
+    {
+      "id": "feed_to_api",
+      "from": "claims_feed",
+      "to": "api_gateway",
+      "label": "Batch Ingestion",
+      "variant": "emphasis"
+    },
+    {
+      "id": "api_to_rules",
+      "from": "api_gateway",
+      "to": "rule_engine",
+      "label": "Evaluate NCCI"
+    },
+    {
+      "id": "api_to_ml",
+      "from": "api_gateway",
+      "to": "ml_engine",
+      "label": "10-D Feature Vector"
+    },
+    {
+      "id": "api_to_graph",
+      "from": "api_gateway",
+      "to": "graph_engine",
+      "label": "Bipartite Network"
+    },
+    {
+      "id": "api_to_velocity",
+      "from": "api_gateway",
+      "to": "velocity_engine",
+      "label": "30d Epoch History"
+    },
+    {
+      "id": "rules_to_synth",
+      "from": "rule_engine",
+      "to": "risk_synth",
+      "label": "0.35 Rule"
+    },
+    {
+      "id": "ml_to_synth",
+      "from": "ml_engine",
+      "to": "risk_synth",
+      "label": "0.25 ML"
+    },
+    {
+      "id": "graph_to_synth",
+      "from": "graph_engine",
+      "to": "risk_synth",
+      "label": "0.25 Graph"
+    },
+    {
+      "id": "velocity_to_synth",
+      "from": "velocity_engine",
+      "to": "risk_synth",
+      "label": "0.15 Velocity"
+    },
+    {
+      "id": "synth_to_queue",
+      "from": "risk_synth",
+      "to": "siu_queue",
+      "label": "Prioritization",
+      "variant": "emphasis"
+    },
+    {
+      "id": "queue_to_ui",
+      "from": "siu_queue",
+      "to": "frontend_ui",
+      "label": "Ranked Cases",
+      "variant": "emphasis"
+    },
+    {
+      "id": "rbac_to_ui",
+      "from": "rbac_guard",
+      "to": "frontend_ui",
+      "label": "Role Auth",
+      "variant": "security"
+    },
+    {
+      "id": "ui_to_merkle",
+      "from": "frontend_ui",
+      "to": "merkle_ledger",
+      "label": "Sign Decision",
+      "variant": "security"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Multi-Modal Intelligence Engine",
+      "items": [
+        "Four dedicated analytics engines score deterministic rules, unsupervised anomalies, bipartite graph cycles, and velocity",
+        "Weighted composite risk synthesis: 0.35 Rule + 0.25 ML + 0.25 Graph + 0.15 Velocity"
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "SIU Dynamic Capacity Triage",
+      "items": [
+        "Multi-attribute utility ranking balances risk, financial exposure, velocity, and network centrality",
+        "Dynamic capacity constraint slider (K=5, 10, 20, 50) maximizes investigative ROI"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Cryptographic Trust & HITL",
+      "items": [
+        "SHA-256 Merkle chain guarantees immutable audit logging for all human investigator dispositions",
+        "Secondary authorization gatekeeper strictly enforces prepayment medical review holds"
+      ]
+    }
+  ]
+}

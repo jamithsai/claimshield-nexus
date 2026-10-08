@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "command": "finalize",
+  "status": "pass",
+  "type": "architecture",
+  "quality": "showcase",
+  "specification": {
+    "path": "C:\\Users\\jamit\\.gemini\\antigravity\\scratch\\claimshield-nexus\\.archify\\architecture-claimshield-nexus-20261008-173600\\candidate.json",
+    "sha256": "415e0cfa90715d978d8e01b9d9e4c4a98cff3128fdce487c41b149b864394ba4",
+    "bytes": 6636
+  },
+  "artifact": {
+    "path": "C:\\Users\\jamit\\.gemini\\antigravity\\scratch\\claimshield-nexus\\.archify\\architecture-claimshield-nexus-20261008-173600\\claimshield-nexus-architecture.html",
+    "sha256": "3367a82a65afdbc4664678db777065a734d132fdc6a93331c3471a481fb55f20",
+    "bytes": 774886
+  },
+  "gates": {
+    "validate": "pass",
+    "deliver": "pass",
+    "check": "pass",
+    "browser-check": "pass"
+  },
+  "diagnostics": [],
+  "diagnosticSummary": {
+    "total": 0,
+    "shown": 0,
+    "truncated": false
+  },
+  "evidence": {
+    "receipt": "C:\\Users\\jamit\\.gemini\\antigravity\\scratch\\claimshield-nexus\\.archify\\architecture-claimshield-nexus-20261008-173600\\claimshield-nexus-architecture.finalize.json",
+    "summaryReceipt": "C:\\Users\\jamit\\.gemini\\antigravity\\scratch\\claimshield-nexus\\.archify\\architecture-claimshield-nexus-20261008-173600\\claimshield-nexus-architecture.finalize-summary.json",
+    "browserCheckReceipt": "C:\\Users\\jamit\\.gemini\\antigravity\\scratch\\claimshield-nexus\\.archify\\architecture-claimshield-nexus-20261008-173600\\claimshield-nexus-architecture.browser-check.json"
+  },
+  "update": {
+    "status": "unavailable",
+    "installedVersion": null,
+    "availableVersion": null,
+    "releaseNotes": null,
+    "checkedAt": null,
+    "source": null,
+    "noticeRequired": false,
+    "noticeText": null,
+    "reason": "check-failed"
+  },
+  "visualReview": "not-requested",
+  "durationMs": 3378
+}

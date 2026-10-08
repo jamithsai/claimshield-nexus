@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "ClaimShield Nexus Decision & Cryptographic Audit Sequence",
+    "output": ".archify/sequence-claimshield-nexus-20261009-020500/claimshield-nexus-sequence.html",
+    "viewBox": [1080, 675],
+    "column_fit": "spread",
+    "animation": "trace",
+    "quality_profile": "showcase"
+  },
+  "participants": [
+    { "id": "user", "type": "external", "label": "Investigator", "sublabel": "Browser Session" },
+    { "id": "ui", "type": "frontend", "label": "React UI", "sublabel": "Case File SPA" },
+    { "id": "api", "type": "backend", "label": "FastAPI API", "sublabel": "REST & SSE" },
+    { "id": "auth", "type": "security", "label": "RBAC Auth", "sublabel": "JWT Validator" },
+    { "id": "risk", "type": "backend", "label": "Risk Engine", "sublabel": "10-D Genome" },
+    { "id": "merkle", "type": "security", "label": "Merkle Ledger", "sublabel": "SHA-256 Chain" },
+    { "id": "audit", "type": "database", "label": "Audit Store", "sublabel": "Ledger History" }
+  ],
+  "segments": [
+    { "from": 145, "to": 340, "label": "Clinical Case File Retrieval" },
+    { "from": 350, "to": 575, "label": "Investigator Disposition & Merkle Sealing" }
+  ],
+  "messages": [
+    { "id": "open-case", "from": "user", "to": "ui", "y": 160, "label": "select case file", "variant": "default" },
+    { "id": "get-case", "from": "ui", "to": "api", "y": 188, "label": "GET /api/v1/cases/{id}", "variant": "emphasis" },
+    { "id": "verify-jwt", "from": "api", "to": "auth", "y": 216, "label": "validate JWT & persona", "variant": "security" },
+    { "id": "auth-ok", "from": "auth", "to": "api", "y": 244, "label": "role: SIU Senior Lead", "variant": "return" },
+    { "id": "fetch-genome", "from": "api", "to": "risk", "y": 272, "label": "synthesize 10-D genome", "variant": "default" },
+    { "id": "case-payload", "from": "api", "to": "ui", "y": 300, "label": "200 OK (case & genome)", "variant": "return" },
+    { "id": "render-case", "from": "ui", "to": "user", "y": 328, "label": "render case investigation", "variant": "return" },
+    { "id": "submit-decision", "from": "user", "to": "ui", "y": 365, "label": "submit hold disposition", "variant": "emphasis" },
+    { "id": "post-decision", "from": "ui", "to": "api", "y": 393, "label": "POST /api/v1/cases/{id}/decision", "variant": "emphasis" },
+    { "id": "check-write-rbac", "from": "api", "to": "auth", "y": 421, "label": "authorize disposition write", "variant": "security" },
+    { "id": "rbac-granted", "from": "auth", "to": "api", "y": 449, "label": "authorized", "variant": "return" },
+    { "id": "seal-block", "from": "api", "to": "merkle", "y": 477, "label": "append_entry & SHA-256", "variant": "security" },
+    { "id": "merkle-proof", "from": "merkle", "to": "audit", "y": 505, "label": "persist block + parent hash", "variant": "dashed" },
+    { "id": "seal-confirmed", "from": "merkle", "to": "api", "y": 533, "label": "sealed block receipt", "variant": "return" },
+    { "id": "decision-response", "from": "api", "to": "ui", "y": 561, "label": "200 OK (merkle_current_hash)", "variant": "return" }
+  ],
+  "activations": [
+    { "participant": "ui", "from": 160, "to": 333, "type": "frontend" },
+    { "participant": "api", "from": 188, "to": 305, "type": "backend" },
+    { "participant": "auth", "from": 216, "to": 249, "type": "security" },
+    { "participant": "risk", "from": 272, "to": 295, "type": "backend" },
+    { "participant": "ui", "from": 365, "to": 566, "type": "frontend" },
+    { "participant": "api", "from": 393, "to": 566, "type": "backend" },
+    { "participant": "auth", "from": 421, "to": 454, "type": "security" },
+    { "participant": "merkle", "from": 477, "to": 538, "type": "security" },
+    { "participant": "audit", "from": 505, "to": 528, "type": "database" }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Sub-Second Clinical Query",
+      "items": [
+        "Case detail request retrieves 10-D Fraud Genome vector instantly",
+        "Clinical citations (42 CFR § 455) and loss projections attached",
+        "Zero PHI exposed through synthetic ground-truth mapping"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Cryptographic Block Sealing",
+      "items": [
+        "Investigator disposition requires validated 4-tier RBAC authority",
+        "Merkle ledger computes deterministic SHA-256 block hash linked to parent",
+        "Immediate audit trail timeline refresh with valid chain proof"
+      ]
+    }
+  ]
+}

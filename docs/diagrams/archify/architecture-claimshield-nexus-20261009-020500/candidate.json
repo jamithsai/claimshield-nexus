@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "ClaimShield Nexus System Architecture",
+    "output": ".archify/architecture-claimshield-nexus-20261009-020500/claimshield-nexus-architecture.html",
+    "quality_profile": "showcase"
+  },
+  "components": [
+    { "id": "claim_generator", "type": "external", "label": "Zero-PHI Generator", "sublabel": "25,000+ synthetic encounters", "pos": [40, 260], "size": [160, 64], "tag": "42 CFR § 455 ground truth" },
+    { "id": "ingest_gateway", "type": "backend", "label": "Ingestion Pipeline", "sublabel": "dual-engine streaming", "pos": [320, 260], "size": [160, 64], "tag": "sub-second triage" },
+    { "id": "fwa_rules", "type": "backend", "label": "FWA Rule Engine", "sublabel": "5 deterministic statutory detectors", "pos": [600, 130], "size": [170, 64], "tag": "upcoding/unbundling/ghost" },
+    { "id": "ml_detector", "type": "backend", "label": "ML Anomaly Engine", "sublabel": "Isolation Forest & clustering", "pos": [600, 260], "size": [170, 64], "tag": "12 clinical features" },
+    { "id": "graph_engine", "type": "database", "label": "Bipartite Graph Network", "sublabel": "NetworkX collusion clusters", "pos": [600, 390], "size": [170, 64], "tag": "provider-patient centrality" },
+    { "id": "risk_engine", "type": "backend", "label": "Risk Synthesis Core", "sublabel": "10-D Fraud Genome & projections", "pos": [890, 260], "size": [170, 64], "tag": "calibrated 0-100 score" },
+    { "id": "capacity_engine", "type": "backend", "label": "SIU Capacity Optimizer", "sublabel": "multi-attribute knapsack K=5..50", "pos": [890, 130], "size": [170, 64], "tag": "max exposure triage" },
+    { "id": "merkle_ledger", "type": "security", "label": "Merkle Audit Ledger", "sublabel": "SHA-256 tamper-evident chain", "pos": [890, 390], "size": [170, 64], "tag": "100% cryptographic proof" },
+    { "id": "fastapi_server", "type": "backend", "label": "FastAPI REST Server", "sublabel": "4-tier RBAC & JWT gateway", "pos": [1180, 260], "size": [160, 64], "tag": "Python 3.13" },
+    { "id": "react_frontend", "type": "frontend", "label": "React Vite Dashboard", "sublabel": "Tailwind & Lucide UI suite", "pos": [1460, 260], "size": [160, 64], "tag": "SPA single-binary" },
+    { "id": "webgl_3d", "type": "frontend", "label": "3D WebGL Studio", "sublabel": "Galaxy / Topography / Spiral", "pos": [1460, 390], "size": [160, 64], "tag": "Three.js rendering" }
+  ],
+  "boundaries": [
+    { "kind": "region", "label": "ClaimShield Nexus Backend Core", "wraps": ["ingest_gateway", "fwa_rules", "ml_detector", "graph_engine", "risk_engine", "capacity_engine", "merkle_ledger", "fastapi_server"] },
+    { "kind": "security-group", "label": "Dual-Engine Detection & Graph Analytics", "wraps": ["fwa_rules", "ml_detector", "graph_engine"] }
+  ],
+  "connections": [
+    { "id": "gen_to_ingest", "from": "claim_generator", "to": "ingest_gateway", "label": "stream encounters", "variant": "emphasis" },
+    { "id": "ingest_to_rules", "from": "ingest_gateway", "to": "fwa_rules", "label": "evaluate rules", "fromSide": "top", "toSide": "left" },
+    { "id": "ingest_to_ml", "from": "ingest_gateway", "to": "ml_detector", "label": "extract features", "variant": "emphasis" },
+    { "id": "ingest_to_graph", "from": "ingest_gateway", "to": "graph_engine", "label": "build edges", "fromSide": "bottom", "toSide": "left" },
+    { "id": "rules_to_risk", "from": "fwa_rules", "to": "risk_engine", "label": "rule violations", "fromSide": "right", "toSide": "top" },
+    { "id": "ml_to_risk", "from": "ml_detector", "to": "risk_engine", "label": "anomaly scores", "variant": "emphasis" },
+    { "id": "graph_to_risk", "from": "graph_engine", "to": "risk_engine", "label": "collusion degree", "fromSide": "right", "toSide": "bottom" },
+    { "id": "risk_to_capacity", "from": "risk_engine", "to": "capacity_engine", "label": "case priority", "fromSide": "top", "toSide": "bottom" },
+    { "id": "risk_to_api", "from": "risk_engine", "to": "fastapi_server", "label": "synthesized cases", "variant": "emphasis" },
+    { "id": "api_to_merkle", "from": "fastapi_server", "to": "merkle_ledger", "label": "record decisions", "fromSide": "bottom", "toSide": "right", "variant": "security" },
+    { "id": "api_to_react", "from": "fastapi_server", "to": "react_frontend", "label": "REST & SSE", "variant": "emphasis" },
+    { "id": "react_to_3d", "from": "react_frontend", "to": "webgl_3d", "label": "render state", "fromSide": "bottom", "toSide": "top" }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Dual-Engine Intelligence",
+      "items": [
+        "Deterministic FWA rule screening meets unsupervised Isolation Forest ML",
+        "Bipartite graph topological analysis reveals hidden provider collusion rings",
+        "10-D Fraud Genome vector synthesizes multi-engine risk into 0-100 scores"
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "SIU Optimization & UI",
+      "items": [
+        "Capacity optimizer triages investigator caseload across selectable K=5..50 limits",
+        "WebGL 3D Intelligence Studio enables interactive exploration of fraud topologies",
+        "Single unified artifact delivers sub-100ms response times across all analytics"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Cryptographic Governance",
+      "items": [
+        "4-tier RBAC enforces strict Investigator, Director, Medical & Compliance roles",
+        "Every disposition seals an immutable SHA-256 Merkle hash chain block",
+        "Audit ledger verification guarantees 100% tamper-evident court admissibility"
+      ]
+    }
+  ]
+}
