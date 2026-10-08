@@ -122,16 +122,7 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
             </span>
           </div>
 
-          {/* Contextual Action Button (Only where useful) */}
-          {activeView === 'overview' && (
-            <button
-              onClick={onNavigateToQueue}
-              className="flex items-center space-x-1 px-3 py-1 rounded-md bg-[#209B47] hover:bg-[#1B843C] text-white text-xs font-semibold shadow-2xs transition-colors cursor-pointer"
-            >
-              <span>SIU Queue</span>
-              <ArrowRight className="w-3 h-3" />
-            </button>
-          )}
+
 
           {activeView === 'case-detail' && (
             <button
