@@ -69,33 +69,33 @@ export const RelationshipGraphViewer: React.FC<RelationshipGraphViewerProps> = (
     <div className="w-full space-y-4 font-sans">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex items-center space-x-2">
-          <div className="p-1.5 rounded-lg bg-sky-50 text-sky-700 border border-sky-200">
-            <Network className="w-4 h-4" />
+          <div className="p-1.5 rounded-lg bg-[#209B47]/10 text-[#005F68] border border-[#209B47]/30">
+            <Network className="w-4 h-4 text-[#209B47]" />
           </div>
           <div>
-            <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
+            <h3 className="text-xs font-bold text-[#042126] uppercase tracking-wider">
               Connected Healthcare Network Topology
             </h3>
-            <p className="text-[11px] text-slate-500">Providers, Facilities, Shared Members &amp; Referral Routes</p>
+            <p className="text-[11px] text-[#042126]/60">Providers, Facilities, Shared Members &amp; Referral Routes</p>
           </div>
         </div>
 
         {/* Legend */}
-        <div className="flex items-center space-x-3 text-[11px] text-slate-600">
+        <div className="flex items-center space-x-3 text-[11px] text-[#042126]/70">
           <span className="flex items-center space-x-1">
-            <span className="w-2.5 h-2.5 rounded-full bg-rose-500 inline-block"></span>
-            <span className="font-medium">Target NPI</span>
+            <span className="w-2.5 h-2.5 rounded-full bg-[#B91C1C] inline-block"></span>
+            <span className="font-medium text-[#042126]">Target NPI</span>
           </span>
           <span className="flex items-center space-x-1">
-            <span className="w-2.5 h-2.5 rounded-full bg-sky-500 inline-block"></span>
+            <span className="w-2.5 h-2.5 rounded-full bg-[#209B47] inline-block"></span>
             <span>Provider</span>
           </span>
           <span className="flex items-center space-x-1">
-            <span className="w-2.5 h-2.5 rounded-full bg-teal-600 inline-block"></span>
+            <span className="w-2.5 h-2.5 rounded-full bg-[#005F68] inline-block"></span>
             <span>Facility</span>
           </span>
           <span className="flex items-center space-x-1">
-            <span className="w-3 h-0.5 bg-rose-400 inline-block"></span>
+            <span className="w-3 h-0.5 bg-[#B91C1C] inline-block"></span>
             <span>Referral Loop</span>
           </span>
         </div>
@@ -103,7 +103,7 @@ export const RelationshipGraphViewer: React.FC<RelationshipGraphViewerProps> = (
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 items-center">
         {/* SVG Graph Canvas */}
-        <div className="lg:col-span-3 bg-slate-50 rounded-xl border border-slate-200 overflow-hidden flex items-center justify-center relative min-h-[360px]">
+        <div className="lg:col-span-3 bg-[#F2FCFF] rounded-xl border border-[#042126]/10 overflow-hidden flex items-center justify-center relative min-h-[360px]">
           <svg width="100%" height={height} viewBox={`0 0 ${width} ${height}`}>
             <defs>
               <marker
@@ -115,7 +115,7 @@ export const RelationshipGraphViewer: React.FC<RelationshipGraphViewerProps> = (
                 markerHeight="6"
                 orient="auto-start-reverse"
               >
-                <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8" />
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="rgba(4, 33, 38, 0.3)" />
               </marker>
               <marker
                 id="arrow-loop"
@@ -126,7 +126,7 @@ export const RelationshipGraphViewer: React.FC<RelationshipGraphViewerProps> = (
                 markerHeight="6"
                 orient="auto-start-reverse"
               >
-                <path d="M 0 0 L 10 5 L 0 10 z" fill="#ef4444" />
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#B91C1C" />
               </marker>
             </defs>
 
@@ -145,7 +145,7 @@ export const RelationshipGraphViewer: React.FC<RelationshipGraphViewerProps> = (
                     y1={src.y}
                     x2={tgt.x}
                     y2={tgt.y}
-                    stroke={isLoop ? '#ef4444' : '#cbd5e1'}
+                    stroke={isLoop ? '#B91C1C' : 'rgba(4, 33, 38, 0.15)'}
                     strokeWidth={isLoop ? 2 : 1.2}
                     strokeDasharray={isLoop ? '4 2' : undefined}
                     markerEnd={isLoop ? 'url(#arrow-loop)' : 'url(#arrow-default)'}
@@ -162,10 +162,10 @@ export const RelationshipGraphViewer: React.FC<RelationshipGraphViewerProps> = (
               const isSelected = selectedNode?.id === node.id;
               const isTarget = node.is_target || node.id === targetNode?.id;
 
-              let nodeFill = '#0284c7';
-              if (isTarget) nodeFill = '#dc2626';
-              else if (node.type === 'FACILITY') nodeFill = '#0d9488';
-              else if (node.type === 'MEMBER') nodeFill = '#64748b';
+              let nodeFill = '#209B47';
+              if (isTarget) nodeFill = '#B91C1C';
+              else if (node.type === 'FACILITY') nodeFill = '#005F68';
+              else if (node.type === 'MEMBER') nodeFill = '#15497E';
 
               return (
                 <g
@@ -185,7 +185,7 @@ export const RelationshipGraphViewer: React.FC<RelationshipGraphViewerProps> = (
                     <circle
                       r={isTarget ? 24 : 19}
                       fill="none"
-                      stroke="#0284c7"
+                      stroke="#209B47"
                       strokeWidth={1.5}
                       strokeDasharray="3 3"
                     />
@@ -193,7 +193,7 @@ export const RelationshipGraphViewer: React.FC<RelationshipGraphViewerProps> = (
                   <text
                     y={isTarget ? 28 : 22}
                     textAnchor="middle"
-                    fill="#1e293b"
+                    fill="#042126"
                     fontSize={10}
                     fontWeight={isTarget ? 'bold' : 'normal'}
                     className="select-none"
@@ -207,43 +207,43 @@ export const RelationshipGraphViewer: React.FC<RelationshipGraphViewerProps> = (
         </div>
 
         {/* Selected Node Details Panel */}
-        <div className="lg:col-span-1 p-4 rounded-xl bg-white border border-slate-200 space-y-3 shadow-xs">
-          <div className="flex items-center space-x-2 pb-2 border-b border-slate-100">
-            <UserCheck className="w-4 h-4 text-sky-600" />
-            <h4 className="text-xs font-bold text-slate-900 uppercase">Entity Detail</h4>
+        <div className="lg:col-span-1 p-4 rounded-xl bg-white border border-[#042126]/10 space-y-3 shadow-xs">
+          <div className="flex items-center space-x-2 pb-2 border-b border-[#042126]/10">
+            <UserCheck className="w-4 h-4 text-[#209B47]" />
+            <h4 className="text-xs font-bold text-[#042126] uppercase">Entity Detail</h4>
           </div>
 
           {selectedNode ? (
             <div className="space-y-2 text-xs">
               <div>
-                <p className="text-[10px] text-slate-500 uppercase font-semibold">Entity Name</p>
-                <p className="font-bold text-slate-900">{selectedNode.label}</p>
+                <p className="text-[10px] text-[#042126]/60 uppercase font-semibold">Entity Name</p>
+                <p className="font-bold text-[#042126]">{selectedNode.label}</p>
               </div>
               <div>
-                <p className="text-[10px] text-slate-500 uppercase font-semibold">Identifier (NPI / ID)</p>
-                <p className="font-mono text-sky-700 font-semibold">{selectedNode.id}</p>
+                <p className="text-[10px] text-[#042126]/60 uppercase font-semibold">Identifier (NPI / ID)</p>
+                <p className="font-mono text-[#005F68] font-semibold">{selectedNode.id}</p>
               </div>
               <div>
-                <p className="text-[10px] text-slate-500 uppercase font-semibold">Entity Type</p>
-                <span className="inline-block px-2 py-0.5 rounded bg-slate-100 text-slate-700 text-[11px] font-medium border border-slate-200 mt-0.5">
+                <p className="text-[10px] text-[#042126]/60 uppercase font-semibold">Entity Type</p>
+                <span className="inline-block px-2 py-0.5 rounded bg-[#042126]/5 text-[#042126] text-[11px] font-medium border border-[#042126]/10 mt-0.5">
                   {selectedNode.type}
                 </span>
               </div>
               {selectedNode.specialty && (
                 <div>
-                  <p className="text-[10px] text-slate-500 uppercase font-semibold">Specialty</p>
-                  <p className="text-slate-700 font-medium">{selectedNode.specialty}</p>
+                  <p className="text-[10px] text-[#042126]/60 uppercase font-semibold">Specialty</p>
+                  <p className="text-[#042126] font-medium">{selectedNode.specialty}</p>
                 </div>
               )}
               {selectedNode.pagerank !== undefined && (
                 <div>
-                  <p className="text-[10px] text-slate-500 uppercase font-semibold">PageRank Centrality</p>
-                  <p className="font-mono font-bold text-slate-900">{selectedNode.pagerank.toFixed(4)}</p>
+                  <p className="text-[10px] text-[#042126]/60 uppercase font-semibold">PageRank Centrality</p>
+                  <p className="font-mono font-bold text-[#042126]">{selectedNode.pagerank.toFixed(4)}</p>
                 </div>
               )}
             </div>
           ) : (
-            <p className="text-xs text-slate-400">Click any node on the graph to inspect entity attributes.</p>
+            <p className="text-xs text-[#042126]/40">Click any node on the graph to inspect entity attributes.</p>
           )}
         </div>
       </div>

@@ -103,48 +103,48 @@ export const FraudGenomeRadar: React.FC<FraudGenomeRadarProps> = ({
     <div className="w-full space-y-4">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         <div className="flex items-center space-x-2">
-          <div className="p-1.5 rounded-lg bg-sky-50 text-sky-700 border border-sky-200">
-            <Dna className="w-4 h-4" />
+          <div className="p-1.5 rounded-lg bg-[#209B47]/10 text-[#005F68] border border-[#209B47]/30">
+            <Dna className="w-4 h-4 text-[#209B47]" />
           </div>
           <div>
-            <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
+            <h3 className="text-xs font-bold text-[#042126] uppercase tracking-wider">
               10-Dimensional Behavioral Fingerprint
             </h3>
-            <p className="text-[11px] text-slate-500">Calculated from empirical synthetic claim and network features</p>
+            <p className="text-[11px] text-[#042126]/60">Calculated from empirical synthetic claim and network features</p>
           </div>
         </div>
         <div className="flex items-center space-x-3 text-xs">
           <div className="flex items-center space-x-1.5">
-            <span className="w-3 h-3 rounded-full bg-sky-600 inline-block"></span>
-            <span className="text-slate-700 font-semibold">Target Entity</span>
+            <span className="w-3 h-3 rounded-full bg-[#209B47] inline-block"></span>
+            <span className="text-[#042126] font-semibold">Target Entity</span>
           </div>
           <div className="flex items-center space-x-1.5">
-            <span className="w-3 h-3 rounded-full bg-slate-300 inline-block"></span>
-            <span className="text-slate-500">Peer Specialty Norm</span>
+            <span className="w-3 h-3 rounded-full bg-[#005F68] inline-block"></span>
+            <span className="text-[#042126]/60">Peer Specialty Norm</span>
           </div>
         </div>
       </div>
 
       {/* Radar Chart Container */}
-      <div className="w-full h-80 flex items-center justify-center bg-slate-50/50 rounded-xl border border-slate-100 p-2">
+      <div className="w-full h-80 flex items-center justify-center bg-[#F2FCFF]/60 rounded-xl border border-[#042126]/10 p-2">
         <ResponsiveContainer width="100%" height="100%">
           <RadarChart cx="50%" cy="50%" outerRadius="75%" data={radarData}>
-            <PolarGrid stroke="#e2e8f0" strokeDasharray="3 3" />
+            <PolarGrid stroke="rgba(4, 33, 38, 0.12)" strokeDasharray="3 3" />
             <PolarAngleAxis 
               dataKey="dimension" 
-              tick={{ fill: '#334155', fontSize: 11, fontWeight: 600 }} 
+              tick={{ fill: '#042126', fontSize: 11, fontWeight: 600 }} 
             />
-            <PolarRadiusAxis angle={30} domain={[0, 100]} stroke="#cbd5e1" tick={{ fill: '#64748b', fontSize: 9 }} />
+            <PolarRadiusAxis angle={30} domain={[0, 100]} stroke="rgba(4, 33, 38, 0.2)" tick={{ fill: 'rgba(4, 33, 38, 0.6)', fontSize: 9 }} />
             <Tooltip 
               content={({ payload }) => {
                 if (payload && payload.length > 0) {
                   const data = payload[0].payload;
                   return (
-                    <div className="bg-white border border-slate-200 p-3 rounded-lg shadow-md text-xs space-y-1">
-                      <p className="font-bold text-slate-900">{data.dimension}</p>
-                      <p className="text-sky-700 font-mono font-bold">{data.score} / 100 (Target)</p>
-                      <p className="text-slate-500 font-mono">{data.peer} / 100 (Peer Norm)</p>
-                      <p className="text-[11px] text-slate-600 pt-1 border-t border-slate-100">{data.description}</p>
+                    <div className="bg-white border border-[#042126]/15 p-3 rounded-lg shadow-md text-xs space-y-1">
+                      <p className="font-bold text-[#042126]">{data.dimension}</p>
+                      <p className="text-[#209B47] font-mono font-bold">{data.score} / 100 (Target)</p>
+                      <p className="text-[#005F68] font-mono">{data.peer} / 100 (Peer Norm)</p>
+                      <p className="text-[11px] text-[#042126]/70 pt-1 border-t border-[#042126]/10">{data.description}</p>
                     </div>
                   );
                 }
@@ -154,17 +154,17 @@ export const FraudGenomeRadar: React.FC<FraudGenomeRadarProps> = ({
             <Radar
               name="Peer Benchmark"
               dataKey="peer"
-              stroke="#94a3b8"
-              fill="#cbd5e1"
-              fillOpacity={0.25}
+              stroke="#005F68"
+              fill="#005F68"
+              fillOpacity={0.15}
               strokeWidth={1.5}
               strokeDasharray="3 3"
             />
             <Radar
               name="Target Score"
               dataKey="score"
-              stroke="#0284c7"
-              fill="#0284c7"
+              stroke="#209B47"
+              fill="#209B47"
               fillOpacity={0.35}
               strokeWidth={2}
             />
@@ -185,12 +185,12 @@ export const FraudGenomeRadar: React.FC<FraudGenomeRadarProps> = ({
               onClick={() => setSelectedDimension(isSelected ? null : d.dimension)}
               className={`p-2 rounded-lg border text-center transition-all ${
                 isSelected
-                  ? 'ring-2 ring-sky-500 bg-sky-50 border-sky-300 shadow-xs'
+                  ? 'ring-2 ring-[#209B47] bg-[#209B47]/10 border-[#209B47] shadow-xs'
                   : isHigh 
-                  ? 'bg-rose-50 border-rose-200 text-rose-800 hover:bg-rose-100/70' 
+                  ? 'bg-[#FEE2E2] border-[#FECACA] text-[#B91C1C] hover:bg-[#FEE2E2]/80' 
                   : isMed 
-                  ? 'bg-amber-50 border-amber-200 text-amber-800 hover:bg-amber-100/70' 
-                  : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100'
+                  ? 'bg-[#FEF3C7] border-[#FDE68A] text-[#B45309] hover:bg-[#FEF3C7]/80' 
+                  : 'bg-[#F2FCFF] border-[#042126]/10 text-[#042126] hover:bg-[#042126]/5'
               }`}
             >
               <p className="text-[10px] font-semibold truncate">{d.dimension}</p>
@@ -202,12 +202,12 @@ export const FraudGenomeRadar: React.FC<FraudGenomeRadarProps> = ({
 
       {/* Selected Dimension Detail Box */}
       {selectedDimData && (
-        <div className="p-3.5 rounded-lg bg-sky-50 border border-sky-200 text-xs text-slate-700 space-y-1">
+        <div className="p-3.5 rounded-lg bg-[#F2FCFF] border border-[#209B47]/30 text-xs text-[#042126] space-y-1">
           <div className="flex items-center justify-between">
-            <span className="font-bold text-sky-900 uppercase">{selectedDimData.dimension} Detail</span>
-            <span className="font-mono text-sky-800 font-bold">{selectedDimData.score}% vs {selectedDimData.peer}% Peer Norm</span>
+            <span className="font-bold text-[#005F68] uppercase">{selectedDimData.dimension} Detail</span>
+            <span className="font-mono text-[#209B47] font-bold">{selectedDimData.score}% vs {selectedDimData.peer}% Peer Norm</span>
           </div>
-          <p className="text-slate-600">{selectedDimData.description}</p>
+          <p className="text-[#042126]/70">{selectedDimData.description}</p>
         </div>
       )}
     </div>

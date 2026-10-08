@@ -43,14 +43,14 @@ export const AuditTrailView: React.FC = () => {
       {/* Header */}
       <div className="health-panel p-5 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center space-x-3.5">
-          <div className="p-2.5 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200">
+          <div className="p-2.5 rounded-lg bg-[#E8F8EE] text-[#1B843C] border border-[#ACF2E5]">
             <History className="w-5 h-5" />
           </div>
           <div>
-            <h1 className="text-lg font-bold text-slate-900 tracking-tight">
+            <h1 className="text-lg font-bold text-[#042126] tracking-tight">
               Cryptographic Audit Trail &amp; Evidence Provenance
             </h1>
-            <p className="text-xs text-slate-600 mt-0.5">
+            <p className="text-xs text-[#042126]/70 mt-0.5">
               Immutable SHA-256 Merkle chain recording every investigator action, review decision, and case status change.
             </p>
           </div>
@@ -62,11 +62,11 @@ export const AuditTrailView: React.FC = () => {
           disabled={isVerifying}
           className={`flex items-center space-x-2 px-3.5 py-2 rounded-lg text-xs font-bold border transition-all ${
             integrity?.is_tampered
-              ? 'bg-rose-50 text-rose-800 border-rose-200 animate-pulse'
-              : 'bg-emerald-50 text-emerald-800 border-emerald-200 hover:bg-emerald-100'
+              ? 'bg-[#FEE2E2] text-[#B91C1C] border-[#FECACA] animate-pulse'
+              : 'bg-[#E8F8EE] text-[#1B843C] border-[#ACF2E5] hover:bg-[#E8F8EE]/80'
           }`}
         >
-          <ShieldCheck className="w-4 h-4 text-emerald-600" />
+          <ShieldCheck className="w-4 h-4 text-[#1B843C]" />
           <span>
             {isVerifying
               ? 'Verifying Merkle Hashes...'
@@ -81,7 +81,7 @@ export const AuditTrailView: React.FC = () => {
       <div className="health-panel rounded-xl overflow-hidden shadow-xs">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-50 text-slate-700 font-semibold border-b border-slate-200">
+            <thead className="bg-[#F2FCFF] text-[#042126] font-semibold border-b border-[#042126]/10">
               <tr>
                 <th className="p-3 w-28">Log ID</th>
                 <th className="p-3 w-40">UTC Timestamp</th>
@@ -91,22 +91,22 @@ export const AuditTrailView: React.FC = () => {
                 <th className="p-3">SHA-256 Hash</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-[#042126]/5">
               {logs.map((log) => (
-                <tr key={log.log_id} className="hover:bg-slate-50 transition-colors">
-                  <td className="p-3 font-mono text-sky-700 font-bold">{log.log_id}</td>
-                  <td className="p-3 text-slate-600 font-mono whitespace-nowrap">{log.timestamp.replace('T', ' ').substring(0, 19)}</td>
+                <tr key={log.log_id} className="hover:bg-[#F2FCFF]/80 transition-colors">
+                  <td className="p-3 font-mono text-[#005F68] font-bold">{log.log_id}</td>
+                  <td className="p-3 text-[#042126]/70 font-mono whitespace-nowrap">{log.timestamp.replace('T', ' ').substring(0, 19)}</td>
                   <td className="p-3">
-                    <span className="font-semibold text-slate-800">{log.actor_username}</span>
-                    <span className="text-[10px] text-slate-500 block font-mono">[{log.actor_role}]</span>
+                    <span className="font-semibold text-[#042126]">{log.actor_username}</span>
+                    <span className="text-[10px] text-[#042126]/60 block font-mono">[{log.actor_role}]</span>
                   </td>
                   <td className="p-3">
-                    <span className="px-2 py-0.5 rounded bg-slate-100 border border-slate-200 font-mono text-[11px] text-amber-800 font-semibold">
+                    <span className="px-2 py-0.5 rounded bg-[#FEF3C7] border border-[#FDE68A] font-mono text-[11px] text-[#B45309] font-semibold">
                       {log.action_type}
                     </span>
                   </td>
-                  <td className="p-3 font-mono text-slate-700">{log.target_resource}</td>
-                  <td className="p-3 font-mono text-[11px] text-slate-500 truncate max-w-xs">
+                  <td className="p-3 font-mono text-[#042126]">{log.target_resource}</td>
+                  <td className="p-3 font-mono text-[11px] text-[#042126]/50 truncate max-w-xs">
                     {log.current_hash.substring(0, 16)}...{log.current_hash.substring(56)}
                   </td>
                 </tr>

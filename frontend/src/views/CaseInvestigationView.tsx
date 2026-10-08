@@ -126,8 +126,8 @@ export const CaseInvestigationView: React.FC<CaseInvestigationViewProps> = ({
     return (
       <div className="flex items-center justify-center min-h-[500px]">
         <div className="flex flex-col items-center space-y-3">
-          <div className="w-8 h-8 border-2 border-sky-600 border-t-transparent rounded-full animate-spin" />
-          <p className="text-xs font-semibold text-slate-600">Loading Case Intelligence Workspace...</p>
+          <div className="w-8 h-8 border-2 border-[#209B47] border-t-transparent rounded-full animate-spin" />
+          <p className="text-xs font-semibold text-[#042126]/70">Loading Case Intelligence Workspace...</p>
         </div>
       </div>
     );
@@ -135,15 +135,15 @@ export const CaseInvestigationView: React.FC<CaseInvestigationViewProps> = ({
 
   if (!caseData) {
     return (
-      <div className="p-8 text-center bg-white border border-slate-200 rounded-xl max-w-lg mx-auto my-12 shadow-sm">
-        <AlertTriangle className="w-10 h-10 text-amber-500 mx-auto mb-3" />
-        <h3 className="text-base font-bold text-slate-900 mb-1">Case Record Not Found</h3>
-        <p className="text-xs text-slate-600 mb-4">Case {caseId} could not be retrieved from the database or the network request failed.</p>
+      <div className="p-8 text-center bg-white border border-[#042126]/10 rounded-xl max-w-lg mx-auto my-12 shadow-sm">
+        <AlertTriangle className="w-10 h-10 text-[#D97706] mx-auto mb-3" />
+        <h3 className="text-base font-bold text-[#042126] mb-1">Case Record Not Found</h3>
+        <p className="text-xs text-[#042126]/70 mb-4">Case {caseId} could not be retrieved from the database or the network request failed.</p>
         <button
           onClick={onBackToQueue}
-          className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-lg transition-colors inline-flex items-center gap-2"
+          className="px-4 py-2 bg-[#F2FCFF] hover:bg-[#042126]/5 text-[#042126] border border-[#042126]/10 text-xs font-semibold rounded-lg transition-colors inline-flex items-center gap-2"
         >
-          <ArrowLeft className="w-3.5 h-3.5" /> Return to SIU Queue
+          <ArrowLeft className="w-3.5 h-3.5 text-[#005F68]" /> Return to SIU Queue
         </button>
       </div>
     );
@@ -171,27 +171,27 @@ export const CaseInvestigationView: React.FC<CaseInvestigationViewProps> = ({
           <div className="flex items-start space-x-3.5">
             <button
               onClick={onBackToQueue}
-              className="p-2 rounded-lg bg-slate-50 border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors mt-0.5"
+              className="p-2 rounded-lg bg-[#F2FCFF] border border-[#042126]/10 text-[#042126]/70 hover:text-[#042126] hover:bg-[#042126]/5 transition-colors mt-0.5"
               title="Return to SIU Priority Queue"
             >
-              <ArrowLeft className="w-4 h-4" />
+              <ArrowLeft className="w-4 h-4 text-[#005F68]" />
             </button>
             <div>
               <div className="flex flex-wrap items-center gap-2">
-                <span className="text-base font-bold font-mono text-sky-700">{caseData.case_id}</span>
-                <span className="text-slate-300">•</span>
-                <h1 className="text-base font-bold text-slate-900">{caseData.target_entity_name}</h1>
+                <span className="text-base font-bold font-mono text-[#005F68]">{caseData.case_id}</span>
+                <span className="text-[#042126]/20">•</span>
+                <h1 className="text-base font-bold text-[#042126]">{caseData.target_entity_name}</h1>
                 <span className={`px-2 py-0.5 rounded text-xs font-bold font-mono ${
                   isCritical ? 'badge-critical' : isHigh ? 'badge-high' : 'badge-medium'
                 }`}>
                   {caseData.risk_tier} • {caseData.composite_risk_score.toFixed(1)} / 100
                 </span>
-                <span className="px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-700 border border-slate-200">
+                <span className="px-2 py-0.5 rounded text-xs font-medium bg-[#042126]/5 text-[#042126] border border-[#042126]/10">
                   {caseData.status.replace(/_/g, ' ')}
                 </span>
               </div>
-              <p className="text-xs text-slate-500 font-mono mt-0.5">
-                NPI: {caseData.target_entity_id} • Specialty: <span className="text-slate-700 font-semibold">{caseData.specialty || 'Internal Medicine'}</span> • Primary Scheme: <span className="text-amber-700 font-semibold">{caseData.primary_fwa_pattern}</span>
+              <p className="text-xs text-[#042126]/60 font-mono mt-0.5">
+                NPI: {caseData.target_entity_id} • Specialty: <span className="text-[#042126] font-semibold">{caseData.specialty || 'Internal Medicine'}</span> • Primary Scheme: <span className="text-[#D97706] font-semibold">{caseData.primary_fwa_pattern}</span>
               </p>
             </div>
           </div>
@@ -200,7 +200,7 @@ export const CaseInvestigationView: React.FC<CaseInvestigationViewProps> = ({
           <div className="flex items-center space-x-3">
             <button
               onClick={() => setIsDecisionModalOpen(true)}
-              className="flex items-center space-x-2 px-4 py-2 rounded-lg bg-sky-600 hover:bg-sky-700 text-white text-xs font-semibold shadow-xs transition-colors"
+              className="flex items-center space-x-2 px-4 py-2 rounded-lg bg-[#209B47] hover:bg-[#1B843C] text-white text-xs font-semibold shadow-xs transition-colors"
             >
               <CheckCircle2 className="w-4 h-4" />
               <span>Record SIU Disposition</span>
@@ -209,34 +209,34 @@ export const CaseInvestigationView: React.FC<CaseInvestigationViewProps> = ({
         </div>
 
         {/* 5-Metric Intelligence KPI Strip */}
-        <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 pt-3 border-t border-slate-100 text-xs">
-          <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-200">
-            <span className="text-[11px] text-slate-500 font-semibold uppercase">Potential Exposure</span>
-            <p className="text-base font-mono font-bold text-slate-900 mt-0.5 tabular-nums">
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 pt-3 border-t border-[#042126]/10 text-xs">
+          <div className="bg-[#F2FCFF] p-2.5 rounded-lg border border-[#042126]/10">
+            <span className="text-[11px] text-[#042126]/60 font-semibold uppercase">Potential Exposure</span>
+            <p className="text-base font-mono font-bold text-[#042126] mt-0.5 tabular-nums">
               ${caseData.potential_financial_exposure.toLocaleString()}
             </p>
           </div>
-          <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-200">
-            <span className="text-[11px] text-slate-500 font-semibold uppercase">Impacted Members</span>
-            <p className="text-base font-mono font-bold text-slate-900 mt-0.5 tabular-nums">
+          <div className="bg-[#F2FCFF] p-2.5 rounded-lg border border-[#042126]/10">
+            <span className="text-[11px] text-[#042126]/60 font-semibold uppercase">Impacted Members</span>
+            <p className="text-base font-mono font-bold text-[#042126] mt-0.5 tabular-nums">
               {caseData.member_impact_count} Patients
             </p>
           </div>
-          <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-200">
-            <span className="text-[11px] text-slate-500 font-semibold uppercase">Risk Velocity</span>
+          <div className="bg-[#F2FCFF] p-2.5 rounded-lg border border-[#042126]/10">
+            <span className="text-[11px] text-[#042126]/60 font-semibold uppercase">Risk Velocity</span>
             <div className="mt-1 flex items-center space-x-1.5">
               <RiskVelocitySpark velocity={caseData.risk_velocity} showText={true} />
             </div>
           </div>
-          <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-200">
-            <span className="text-[11px] text-slate-500 font-semibold uppercase">Evidence Strength</span>
-            <p className="text-base font-mono font-bold text-slate-900 mt-0.5 tabular-nums">
+          <div className="bg-[#F2FCFF] p-2.5 rounded-lg border border-[#042126]/10">
+            <span className="text-[11px] text-[#042126]/60 font-semibold uppercase">Evidence Strength</span>
+            <p className="text-base font-mono font-bold text-[#042126] mt-0.5 tabular-nums">
               {caseData.evidence_strength}
             </p>
           </div>
-          <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-200 col-span-2 sm:col-span-1">
-            <span className="text-[11px] text-slate-500 font-semibold uppercase">Flagged Claims</span>
-            <p className="text-base font-mono font-bold text-slate-900 mt-0.5 tabular-nums">
+          <div className="bg-[#F2FCFF] p-2.5 rounded-lg border border-[#042126]/10 col-span-2 sm:col-span-1">
+            <span className="text-[11px] text-[#042126]/60 font-semibold uppercase">Flagged Claims</span>
+            <p className="text-base font-mono font-bold text-[#042126] mt-0.5 tabular-nums">
               {providerDetails?.claim_count || claims.length} Encounters
             </p>
           </div>
@@ -244,7 +244,7 @@ export const CaseInvestigationView: React.FC<CaseInvestigationViewProps> = ({
       </div>
 
       {/* 8-Tab Segmented Workspace Navigation */}
-      <div className="flex border-b border-slate-200 overflow-x-auto space-x-1">
+      <div className="flex border-b border-[#042126]/10 overflow-x-auto space-x-1">
         {[
           { id: 'overview', label: 'Overview & Trace', icon: Layers },
           { id: 'evidence', label: 'Evidence Graph', icon: GitCommit },
@@ -264,11 +264,11 @@ export const CaseInvestigationView: React.FC<CaseInvestigationViewProps> = ({
               onClick={() => setActiveTab(tab.id as any)}
               className={`flex items-center space-x-1.5 px-4 py-2.5 text-xs font-semibold whitespace-nowrap transition-colors border-b-2 ${
                 isActive
-                  ? 'border-sky-600 text-sky-700 bg-sky-50/50 rounded-t-lg'
-                  : 'border-transparent text-slate-600 hover:text-slate-900 hover:border-slate-300'
+                  ? 'border-[#209B47] text-[#005F68] bg-[#209B47]/10 rounded-t-lg'
+                  : 'border-transparent text-[#042126]/70 hover:text-[#042126] hover:border-[#042126]/20'
               }`}
             >
-              <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-sky-600' : 'text-slate-400'}`} />
+              <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-[#209B47]' : 'text-[#042126]/40'}`} />
               <span>{tab.label}</span>
             </button>
           );
@@ -283,12 +283,12 @@ export const CaseInvestigationView: React.FC<CaseInvestigationViewProps> = ({
             <div className="lg:col-span-7 space-y-4">
               <div className="health-panel p-5 rounded-xl space-y-4">
                 <div className="flex items-center justify-between">
-                  <h2 className="text-sm font-bold text-slate-900">Multi-Detector Risk Synthesis</h2>
-                  <span className="text-[11px] font-mono text-sky-700 bg-sky-50 px-2 py-0.5 rounded border border-sky-200 font-semibold">
+                  <h2 className="text-sm font-bold text-[#042126]">Multi-Detector Risk Synthesis</h2>
+                  <span className="text-[11px] font-mono text-[#005F68] bg-[#005F68]/10 px-2 py-0.5 rounded border border-[#005F68]/20 font-semibold">
                     Ensemble Weighting
                   </span>
                 </div>
-                <p className="text-xs text-slate-600 leading-relaxed">
+                <p className="text-xs text-[#042126]/70 leading-relaxed">
                   Composite score synthesized from deterministic FWA rules, unsupervised Isolation Forest anomaly scoring, bipartite graph centrality, and temporal billing acceleration.
                 </p>
 
@@ -298,109 +298,109 @@ export const CaseInvestigationView: React.FC<CaseInvestigationViewProps> = ({
                     onClick={() => setExpandedTraceDetector(expandedTraceDetector === 'rule' ? null : 'rule')}
                     className={`p-3 rounded-lg border cursor-pointer transition-all ${
                       expandedTraceDetector === 'rule'
-                        ? 'bg-sky-50 border-sky-300 shadow-xs'
-                        : 'bg-slate-50 border-slate-200 hover:bg-slate-100'
+                        ? 'bg-[#209B47]/10 border-[#209B47]/40 shadow-xs'
+                        : 'bg-[#F2FCFF] border-[#042126]/10 hover:bg-[#042126]/5'
                     }`}
                   >
-                    <div className="flex items-center justify-between text-slate-600 text-xs">
+                    <div className="flex items-center justify-between text-[#042126]/70 text-xs">
                       <span className="font-semibold">Deterministic Rule Engine</span>
-                      {expandedTraceDetector === 'rule' ? <ChevronDown className="w-3.5 h-3.5 text-sky-600" /> : <ChevronRight className="w-3.5 h-3.5 text-slate-400" />}
+                      {expandedTraceDetector === 'rule' ? <ChevronDown className="w-3.5 h-3.5 text-[#209B47]" /> : <ChevronRight className="w-3.5 h-3.5 text-[#042126]/40" />}
                     </div>
-                    <p className="text-lg font-bold font-mono text-slate-900 mt-1">
-                      {caseData.risk_breakdown?.['Rule Engine']?.toFixed(1) || '85.0'} <span className="text-xs text-slate-500 font-normal">/ 100</span>
+                    <p className="text-lg font-bold font-mono text-[#042126] mt-1">
+                      {caseData.risk_breakdown?.['Rule Engine']?.toFixed(1) || '85.0'} <span className="text-xs text-[#042126]/50 font-normal">/ 100</span>
                     </p>
-                    <span className="text-[10px] text-sky-700 font-medium">Click to trace rule violations</span>
+                    <span className="text-[10px] text-[#005F68] font-medium">Click to trace rule violations</span>
                   </div>
 
                   <div 
                     onClick={() => setExpandedTraceDetector(expandedTraceDetector === 'ml' ? null : 'ml')}
                     className={`p-3 rounded-lg border cursor-pointer transition-all ${
                       expandedTraceDetector === 'ml'
-                        ? 'bg-sky-50 border-sky-300 shadow-xs'
-                        : 'bg-slate-50 border-slate-200 hover:bg-slate-100'
+                        ? 'bg-[#209B47]/10 border-[#209B47]/40 shadow-xs'
+                        : 'bg-[#F2FCFF] border-[#042126]/10 hover:bg-[#042126]/5'
                     }`}
                   >
-                    <div className="flex items-center justify-between text-slate-600 text-xs">
+                    <div className="flex items-center justify-between text-[#042126]/70 text-xs">
                       <span className="font-semibold">Isolation Forest Anomaly</span>
-                      {expandedTraceDetector === 'ml' ? <ChevronDown className="w-3.5 h-3.5 text-sky-600" /> : <ChevronRight className="w-3.5 h-3.5 text-slate-400" />}
+                      {expandedTraceDetector === 'ml' ? <ChevronDown className="w-3.5 h-3.5 text-[#209B47]" /> : <ChevronRight className="w-3.5 h-3.5 text-[#042126]/40" />}
                     </div>
-                    <p className="text-lg font-bold font-mono text-slate-900 mt-1">
-                      {caseData.risk_breakdown?.['ML Anomaly Detector']?.toFixed(2) || '0.89'} <span className="text-xs text-slate-500 font-normal">score</span>
+                    <p className="text-lg font-bold font-mono text-[#042126] mt-1">
+                      {caseData.risk_breakdown?.['ML Anomaly Detector']?.toFixed(2) || '0.89'} <span className="text-xs text-[#042126]/50 font-normal">score</span>
                     </p>
-                    <span className="text-[10px] text-sky-700 font-medium">Click to trace ML features</span>
+                    <span className="text-[10px] text-[#005F68] font-medium">Click to trace ML features</span>
                   </div>
 
                   <div 
                     onClick={() => setExpandedTraceDetector(expandedTraceDetector === 'graph' ? null : 'graph')}
                     className={`p-3 rounded-lg border cursor-pointer transition-all ${
                       expandedTraceDetector === 'graph'
-                        ? 'bg-sky-50 border-sky-300 shadow-xs'
-                        : 'bg-slate-50 border-slate-200 hover:bg-slate-100'
+                        ? 'bg-[#209B47]/10 border-[#209B47]/40 shadow-xs'
+                        : 'bg-[#F2FCFF] border-[#042126]/10 hover:bg-[#042126]/5'
                     }`}
                   >
-                    <div className="flex items-center justify-between text-slate-600 text-xs">
+                    <div className="flex items-center justify-between text-[#042126]/70 text-xs">
                       <span className="font-semibold">Bipartite Graph Risk</span>
-                      {expandedTraceDetector === 'graph' ? <ChevronDown className="w-3.5 h-3.5 text-sky-600" /> : <ChevronRight className="w-3.5 h-3.5 text-slate-400" />}
+                      {expandedTraceDetector === 'graph' ? <ChevronDown className="w-3.5 h-3.5 text-[#209B47]" /> : <ChevronRight className="w-3.5 h-3.5 text-[#042126]/40" />}
                     </div>
-                    <p className="text-lg font-bold font-mono text-slate-900 mt-1">
-                      {caseData.risk_breakdown?.['Graph Network']?.toFixed(1) || '72.4'} <span className="text-xs text-slate-500 font-normal">/ 100</span>
+                    <p className="text-lg font-bold font-mono text-[#042126] mt-1">
+                      {caseData.risk_breakdown?.['Graph Network']?.toFixed(1) || '72.4'} <span className="text-xs text-[#042126]/50 font-normal">/ 100</span>
                     </p>
-                    <span className="text-[10px] text-sky-700 font-medium">Click to trace network density</span>
+                    <span className="text-[10px] text-[#005F68] font-medium">Click to trace network density</span>
                   </div>
 
                   <div 
                     onClick={() => setExpandedTraceDetector(expandedTraceDetector === 'temporal' ? null : 'temporal')}
                     className={`p-3 rounded-lg border cursor-pointer transition-all ${
                       expandedTraceDetector === 'temporal'
-                        ? 'bg-sky-50 border-sky-300 shadow-xs'
-                        : 'bg-slate-50 border-slate-200 hover:bg-slate-100'
+                        ? 'bg-[#209B47]/10 border-[#209B47]/40 shadow-xs'
+                        : 'bg-[#F2FCFF] border-[#042126]/10 hover:bg-[#042126]/5'
                     }`}
                   >
-                    <div className="flex items-center justify-between text-slate-600 text-xs">
+                    <div className="flex items-center justify-between text-[#042126]/70 text-xs">
                       <span className="font-semibold">Risk Velocity (Temporal)</span>
-                      {expandedTraceDetector === 'temporal' ? <ChevronDown className="w-3.5 h-3.5 text-sky-600" /> : <ChevronRight className="w-3.5 h-3.5 text-slate-400" />}
+                      {expandedTraceDetector === 'temporal' ? <ChevronDown className="w-3.5 h-3.5 text-[#209B47]" /> : <ChevronRight className="w-3.5 h-3.5 text-[#042126]/40" />}
                     </div>
-                    <p className="text-lg font-bold font-mono text-slate-900 mt-1">
-                      +{caseData.risk_velocity?.toFixed(1) || '38.5'} <span className="text-xs text-slate-500 font-normal">pts/mo</span>
+                    <p className="text-lg font-bold font-mono text-[#042126] mt-1">
+                      +{caseData.risk_velocity?.toFixed(1) || '38.5'} <span className="text-xs text-[#042126]/50 font-normal">pts/mo</span>
                     </p>
-                    <span className="text-[10px] text-sky-700 font-medium">Click to trace 30d acceleration</span>
+                    <span className="text-[10px] text-[#005F68] font-medium">Click to trace 30d acceleration</span>
                   </div>
                 </div>
 
                 {/* Interactive Trace Evidence Detail Box */}
                 {expandedTraceDetector && (
-                  <div className="p-4 rounded-lg bg-sky-50/70 border border-sky-200 text-xs space-y-2 mt-3">
+                  <div className="p-4 rounded-lg bg-[#F2FCFF] border border-[#209B47]/30 text-xs space-y-2 mt-3">
                     <div className="flex items-center justify-between">
-                      <span className="font-bold text-sky-900 uppercase tracking-wider text-[11px]">
+                      <span className="font-bold text-[#005F68] uppercase tracking-wider text-[11px]">
                         Trace Evidence Lineage: {expandedTraceDetector.toUpperCase()} DRIVER
                       </span>
-                      <span className="font-mono text-[10px] text-sky-700 font-semibold">
+                      <span className="font-mono text-[10px] text-[#005F68] font-semibold">
                         Grounded in Synthetic Dataset
                       </span>
                     </div>
                     {expandedTraceDetector === 'rule' && (
-                      <div className="space-y-1 text-slate-700">
+                      <div className="space-y-1 text-[#042126]/80">
                         <p><strong>Primary Rule Trigger:</strong> {caseData.primary_fwa_pattern} (R102 Upcoding &amp; Modifier-25 misuse).</p>
                         <p><strong>Violations Count:</strong> 247 synthetic claims flagged with modifier discrepancies.</p>
                         <p><strong>Rule Weight in Composite:</strong> 35% contribution factor.</p>
                       </div>
                     )}
                     {expandedTraceDetector === 'ml' && (
-                      <div className="space-y-1 text-slate-700">
+                      <div className="space-y-1 text-[#042126]/80">
                         <p><strong>Model:</strong> Isolation Forest (200 estimators, 5% contamination baseline).</p>
                         <p><strong>Key Feature Attributions:</strong> High procedure code complexity variance (Z = +3.42) &amp; billing velocity spike (Z = +2.89).</p>
                         <p><strong>Model Attribution:</strong> 25% contribution factor.</p>
                       </div>
                     )}
                     {expandedTraceDetector === 'graph' && (
-                      <div className="space-y-1 text-slate-700">
+                      <div className="space-y-1 text-[#042126]/80">
                         <p><strong>Topology Analysis:</strong> PageRank 0.0412, Betweenness Centrality 0.0289.</p>
                         <p><strong>Network Context:</strong> Connected to 3 shared rendering clinics with unusually tight referral concentration (Gini coefficient 0.81).</p>
                         <p><strong>Graph Weight:</strong> 20% contribution factor.</p>
                       </div>
                     )}
                     {expandedTraceDetector === 'temporal' && (
-                      <div className="space-y-1 text-slate-700">
+                      <div className="space-y-1 text-[#042126]/80">
                         <p><strong>Temporal Velocity:</strong> Calculated 1st order rate of change over 30-day epoch windows.</p>
                         <p><strong>Acceleration State:</strong> Accelerating (Current 30d volume is 3.8x historical baseline).</p>
                         <p><strong>Velocity Weight:</strong> 20% contribution factor.</p>
@@ -412,16 +412,16 @@ export const CaseInvestigationView: React.FC<CaseInvestigationViewProps> = ({
 
               {/* Active Rules Triggers List */}
               <div className="health-panel p-5 rounded-xl space-y-3">
-                <h3 className="text-sm font-bold text-slate-900">Active Deterministic Rule Triggers</h3>
+                <h3 className="text-sm font-bold text-[#042126]">Active Deterministic Rule Triggers</h3>
                 <div className="space-y-2">
                   {(caseData.rule_triggers && caseData.rule_triggers.length > 0) ? (
                     caseData.rule_triggers.map((rt, idx) => (
-                      <div key={idx} className="p-3 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-between text-xs">
+                      <div key={idx} className="p-3 rounded-lg bg-[#F2FCFF] border border-[#042126]/10 flex items-center justify-between text-xs">
                         <div className="flex items-center space-x-2.5">
-                          <span className="w-2 h-2 rounded-full bg-rose-500"></span>
+                          <span className="w-2 h-2 rounded-full bg-[#B91C1C]"></span>
                           <div>
-                            <span className="font-semibold text-slate-800">{rt.rule_name}</span>
-                            <p className="text-[11px] text-slate-500 mt-0.5">{rt.description}</p>
+                            <span className="font-semibold text-[#042126]">{rt.rule_name}</span>
+                            <p className="text-[11px] text-[#042126]/60 mt-0.5">{rt.description}</p>
                           </div>
                         </div>
                         <span className="px-2 py-0.5 rounded text-[10px] font-bold font-mono badge-critical">
@@ -430,7 +430,7 @@ export const CaseInvestigationView: React.FC<CaseInvestigationViewProps> = ({
                       </div>
                     ))
                   ) : (
-                    <div className="p-3 rounded-lg bg-slate-50 border border-slate-200 text-xs text-slate-600">
+                    <div className="p-3 rounded-lg bg-[#F2FCFF] border border-[#042126]/10 text-xs text-[#042126]/70">
                       R102 Upcoding: High-complexity evaluation &amp; management code overbilling detected.
                     </div>
                   )}
@@ -442,29 +442,29 @@ export const CaseInvestigationView: React.FC<CaseInvestigationViewProps> = ({
             <div className="lg:col-span-5 space-y-4">
               <div className="health-panel p-5 rounded-xl space-y-4">
                 <div className="flex items-center justify-between">
-                  <h2 className="text-sm font-bold text-slate-900">Known Scheme Taxonomy Similarity</h2>
-                  <span className="text-xs font-mono font-bold text-sky-700 bg-sky-50 px-2 py-0.5 rounded border border-sky-200">
+                  <h2 className="text-sm font-bold text-[#042126]">Known Scheme Taxonomy Similarity</h2>
+                  <span className="text-xs font-mono font-bold text-[#005F68] bg-[#005F68]/10 px-2 py-0.5 rounded border border-[#005F68]/20">
                     {similarity?.matched_scheme_name || caseData.primary_fwa_pattern}
                   </span>
                 </div>
-                <div className="flex items-baseline justify-between border-b border-slate-100 pb-3">
-                  <span className="text-xs text-slate-600">Cosine Vector Alignment:</span>
-                  <span className="font-mono text-xl font-bold text-sky-700">
+                <div className="flex items-baseline justify-between border-b border-[#042126]/10 pb-3">
+                  <span className="text-xs text-[#042126]/70">Cosine Vector Alignment:</span>
+                  <span className="font-mono text-xl font-bold text-[#005F68]">
                     {similarity ? (similarity.similarity_score * 100).toFixed(1) : '89.4'}% Match
                   </span>
                 </div>
 
                 <div className="space-y-2 text-xs">
-                  <span className="font-semibold text-slate-700">Statutory &amp; Clinical Definition:</span>
-                  <p className="text-slate-600 bg-slate-50 p-3 rounded-lg border border-slate-200 leading-relaxed">
+                  <span className="font-semibold text-[#042126]">Statutory &amp; Clinical Definition:</span>
+                  <p className="text-[#042126]/80 bg-[#F2FCFF] p-3 rounded-lg border border-[#042126]/10 leading-relaxed">
                     {similarity?.definition || 
                       'Systematic billing of high-level evaluation/management CPT codes (e.g. 99215) with Modifier-25 without documented medical necessity or chart records supporting extended clinical complexity.'}
                   </p>
                 </div>
 
                 <div className="space-y-2 text-xs pt-2">
-                  <span className="font-semibold text-slate-700">Recommended SIU Verification Steps:</span>
-                  <ul className="space-y-1.5 list-disc list-inside text-slate-600 pl-1">
+                  <span className="font-semibold text-[#042126]">Recommended SIU Verification Steps:</span>
+                  <ul className="space-y-1.5 list-disc list-inside text-[#042126]/70 pl-1">
                     <li>Sample 30 medical record charts for time documentation and history complexity.</li>
                     <li>Verify whether time spent exceeds total operating hours for single encounter dates.</li>
                     <li>Request comparative peer specialty billing percentiles under 42 CFR § 455.</li>
@@ -479,14 +479,14 @@ export const CaseInvestigationView: React.FC<CaseInvestigationViewProps> = ({
       {/* ==================== TAB 2: EVIDENCE GRAPH ==================== */}
       {activeTab === 'evidence' && (
         <div className="health-panel p-5 rounded-xl space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#042126]/10 pb-3">
             <div>
-              <h2 className="text-sm font-bold text-slate-900">Hierarchical Evidence Provenance DAG</h2>
-              <p className="text-xs text-slate-500 mt-0.5">
+              <h2 className="text-sm font-bold text-[#042126]">Hierarchical Evidence Provenance DAG</h2>
+              <p className="text-xs text-[#042126]/60 mt-0.5">
                 Directed acyclic graph mapping target provider entity to specific claim records, rule violation triggers, and empirical statistical metrics.
               </p>
             </div>
-            <span className="text-xs font-mono text-slate-600 bg-slate-50 px-2 py-1 rounded border border-slate-200">
+            <span className="text-xs font-mono text-[#005F68] bg-[#F2FCFF] px-2 py-1 rounded border border-[#042126]/10">
               Interactive Node Drilldown
             </span>
           </div>
@@ -495,7 +495,7 @@ export const CaseInvestigationView: React.FC<CaseInvestigationViewProps> = ({
             {evidenceGraph ? (
               <EvidenceGraphViewer data={evidenceGraph} />
             ) : (
-              <div className="p-12 text-center text-slate-400">Loading evidence DAG...</div>
+              <div className="p-12 text-center text-[#042126]/40">Loading evidence DAG...</div>
             )}
           </div>
         </div>
@@ -504,14 +504,14 @@ export const CaseInvestigationView: React.FC<CaseInvestigationViewProps> = ({
       {/* ==================== TAB 3: NETWORK EXPLORER ==================== */}
       {activeTab === 'network' && (
         <div className="health-panel p-5 rounded-xl space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#042126]/10 pb-3">
             <div>
-              <h2 className="text-sm font-bold text-slate-900">Multi-Entity Bipartite Network Subgraph</h2>
-              <p className="text-xs text-slate-500 mt-0.5">
+              <h2 className="text-sm font-bold text-[#042126]">Multi-Entity Bipartite Network Subgraph</h2>
+              <p className="text-xs text-[#042126]/60 mt-0.5">
                 Exposes shared member pools, common billing facilities, and referral collusion rings associated with this target provider.
               </p>
             </div>
-            <span className="text-xs font-mono text-slate-600 bg-slate-50 px-2 py-1 rounded border border-slate-200">
+            <span className="text-xs font-mono text-[#005F68] bg-[#F2FCFF] px-2 py-1 rounded border border-[#042126]/10">
               Bipartite Projection
             </span>
           </div>
@@ -520,7 +520,7 @@ export const CaseInvestigationView: React.FC<CaseInvestigationViewProps> = ({
             {subgraph ? (
               <RelationshipGraphViewer graphData={subgraph} />
             ) : (
-              <div className="p-12 text-center text-slate-400">Loading network graph...</div>
+              <div className="p-12 text-center text-[#042126]/40">Loading network graph...</div>
             )}
           </div>
         </div>
@@ -529,21 +529,21 @@ export const CaseInvestigationView: React.FC<CaseInvestigationViewProps> = ({
       {/* ==================== TAB 4: 10-D FRAUD GENOME ==================== */}
       {activeTab === 'genome' && (
         <div className="health-panel p-5 rounded-xl space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#042126]/10 pb-3">
             <div>
-              <h2 className="text-sm font-bold text-slate-900">10-Dimensional Behavioral Fraud Genome</h2>
-              <p className="text-xs text-slate-500 mt-0.5">
+              <h2 className="text-sm font-bold text-[#042126]">10-Dimensional Behavioral Fraud Genome</h2>
+              <p className="text-xs text-[#042126]/60 mt-0.5">
                 Empirical radar representation mapping 10 distinct billing behavioral vectors against the standardized specialty peer baseline.
               </p>
             </div>
             <div className="flex items-center space-x-3 text-xs">
               <div className="flex items-center space-x-1.5">
-                <span className="w-3 h-3 rounded-full bg-sky-600"></span>
-                <span className="text-slate-700 font-semibold">Target Entity</span>
+                <span className="w-3 h-3 rounded-full bg-[#209B47]"></span>
+                <span className="text-[#042126] font-semibold">Target Entity</span>
               </div>
               <div className="flex items-center space-x-1.5">
-                <span className="w-3 h-3 rounded-full bg-slate-300"></span>
-                <span className="text-slate-500">Peer Baseline (Norm)</span>
+                <span className="w-3 h-3 rounded-full bg-[#005F68]"></span>
+                <span className="text-[#042126]/60">Peer Baseline (Norm)</span>
               </div>
             </div>
           </div>
@@ -554,7 +554,7 @@ export const CaseInvestigationView: React.FC<CaseInvestigationViewProps> = ({
                 genome={caseData.fraud_genome} 
               />
             ) : (
-              <div className="p-12 text-center text-slate-400">Loading Fraud Genome Vector...</div>
+              <div className="p-12 text-center text-[#042126]/40">Loading Fraud Genome Vector...</div>
             )}
           </div>
         </div>
@@ -563,14 +563,14 @@ export const CaseInvestigationView: React.FC<CaseInvestigationViewProps> = ({
       {/* ==================== TAB 5: SCHEME EVOLUTION ==================== */}
       {activeTab === 'evolution' && (
         <div className="health-panel p-5 rounded-xl space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#042126]/10 pb-3">
             <div>
-              <h2 className="text-sm font-bold text-slate-900">Temporal Scheme Evolution &amp; Acceleration Curve</h2>
-              <p className="text-xs text-slate-500 mt-0.5">
+              <h2 className="text-sm font-bold text-[#042126]">Temporal Scheme Evolution &amp; Acceleration Curve</h2>
+              <p className="text-xs text-[#042126]/60 mt-0.5">
                 Longitudinal progression tracking scheme emergence from baseline normal billing through aggressive volume spikes.
               </p>
             </div>
-            <span className="text-xs font-mono text-sky-700 bg-sky-50 px-2 py-1 rounded border border-sky-200 font-semibold">
+            <span className="text-xs font-mono text-[#005F68] bg-[#209B47]/10 px-2 py-1 rounded border border-[#209B47]/30 font-semibold">
               Epoch Scrubber (Day 0 – 90)
             </span>
           </div>
@@ -584,20 +584,20 @@ export const CaseInvestigationView: React.FC<CaseInvestigationViewProps> = ({
       {/* ==================== TAB 6: 30/60/90 PROJECTIONS ==================== */}
       {activeTab === 'projections' && (
         <div className="health-panel p-5 rounded-xl space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#042126]/10 pb-4">
             <div>
-              <h2 className="text-sm font-bold text-slate-900">Predictive Escalation &amp; Financial Exposure Projections</h2>
-              <p className="text-xs text-slate-500 mt-0.5">
+              <h2 className="text-sm font-bold text-[#042126]">Predictive Escalation &amp; Financial Exposure Projections</h2>
+              <p className="text-xs text-[#042126]/60 mt-0.5">
                 Predictive risk projections assuming no SIU intervention occurs over 30, 60, and 90-day operational horizons.
               </p>
             </div>
-            <div className="flex items-center bg-slate-100 p-1 rounded-lg border border-slate-200">
+            <div className="flex items-center bg-[#F2FCFF] p-1 rounded-lg border border-[#042126]/10">
               <button
                 onClick={() => setProjectionMode('financial')}
                 className={`px-3 py-1 text-xs font-semibold rounded-md transition-colors ${
                   projectionMode === 'financial'
-                    ? 'bg-white text-slate-900 shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900'
+                    ? 'bg-white text-[#042126] shadow-xs'
+                    : 'text-[#042126]/70 hover:text-[#042126]'
                 }`}
               >
                 Projected Financial Exposure ($)
@@ -606,8 +606,8 @@ export const CaseInvestigationView: React.FC<CaseInvestigationViewProps> = ({
                 onClick={() => setProjectionMode('escalation')}
                 className={`px-3 py-1 text-xs font-semibold rounded-md transition-colors ${
                   projectionMode === 'escalation'
-                    ? 'bg-white text-slate-900 shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900'
+                    ? 'bg-white text-[#042126] shadow-xs'
+                    : 'text-[#042126]/70 hover:text-[#042126]'
                 }`}
               >
                 Escalation Risk Score
@@ -617,61 +617,61 @@ export const CaseInvestigationView: React.FC<CaseInvestigationViewProps> = ({
 
           {/* 30 / 60 / 90 Forecast Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
-              <div className="flex items-center justify-between text-slate-600 text-xs font-semibold">
+            <div className="p-4 rounded-xl bg-[#F2FCFF] border border-[#042126]/10 space-y-2">
+              <div className="flex items-center justify-between text-[#042126]/70 text-xs font-semibold">
                 <span>+30 Days Forecast</span>
-                <span className="px-2 py-0.5 rounded bg-sky-50 text-sky-700 border border-sky-200 font-mono text-[10px]">
+                <span className="px-2 py-0.5 rounded bg-[#209B47]/10 text-[#005F68] border border-[#209B47]/30 font-mono text-[10px]">
                   NEAR TERM
                 </span>
               </div>
-              <p className="text-2xl font-bold font-mono text-slate-900 tabular-nums">
+              <p className="text-2xl font-bold font-mono text-[#042126] tabular-nums">
                 {projectionMode === 'financial'
                   ? `$${(caseData.potential_financial_exposure * 1.35).toLocaleString(undefined, { maximumFractionDigits: 0 })}`
                   : `${Math.min(100, caseData.composite_risk_score * 1.15).toFixed(1)} / 100`}
               </p>
-              <p className="text-[11px] text-slate-500">
+              <p className="text-[11px] text-[#042126]/60">
                 {projectionMode === 'financial' ? 'Estimated cumulative exposure (+35%)' : 'Projected escalation risk (+15%)'}
               </p>
             </div>
 
-            <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
-              <div className="flex items-center justify-between text-slate-600 text-xs font-semibold">
+            <div className="p-4 rounded-xl bg-[#F2FCFF] border border-[#042126]/10 space-y-2">
+              <div className="flex items-center justify-between text-[#042126]/70 text-xs font-semibold">
                 <span>+60 Days Forecast</span>
-                <span className="px-2 py-0.5 rounded bg-amber-50 text-amber-800 border border-amber-200 font-mono text-[10px]">
+                <span className="px-2 py-0.5 rounded bg-[#FEF3C7] text-[#B45309] border border-[#FDE68A] font-mono text-[10px]">
                   MID TERM
                 </span>
               </div>
-              <p className="text-2xl font-bold font-mono text-amber-800 tabular-nums">
+              <p className="text-2xl font-bold font-mono text-[#B45309] tabular-nums">
                 {projectionMode === 'financial'
                   ? `$${(caseData.potential_financial_exposure * 1.85).toLocaleString(undefined, { maximumFractionDigits: 0 })}`
                   : `${Math.min(100, caseData.composite_risk_score * 1.32).toFixed(1)} / 100`}
               </p>
-              <p className="text-[11px] text-slate-500">
+              <p className="text-[11px] text-[#042126]/60">
                 {projectionMode === 'financial' ? 'Estimated cumulative exposure (+85%)' : 'Projected escalation risk (+32%)'}
               </p>
             </div>
 
-            <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
-              <div className="flex items-center justify-between text-slate-600 text-xs font-semibold">
+            <div className="p-4 rounded-xl bg-[#F2FCFF] border border-[#042126]/10 space-y-2">
+              <div className="flex items-center justify-between text-[#042126]/70 text-xs font-semibold">
                 <span>+90 Days Forecast</span>
-                <span className="px-2 py-0.5 rounded bg-rose-50 text-rose-800 border border-rose-200 font-mono text-[10px]">
+                <span className="px-2 py-0.5 rounded bg-[#FEE2E2] text-[#B91C1C] border border-[#FECACA] font-mono text-[10px]">
                   LONG TERM BURST
                 </span>
               </div>
-              <p className="text-2xl font-bold font-mono text-rose-800 tabular-nums">
+              <p className="text-2xl font-bold font-mono text-[#B91C1C] tabular-nums">
                 {projectionMode === 'financial'
                   ? `$${(caseData.potential_financial_exposure * 2.45).toLocaleString(undefined, { maximumFractionDigits: 0 })}`
                   : `${Math.min(100, caseData.composite_risk_score * 1.48).toFixed(1)} / 100`}
               </p>
-              <p className="text-[11px] text-slate-500">
+              <p className="text-[11px] text-[#042126]/60">
                 {projectionMode === 'financial' ? 'Estimated cumulative exposure (+145%)' : 'Projected escalation risk (+48%)'}
               </p>
             </div>
           </div>
 
           {/* Mandatory Responsible AI Projection Disclaimer */}
-          <div className="p-3.5 rounded-lg bg-amber-50 border border-amber-200 flex items-start space-x-2.5 text-xs text-amber-900">
-            <Info className="w-4 h-4 text-amber-700 flex-shrink-0 mt-0.5" />
+          <div className="p-3.5 rounded-lg bg-[#FEF3C7] border border-[#FDE68A] flex items-start space-x-2.5 text-xs text-[#B45309]">
+            <Info className="w-4 h-4 text-[#B45309] flex-shrink-0 mt-0.5" />
             <p>
               <strong>Statistical Projection Notice:</strong> Projections represent predictive trend extrapolations based on historical volume velocity for SIU triage prioritization only; they do not constitute guaranteed financial loss or legal proof of fraud.
             </p>
@@ -682,16 +682,16 @@ export const CaseInvestigationView: React.FC<CaseInvestigationViewProps> = ({
       {/* ==================== TAB 7: AI INVESTIGATION BRIEF ==================== */}
       {activeTab === 'brief' && (
         <div className="health-panel p-6 rounded-xl space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#042126]/10 pb-4">
             <div>
-              <h2 className="text-sm font-bold text-slate-900">Structured SIU Investigation Brief</h2>
-              <p className="text-xs text-slate-500 mt-0.5">
+              <h2 className="text-sm font-bold text-[#042126]">Structured SIU Investigation Brief</h2>
+              <p className="text-xs text-[#042126]/60 mt-0.5">
                 Clinical report synthesized from deterministic triggers, ML attribution, network graph, and statutory citations.
               </p>
             </div>
             <button
               onClick={handleCopyBrief}
-              className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition-colors"
+              className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-[#F2FCFF] hover:bg-[#042126]/5 text-[#005F68] border border-[#042126]/10 text-xs font-semibold transition-colors"
             >
               <Copy className="w-3.5 h-3.5" />
               <span>{copiedBrief ? 'Copied to Clipboard!' : 'Copy SIU Brief'}</span>
@@ -699,22 +699,22 @@ export const CaseInvestigationView: React.FC<CaseInvestigationViewProps> = ({
           </div>
 
           {brief ? (
-            <div className="space-y-6 text-xs leading-relaxed text-slate-700">
+            <div className="space-y-6 text-xs leading-relaxed text-[#042126]/80">
               {/* Executive Summary */}
               <div className="space-y-2">
-                <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">1. Executive Summary</h3>
-                <p className="bg-slate-50 p-4 rounded-lg border border-slate-200 text-slate-800">
+                <h3 className="text-xs font-bold text-[#042126] uppercase tracking-wider">1. Executive Summary</h3>
+                <p className="bg-[#F2FCFF] p-4 rounded-lg border border-[#042126]/10 text-[#042126]">
                   {brief.executive_summary}
                 </p>
               </div>
 
               {/* Key Findings */}
               <div className="space-y-2">
-                <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">2. Key Behavioral Findings &amp; Evidence</h3>
-                <div className="bg-slate-50 p-4 rounded-lg border border-slate-200 space-y-2">
+                <h3 className="text-xs font-bold text-[#042126] uppercase tracking-wider">2. Key Behavioral Findings &amp; Evidence</h3>
+                <div className="bg-[#F2FCFF] p-4 rounded-lg border border-[#042126]/10 space-y-2">
                   {brief.key_behavioral_findings.map((item, i) => (
                     <div key={i} className="flex items-start space-x-2">
-                      <span className="text-sky-700 font-bold">•</span>
+                      <span className="text-[#209B47] font-bold">•</span>
                       <span>{item}</span>
                     </div>
                   ))}
@@ -723,33 +723,33 @@ export const CaseInvestigationView: React.FC<CaseInvestigationViewProps> = ({
 
               {/* Mitigating Factors & Alternative Explanations */}
               <div className="space-y-2">
-                <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">3. Mitigating Factors &amp; Clinical Differential</h3>
-                <p className="bg-slate-50 p-4 rounded-lg border border-slate-200 text-slate-700">
+                <h3 className="text-xs font-bold text-[#042126] uppercase tracking-wider">3. Mitigating Factors &amp; Clinical Differential</h3>
+                <p className="bg-[#F2FCFF] p-4 rounded-lg border border-[#042126]/10 text-[#042126]/80">
                   {brief.mitigating_factors}
                 </p>
               </div>
 
               {/* Recommended Investigative Actions */}
               <div className="space-y-2">
-                <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">4. Recommended Next Actions</h3>
-                <div className="bg-slate-50 p-4 rounded-lg border border-slate-200 space-y-2">
+                <h3 className="text-xs font-bold text-[#042126] uppercase tracking-wider">4. Recommended Next Actions</h3>
+                <div className="bg-[#F2FCFF] p-4 rounded-lg border border-[#042126]/10 space-y-2">
                   {brief.recommended_investigative_actions.map((item, i) => (
                     <div key={i} className="flex items-start space-x-2">
-                      <span className="text-emerald-700 font-bold">&check;</span>
-                      <span className="text-slate-800 font-medium">{item}</span>
+                      <span className="text-[#209B47] font-bold">&check;</span>
+                      <span className="text-[#042126] font-medium">{item}</span>
                     </div>
                   ))}
                 </div>
               </div>
 
               {/* Statutory Framework & Disclaimer */}
-              <div className="p-4 rounded-lg bg-sky-50 border border-sky-200 text-[11px] text-sky-900 space-y-1">
+              <div className="p-4 rounded-lg bg-[#F2FCFF] border border-[#005F68]/20 text-[11px] text-[#005F68] space-y-1">
                 <p className="font-semibold">Legal &amp; Regulatory Context: 42 CFR § 455.23 (Payment Suspension upon Credible Allegation of Fraud)</p>
-                <p className="text-slate-600">{brief.mandatory_disclaimer}</p>
+                <p className="text-[#042126]/70">{brief.mandatory_disclaimer}</p>
               </div>
             </div>
           ) : (
-            <div className="p-12 text-center text-slate-400">Loading structured brief...</div>
+            <div className="p-12 text-center text-[#042126]/40">Loading structured brief...</div>
           )}
         </div>
       )}
@@ -757,10 +757,10 @@ export const CaseInvestigationView: React.FC<CaseInvestigationViewProps> = ({
       {/* ==================== TAB 8: CLAIM LEDGER ==================== */}
       {activeTab === 'claims' && (
         <div className="health-panel p-5 rounded-xl space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#042126]/10 pb-3">
             <div>
-              <h2 className="text-sm font-bold text-slate-900">Synthetic Claim Encounters Ledger</h2>
-              <p className="text-xs text-slate-500 mt-0.5">
+              <h2 className="text-sm font-bold text-[#042126]">Synthetic Claim Encounters Ledger</h2>
+              <p className="text-xs text-[#042126]/60 mt-0.5">
                 Line-item claim records with CPT codes, modifiers, billed vs allowed, and deterministic rule violations.
               </p>
             </div>
@@ -769,13 +769,13 @@ export const CaseInvestigationView: React.FC<CaseInvestigationViewProps> = ({
               placeholder="Search by Claim ID, CPT Code, or Rule..."
               value={claimSearch}
               onChange={(e) => setClaimSearch(e.target.value)}
-              className="bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-900 focus:outline-none focus:ring-1 focus:ring-sky-500"
+              className="bg-white border border-[#042126]/15 rounded-lg px-3 py-1.5 text-xs text-[#042126] focus:outline-none focus:ring-1 focus:ring-[#209B47]"
             />
           </div>
 
-          <div className="overflow-x-auto border border-slate-200 rounded-lg">
+          <div className="overflow-x-auto border border-[#042126]/10 rounded-lg">
             <table className="w-full text-left text-xs">
-              <thead className="bg-slate-50 text-slate-700 font-semibold border-b border-slate-200">
+              <thead className="bg-[#F2FCFF] text-[#042126] font-semibold border-b border-[#042126]/10">
                 <tr>
                   <th className="py-2.5 px-3">Claim ID</th>
                   <th className="py-2.5 px-3">Service Date</th>
@@ -785,21 +785,21 @@ export const CaseInvestigationView: React.FC<CaseInvestigationViewProps> = ({
                   <th className="py-2.5 px-3">Triggered Rule Violations</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-[#042126]/5">
                 {filteredClaims.slice(0, 50).map((cl, i) => (
-                  <tr key={i} className="hover:bg-slate-50 transition-colors">
-                    <td className="py-2.5 px-3 font-mono font-semibold text-sky-700">{cl.claim_id}</td>
-                    <td className="py-2.5 px-3 font-mono text-slate-600">{cl.service_date || '2026-01-15'}</td>
+                  <tr key={i} className="hover:bg-[#F2FCFF]/80 transition-colors">
+                    <td className="py-2.5 px-3 font-mono font-semibold text-[#005F68]">{cl.claim_id}</td>
+                    <td className="py-2.5 px-3 font-mono text-[#042126]/70">{cl.service_date || '2026-01-15'}</td>
                     <td className="py-2.5 px-3">
-                      <span className="font-mono font-bold text-slate-900">{cl.cpt_hcpcs_code}</span>
+                      <span className="font-mono font-bold text-[#042126]">{cl.cpt_hcpcs_code}</span>
                       {cl.modifiers && cl.modifiers.length > 0 && (
-                        <span className="ml-1 text-[10px] text-slate-500 font-mono">({cl.modifiers.join(', ')})</span>
+                        <span className="ml-1 text-[10px] text-[#042126]/50 font-mono">({cl.modifiers.join(', ')})</span>
                       )}
                     </td>
-                    <td className="py-2.5 px-3 text-right font-mono font-bold text-slate-900 tabular-nums">
+                    <td className="py-2.5 px-3 text-right font-mono font-bold text-[#042126] tabular-nums">
                       ${Number(cl.billed_amount || 0).toFixed(2)}
                     </td>
-                    <td className="py-2.5 px-3 text-right font-mono text-slate-600 tabular-nums">
+                    <td className="py-2.5 px-3 text-right font-mono text-[#042126]/70 tabular-nums">
                       ${Number(cl.allowed_amount || 0).toFixed(2)}
                     </td>
                     <td className="py-2.5 px-3">
@@ -812,7 +812,7 @@ export const CaseInvestigationView: React.FC<CaseInvestigationViewProps> = ({
                           ))}
                         </div>
                       ) : (
-                        <span className="text-[11px] text-slate-400">Normal baseline encounter</span>
+                        <span className="text-[11px] text-[#042126]/40">Normal baseline encounter</span>
                       )}
                     </td>
                   </tr>
@@ -827,14 +827,14 @@ export const CaseInvestigationView: React.FC<CaseInvestigationViewProps> = ({
       {activeTab === 'simulator' && (
         <div className="health-panel p-6 rounded-xl space-y-6">
           <div>
-            <h2 className="text-sm font-bold text-slate-900">Counterfactual What-If Remediation Simulator</h2>
-            <p className="text-xs text-slate-500 mt-0.5">
+            <h2 className="text-sm font-bold text-[#042126]">Counterfactual What-If Remediation Simulator</h2>
+            <p className="text-xs text-[#042126]/60 mt-0.5">
               Simulate risk reduction and potential financial recovery when excluding collusive facilities or non-compliant billing modifiers.
             </p>
           </div>
 
-          <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-4">
-            <h3 className="text-xs font-bold text-slate-800 uppercase">Select Entity or Rule Intervention to Exclude:</h3>
+          <div className="p-4 rounded-xl bg-[#F2FCFF] border border-[#042126]/10 space-y-4">
+            <h3 className="text-xs font-bold text-[#042126] uppercase">Select Entity or Rule Intervention to Exclude:</h3>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               {[
                 { id: 'R102_UPCODING', label: 'Enforce Modifier-25 Audit (R102)' },
@@ -854,14 +854,14 @@ export const CaseInvestigationView: React.FC<CaseInvestigationViewProps> = ({
                     }}
                     className={`p-3 rounded-lg border text-xs font-semibold text-left transition-colors ${
                       isSelected
-                        ? 'bg-sky-50 border-sky-400 text-sky-800 shadow-xs'
-                        : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-100'
+                        ? 'bg-[#209B47]/10 border-[#209B47] text-[#005F68] shadow-xs'
+                        : 'bg-white border-[#042126]/15 text-[#042126] hover:bg-[#F2FCFF]'
                     }`}
                   >
                     <div className="flex items-center justify-between">
                       <span>{item.label}</span>
                       <span className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center ${
-                        isSelected ? 'bg-sky-600 border-sky-600 text-white text-[9px]' : 'border-slate-300'
+                        isSelected ? 'bg-[#209B47] border-[#209B47] text-white text-[9px]' : 'border-[#042126]/20'
                       }`}>
                         {isSelected && '✓'}
                       </span>
@@ -872,13 +872,13 @@ export const CaseInvestigationView: React.FC<CaseInvestigationViewProps> = ({
             </div>
 
             <div className="flex items-center justify-between pt-2">
-              <span className="text-xs text-slate-500">
+              <span className="text-xs text-[#042126]/60">
                 Selected {cfExcludedEntities.length} counterfactual interventions
               </span>
               <button
                 onClick={handleRunCounterfactual}
                 disabled={cfExcludedEntities.length === 0 || isSimulating}
-                className="px-4 py-2 rounded-lg bg-sky-600 hover:bg-sky-700 disabled:bg-slate-200 text-white text-xs font-semibold transition-colors flex items-center space-x-1.5"
+                className="px-4 py-2 rounded-lg bg-[#209B47] hover:bg-[#1B843C] disabled:bg-[#042126]/10 disabled:text-[#042126]/40 text-white text-xs font-semibold transition-colors flex items-center space-x-1.5 shadow-xs"
               >
                 <Play className="w-3.5 h-3.5" />
                 <span>{isSimulating ? 'Recalculating...' : 'Run Simulation'}</span>
@@ -889,28 +889,28 @@ export const CaseInvestigationView: React.FC<CaseInvestigationViewProps> = ({
           {/* Simulation Output */}
           {cfResult && (
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
-              <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 space-y-1">
-                <span className="text-xs font-semibold text-emerald-800">Simulated Risk Delta</span>
-                <p className="text-2xl font-bold font-mono text-emerald-900">
+              <div className="p-4 rounded-xl bg-[#E8F8EE] border border-[#ACF2E5] space-y-1">
+                <span className="text-xs font-semibold text-[#1B843C]">Simulated Risk Delta</span>
+                <p className="text-2xl font-bold font-mono text-[#042126]">
                   -{cfResult.risk_score_delta?.toFixed(1) || '32.4'}%
                 </p>
-                <p className="text-[11px] text-emerald-700">Risk drops into Moderate tier</p>
+                <p className="text-[11px] text-[#1B843C]">Risk drops into Moderate tier</p>
               </div>
 
-              <div className="p-4 rounded-xl bg-sky-50 border border-sky-200 space-y-1">
-                <span className="text-xs font-semibold text-sky-800">Potential Cost Avoidance</span>
-                <p className="text-2xl font-bold font-mono text-sky-900">
+              <div className="p-4 rounded-xl bg-[#005F68]/10 border border-[#005F68]/20 space-y-1">
+                <span className="text-xs font-semibold text-[#005F68]">Potential Cost Avoidance</span>
+                <p className="text-2xl font-bold font-mono text-[#042126]">
                   ${(caseData.potential_financial_exposure * 0.42).toLocaleString(undefined, { maximumFractionDigits: 0 })}
                 </p>
-                <p className="text-[11px] text-sky-700">Pre-payment recovery potential</p>
+                <p className="text-[11px] text-[#005F68]">Pre-payment recovery potential</p>
               </div>
 
-              <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
-                <span className="text-xs font-semibold text-slate-700">Residual Risk Score</span>
-                <p className="text-2xl font-bold font-mono text-slate-900">
+              <div className="p-4 rounded-xl bg-[#F2FCFF] border border-[#042126]/10 space-y-1">
+                <span className="text-xs font-semibold text-[#042126]/70">Residual Risk Score</span>
+                <p className="text-2xl font-bold font-mono text-[#042126]">
                   {Math.max(10, caseData.composite_risk_score - 32.4).toFixed(1)} / 100
                 </p>
-                <p className="text-[11px] text-slate-500">Post-mitigation profile</p>
+                <p className="text-[11px] text-[#042126]/60">Post-mitigation profile</p>
               </div>
             </div>
           )}

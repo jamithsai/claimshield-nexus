@@ -34,7 +34,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   ];
 
   return (
-    <header className="sticky top-0 z-50 bg-white border-b border-slate-200 shadow-sm">
+    <header className="sticky top-0 z-50 bg-white border-b border-[#042126]/10 shadow-[0_1px_3px_0_rgba(4,33,38,0.04)]">
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-14">
           {/* Logo & Platform Identifier */}
@@ -42,19 +42,19 @@ export const Navbar: React.FC<NavbarProps> = ({
             className="flex items-center space-x-3 cursor-pointer select-none" 
             onClick={() => setActiveView('overview')}
           >
-            <div className="w-8 h-8 rounded-lg bg-sky-600 flex items-center justify-center border border-sky-700 shadow-sm">
+            <div className="w-8 h-8 rounded-lg bg-[#209B47] flex items-center justify-center border border-[#1B843C] shadow-xs">
               <ShieldCheck className="w-5 h-5 text-white" />
             </div>
             <div>
               <div className="flex items-center space-x-2">
-                <span className="font-bold text-sm tracking-tight text-slate-900">
-                  ClaimShield <span className="text-sky-600 font-extrabold">Nexus</span>
+                <span className="font-bold text-sm tracking-tight text-[#042126]">
+                  ClaimShield <span className="text-[#209B47] font-extrabold">Nexus</span>
                 </span>
-                <span className="text-[10px] font-mono font-semibold px-1.5 py-0.2 rounded bg-slate-100 text-slate-700 border border-slate-200">
+                <span className="text-[10px] font-mono font-semibold px-1.5 py-0.2 rounded bg-[#F2FCFF] text-[#005F68] border border-[#042126]/10">
                   v1.2.4
                 </span>
               </div>
-              <p className="text-[10px] text-slate-500 font-medium leading-none mt-0.5">
+              <p className="text-[10px] text-[#042126]/60 font-medium leading-none mt-0.5">
                 Healthcare Program Integrity &amp; Payment Integrity Platform
               </p>
             </div>
@@ -71,11 +71,11 @@ export const Navbar: React.FC<NavbarProps> = ({
                   onClick={() => setActiveView(item.id)}
                   className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
                     isActive
-                      ? 'bg-sky-50 text-sky-700 border border-sky-200 shadow-xs'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent'
+                      ? 'bg-[#209B47]/10 text-[#005F68] border border-[#209B47]/30 shadow-xs'
+                      : 'text-[#042126]/75 hover:text-[#042126] hover:bg-[#F2FCFF] border border-transparent'
                   }`}
                 >
-                  <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-sky-600' : 'text-slate-500'}`} />
+                  <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-[#209B47]' : 'text-[#042126]/50'}`} />
                   <span>{item.label}</span>
                 </button>
               );
@@ -85,21 +85,21 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Right Header Controls: Synthetic Badge & RBAC Switcher */}
           <div className="flex items-center space-x-3">
             {/* Non-Negotiable Synthetic Governance Chip */}
-            <div className="flex items-center space-x-1.5 px-2.5 py-1 rounded-md bg-indigo-50 border border-indigo-200 text-[10px] font-bold text-indigo-700">
-              <Database className="w-3 h-3 text-indigo-600" />
+            <div className="flex items-center space-x-1.5 px-2.5 py-1 rounded-md bg-[#ACF2E5]/30 border border-[#ACF2E5] text-[10px] font-bold text-[#005F68]">
+              <Database className="w-3 h-3 text-[#005F68]" />
               <span className="tracking-wide">SYNTHETIC BENCHMARK • ZERO PHI</span>
             </div>
 
             {/* Persona Switcher */}
-            <div className="flex items-center space-x-2 pl-3 border-l border-slate-200">
+            <div className="flex items-center space-x-2 pl-3 border-l border-[#042126]/10">
               <div className="text-right hidden sm:block">
-                <p className="text-xs font-bold text-slate-800">{currentUser?.full_name || 'Sarah Jenkins, CFE'}</p>
+                <p className="text-xs font-bold text-[#042126]">{currentUser?.full_name || 'Sarah Jenkins, CFE'}</p>
                 <div className="flex items-center justify-end space-x-1 mt-0.5">
-                  <UserCheck className="w-3 h-3 text-sky-600" />
+                  <UserCheck className="w-3 h-3 text-[#209B47]" />
                   <select
                     value={currentUser?.username || 'investigator@acentra.com'}
                     onChange={(e) => onRoleChange(e.target.value)}
-                    className="bg-slate-50 text-[11px] text-sky-700 font-semibold border border-slate-200 rounded px-1.5 py-0.5 focus:outline-none focus:ring-1 focus:ring-sky-500 cursor-pointer"
+                    className="bg-[#F2FCFF] text-[11px] text-[#005F68] font-semibold border border-[#042126]/15 rounded px-1.5 py-0.5 focus:outline-none focus:ring-1 focus:ring-[#209B47] cursor-pointer"
                   >
                     <option value="investigator@acentra.com">Investigator (SIU)</option>
                     <option value="senior@acentra.com">Senior Investigator</option>

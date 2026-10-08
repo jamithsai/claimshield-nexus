@@ -74,28 +74,28 @@ export const SIUQueueView: React.FC<SIUQueueViewProps> = ({ onSelectCase }) => {
       <div className="health-panel p-5 rounded-xl space-y-4">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center space-x-3.5">
-            <div className="p-2.5 rounded-lg bg-sky-50 text-sky-700 border border-sky-200">
-              <Layers className="w-5 h-5" />
+            <div className="p-2.5 rounded-lg bg-[#209B47]/10 text-[#005F68] border border-[#209B47]/30">
+              <Layers className="w-5 h-5 text-[#209B47]" />
             </div>
             <div>
-              <h1 className="text-lg font-bold text-slate-900 tracking-tight">SIU Priority Investigation Queue</h1>
-              <p className="text-xs text-slate-600 mt-0.5">
-                Capacity-constrained multi-attribute utility ranking: <span className="font-mono text-sky-800 font-semibold">U = 0.35(Risk) + 0.25(Exposure) + 0.15(Members) + 0.15(Velocity) + 0.10(Evidence)</span>
+              <h1 className="text-lg font-bold text-[#042126] tracking-tight">SIU Priority Investigation Queue</h1>
+              <p className="text-xs text-[#042126]/70 mt-0.5">
+                Capacity-constrained multi-attribute utility ranking: <span className="font-mono text-[#005F68] font-semibold">U = 0.35(Risk) + 0.25(Exposure) + 0.15(Members) + 0.15(Velocity) + 0.10(Evidence)</span>
               </p>
             </div>
           </div>
 
           {/* Quick Capacity Limit Buttons */}
-          <div className="flex items-center space-x-2 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200">
-            <span className="text-[11px] font-semibold text-slate-600 uppercase">Capacity Limit (K):</span>
+          <div className="flex items-center space-x-2 bg-[#F2FCFF] px-3 py-1.5 rounded-lg border border-[#042126]/10">
+            <span className="text-[11px] font-semibold text-[#042126]/70 uppercase">Capacity Limit (K):</span>
             {[5, 10, 20, 50].map((k) => (
               <button
                 key={k}
                 onClick={() => setCapacity(k)}
                 className={`px-2.5 py-1 rounded text-xs font-mono font-bold transition-colors ${
                   capacity === k
-                    ? 'bg-sky-600 text-white shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200'
+                    ? 'bg-[#209B47] text-white shadow-xs'
+                    : 'text-[#042126]/70 hover:text-[#042126] hover:bg-[#042126]/10'
                 }`}
               >
                 {k}
@@ -105,12 +105,12 @@ export const SIUQueueView: React.FC<SIUQueueViewProps> = ({ onSelectCase }) => {
         </div>
 
         {/* Capacity Meter Bar */}
-        <div className="flex items-center justify-between text-xs text-slate-500 pt-2 border-t border-slate-100">
+        <div className="flex items-center justify-between text-xs text-[#042126]/60 pt-2 border-t border-[#042126]/10">
           <div className="flex items-center space-x-2">
-            <span className="w-2 h-2 rounded-full bg-sky-600 animate-pulse"></span>
-            <span>Allocated Top <span className="text-slate-900 font-mono font-bold">{cases.length}</span> of {totalAvailable} Flagged Population Cases</span>
+            <span className="w-2 h-2 rounded-full bg-[#209B47] animate-pulse"></span>
+            <span>Allocated Top <span className="text-[#042126] font-mono font-bold">{cases.length}</span> of {totalAvailable} Flagged Population Cases</span>
           </div>
-          <span className="font-mono text-[11px] text-slate-500">100% Empirical Calculations • 0 Mock Overrides</span>
+          <span className="font-mono text-[11px] text-[#042126]/50">100% Empirical Calculations • 0 Mock Overrides</span>
         </div>
       </div>
 
@@ -118,13 +118,13 @@ export const SIUQueueView: React.FC<SIUQueueViewProps> = ({ onSelectCase }) => {
       <div className="grid grid-cols-1 md:grid-cols-12 gap-3">
         {/* Search Input */}
         <div className="md:col-span-5 relative">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+          <Search className="w-4 h-4 text-[#042126]/40 absolute left-3 top-2.5" />
           <input
             type="text"
             placeholder="Filter by Provider, NPI, Case ID, Scheme, or Specialty..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-white border border-slate-200 rounded-lg pl-9 pr-3 py-2 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-sky-500 shadow-xs"
+            className="w-full bg-white border border-[#042126]/15 rounded-lg pl-9 pr-3 py-2 text-xs text-[#042126] placeholder-[#042126]/40 focus:outline-none focus:ring-1 focus:ring-[#209B47] shadow-xs"
           />
         </div>
 
@@ -133,7 +133,7 @@ export const SIUQueueView: React.FC<SIUQueueViewProps> = ({ onSelectCase }) => {
           <select
             value={tierFilter}
             onChange={(e) => setTierFilter(e.target.value)}
-            className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-800 font-medium focus:outline-none focus:ring-1 focus:ring-sky-500 shadow-xs cursor-pointer"
+            className="w-full bg-white border border-[#042126]/15 rounded-lg px-3 py-2 text-xs text-[#042126] font-medium focus:outline-none focus:ring-1 focus:ring-[#209B47] shadow-xs cursor-pointer"
           >
             <option value="">All Severity Tiers</option>
             <option value="CRITICAL">CRITICAL (&ge; 75)</option>
@@ -147,7 +147,7 @@ export const SIUQueueView: React.FC<SIUQueueViewProps> = ({ onSelectCase }) => {
           <select
             value={schemeFilter}
             onChange={(e) => setSchemeFilter(e.target.value)}
-            className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-800 font-medium focus:outline-none focus:ring-1 focus:ring-sky-500 shadow-xs cursor-pointer"
+            className="w-full bg-white border border-[#042126]/15 rounded-lg px-3 py-2 text-xs text-[#042126] font-medium focus:outline-none focus:ring-1 focus:ring-[#209B47] shadow-xs cursor-pointer"
           >
             <option value="">All Schemes</option>
             <option value="Upcoding">Upcoding</option>
@@ -163,7 +163,7 @@ export const SIUQueueView: React.FC<SIUQueueViewProps> = ({ onSelectCase }) => {
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
-            className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-800 font-medium focus:outline-none focus:ring-1 focus:ring-sky-500 shadow-xs cursor-pointer"
+            className="w-full bg-white border border-[#042126]/15 rounded-lg px-3 py-2 text-xs text-[#042126] font-medium focus:outline-none focus:ring-1 focus:ring-[#209B47] shadow-xs cursor-pointer"
           >
             <option value="priority">Sort: Utility Rank</option>
             <option value="risk_score">Sort: Risk Score</option>
@@ -177,20 +177,20 @@ export const SIUQueueView: React.FC<SIUQueueViewProps> = ({ onSelectCase }) => {
       {/* Main High-Density Tabular Investigation Grid */}
       <div className="health-panel rounded-xl overflow-hidden shadow-xs">
         {isLoading ? (
-          <div className="p-12 text-center text-slate-500">
-            <Activity className="w-6 h-6 text-sky-600 animate-spin mx-auto mb-2" />
+          <div className="p-12 text-center text-[#042126]/60">
+            <Activity className="w-6 h-6 text-[#209B47] animate-spin mx-auto mb-2" />
             <p className="text-xs font-semibold">Recalculating SIU queue optimization...</p>
           </div>
         ) : filteredCases.length === 0 ? (
-          <div className="p-12 text-center text-slate-500">
-            <ShieldAlert className="w-8 h-8 text-slate-400 mx-auto mb-2" />
-            <p className="text-xs font-semibold text-slate-700">No cases matched the current search/filter criteria.</p>
-            <p className="text-[11px] text-slate-400 mt-1">Try resetting the severity or scheme filter dropdowns.</p>
+          <div className="p-12 text-center text-[#042126]/60">
+            <ShieldAlert className="w-8 h-8 text-[#042126]/40 mx-auto mb-2" />
+            <p className="text-xs font-semibold text-[#042126]">No cases matched the current search/filter criteria.</p>
+            <p className="text-[11px] text-[#042126]/50 mt-1">Try resetting the severity or scheme filter dropdowns.</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="bg-slate-50 text-slate-700 font-semibold border-b border-slate-200">
+              <thead className="bg-[#F2FCFF] text-[#042126] font-semibold border-b border-[#042126]/10">
                 <tr>
                   <th className="py-3 px-3 text-center w-12">#</th>
                   <th className="py-3 px-3">Case ID</th>
@@ -205,7 +205,7 @@ export const SIUQueueView: React.FC<SIUQueueViewProps> = ({ onSelectCase }) => {
                   <th className="py-3 px-4 text-center">Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-[#042126]/5">
                 {filteredCases.map((c, idx) => {
                   const isCritical = c.risk_tier === 'CRITICAL';
                   const isHigh = c.risk_tier === 'HIGH';
@@ -214,32 +214,32 @@ export const SIUQueueView: React.FC<SIUQueueViewProps> = ({ onSelectCase }) => {
                   return (
                     <tr 
                       key={c.case_id}
-                      className="hover:bg-slate-50 transition-colors group cursor-pointer"
+                      className="hover:bg-[#F2FCFF]/80 transition-colors group cursor-pointer"
                       onClick={() => onSelectCase(c.case_id)}
                     >
                       {/* Rank Index */}
-                      <td className="py-3.5 px-3 text-center font-mono font-bold text-slate-400 group-hover:text-sky-700">
+                      <td className="py-3.5 px-3 text-center font-mono font-bold text-[#042126]/40 group-hover:text-[#005F68]">
                         {idx + 1}
                       </td>
 
                       {/* Case ID */}
-                      <td className="py-3.5 px-3 font-mono font-semibold text-sky-700 whitespace-nowrap">
+                      <td className="py-3.5 px-3 font-mono font-semibold text-[#005F68] whitespace-nowrap">
                         {c.case_id}
                       </td>
 
                       {/* Provider Details */}
                       <td className="py-3.5 px-4">
-                        <div className="font-semibold text-slate-900 group-hover:text-sky-800 transition-colors">
+                        <div className="font-semibold text-[#042126] group-hover:text-[#005F68] transition-colors">
                           {c.target_entity_name}
                         </div>
-                        <div className="text-[11px] text-slate-500 font-mono mt-0.5">
-                          NPI: {c.target_entity_id} • <span className="text-slate-600">{c.specialty}</span>
+                        <div className="text-[11px] text-[#042126]/60 font-mono mt-0.5">
+                          NPI: {c.target_entity_id} • <span className="text-[#042126]/80">{c.specialty}</span>
                         </div>
                       </td>
 
                       {/* Primary Signal */}
                       <td className="py-3.5 px-3">
-                        <span className="inline-block px-2 py-0.5 rounded text-[11px] font-medium bg-slate-100 text-slate-700 border border-slate-200">
+                        <span className="inline-block px-2 py-0.5 rounded text-[11px] font-medium bg-[#042126]/5 text-[#042126] border border-[#042126]/10">
                           {c.primary_fwa_pattern}
                         </span>
                       </td>
@@ -254,12 +254,12 @@ export const SIUQueueView: React.FC<SIUQueueViewProps> = ({ onSelectCase }) => {
                       </td>
 
                       {/* Potential Financial Exposure */}
-                      <td className="py-3.5 px-3 text-right font-mono font-bold text-slate-900 tabular-nums">
+                      <td className="py-3.5 px-3 text-right font-mono font-bold text-[#042126] tabular-nums">
                         ${c.potential_financial_exposure.toLocaleString()}
                       </td>
 
                       {/* Impacted Members */}
-                      <td className="py-3.5 px-3 text-right font-mono text-slate-700 tabular-nums">
+                      <td className="py-3.5 px-3 text-right font-mono text-[#042126]/80 tabular-nums">
                         {c.member_impact_count}
                       </td>
 
@@ -270,7 +270,7 @@ export const SIUQueueView: React.FC<SIUQueueViewProps> = ({ onSelectCase }) => {
 
                       {/* Evidence Strength */}
                       <td className="py-3.5 px-3 text-center">
-                        <span className="font-mono text-xs font-semibold text-slate-700">
+                        <span className="font-mono text-xs font-semibold text-[#042126]">
                           {c.evidence_strength}
                         </span>
                       </td>
@@ -279,10 +279,10 @@ export const SIUQueueView: React.FC<SIUQueueViewProps> = ({ onSelectCase }) => {
                       <td className="py-3.5 px-3 text-center">
                         <span className={`px-2 py-0.5 rounded text-[10px] font-semibold uppercase ${
                           c.status === 'UNDER_INVESTIGATION'
-                            ? 'bg-amber-50 text-amber-800 border border-amber-200'
+                            ? 'bg-[#FEF3C7] text-[#B45309] border border-[#FDE68A]'
                             : c.status === 'ESCALATED'
-                            ? 'bg-rose-50 text-rose-800 border border-rose-200'
-                            : 'bg-slate-100 text-slate-700 border border-slate-200'
+                            ? 'bg-[#FEE2E2] text-[#B91C1C] border border-[#FECACA]'
+                            : 'bg-[#042126]/5 text-[#042126] border border-[#042126]/10'
                         }`}>
                           {c.status.replace(/_/g, ' ')}
                         </span>
@@ -292,7 +292,7 @@ export const SIUQueueView: React.FC<SIUQueueViewProps> = ({ onSelectCase }) => {
                       <td className="py-3.5 px-4 text-center" onClick={(e) => e.stopPropagation()}>
                         <button
                           onClick={() => onSelectCase(c.case_id)}
-                          className="px-3 py-1 rounded bg-sky-600 hover:bg-sky-700 text-white text-xs font-semibold shadow-xs transition-colors"
+                          className="px-3 py-1 rounded bg-[#209B47] hover:bg-[#1B843C] text-white text-xs font-semibold shadow-xs transition-colors"
                         >
                           Investigate
                         </button>

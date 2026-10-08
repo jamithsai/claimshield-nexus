@@ -56,7 +56,7 @@ export function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans">
+    <div className="min-h-screen bg-[#F2FCFF] text-[#042126] flex flex-col font-sans">
       {/* Top Healthcare Navigation Bar */}
       <Navbar
         currentUser={currentUser}
@@ -105,14 +105,14 @@ export function App() {
       </main>
 
       {/* Institutional Healthcare Enterprise Footer */}
-      <footer className="border-t border-slate-200 bg-white py-4 text-center text-xs text-slate-600">
+      <footer className="border-t border-[#042126]/10 bg-white py-4 text-center text-xs text-[#042126]/70">
         <div className="max-w-[1600px] mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
           <div className="flex items-center space-x-2">
-            <span className="font-semibold text-slate-800">ClaimShield Nexus</span>
-            <span className="text-slate-300">•</span>
+            <span className="font-semibold text-[#042126]">ClaimShield Nexus</span>
+            <span className="text-[#042126]/20">•</span>
             <span>Healthcare Program Integrity &amp; Payment Integrity Intelligence</span>
           </div>
-          <p className="text-[11px] text-slate-500 font-mono">
+          <p className="text-[11px] text-[#042126]/50 font-mono">
             Synthetic Benchmark Evaluation • Zero PHI Ingestion • Acentra Health PS3
           </p>
         </div>

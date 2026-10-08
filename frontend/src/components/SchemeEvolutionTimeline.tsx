@@ -83,27 +83,27 @@ export const SchemeEvolutionTimeline: React.FC<SchemeEvolutionTimelineProps> = (
     <div className="w-full space-y-4 font-sans">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex items-center space-x-2">
-          <div className="p-1.5 rounded-lg bg-sky-50 text-sky-700 border border-sky-200">
+          <div className="p-1.5 rounded-lg bg-[#E8F8EE] text-[#1B843C] border border-[#209B47]/20">
             <Clock className="w-4 h-4" />
           </div>
           <div>
-            <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
+            <h3 className="text-xs font-bold text-[#042126] uppercase tracking-wider">
               Longitudinal Scheme Evolution
             </h3>
-            <p className="text-[11px] text-slate-500">Tracks expansion of providers, facilities, volume, and exposure over 30-day epochs</p>
+            <p className="text-[11px] text-[#042126]/60">Tracks expansion of providers, facilities, volume, and exposure over 30-day epochs</p>
           </div>
         </div>
 
         {/* Epoch Selector Buttons */}
-        <div className="flex items-center space-x-1 bg-slate-100 p-1 rounded-lg border border-slate-200">
+        <div className="flex items-center space-x-1 bg-[#F2FCFF] p-1 rounded-lg border border-[#042126]/10">
           {history.map((h, idx) => (
             <button
               key={idx}
               onClick={() => setSelectedEpochIndex(idx)}
               className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-colors ${
                 selectedEpochIndex === idx
-                  ? 'bg-white text-slate-900 shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900'
+                  ? 'bg-white text-[#042126] shadow-xs border border-[#042126]/10 font-bold'
+                  : 'text-[#042126]/70 hover:text-[#042126]'
               }`}
             >
               {h.epoch_label.split(' - ')[0]}
@@ -114,31 +114,31 @@ export const SchemeEvolutionTimeline: React.FC<SchemeEvolutionTimelineProps> = (
 
       {/* Epoch Detail Banner */}
       {activeSnapshot && (
-        <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-xs">
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 p-3.5 rounded-xl bg-[#F2FCFF] border border-[#042126]/10 text-xs">
           <div>
-            <p className="text-[10px] text-slate-500 font-semibold uppercase">Epoch Window</p>
-            <p className="font-bold text-slate-900 mt-0.5">{activeSnapshot.date_start} &rarr; {activeSnapshot.date_end}</p>
+            <p className="text-[10px] text-[#042126]/60 font-semibold uppercase">Epoch Window</p>
+            <p className="font-bold text-[#042126] mt-0.5">{activeSnapshot.date_start} &rarr; {activeSnapshot.date_end}</p>
           </div>
           <div>
-            <p className="text-[10px] text-slate-500 font-semibold uppercase">Linked Entities</p>
-            <p className="font-bold text-sky-700 mt-0.5 flex items-center space-x-1">
+            <p className="text-[10px] text-[#042126]/60 font-semibold uppercase">Linked Entities</p>
+            <p className="font-bold text-[#005F68] mt-0.5 flex items-center space-x-1">
               <Users className="w-3.5 h-3.5" />
               <span>{activeSnapshot.active_providers_count} Prov • {activeSnapshot.active_facilities_count} Fac</span>
             </p>
           </div>
           <div>
-            <p className="text-[10px] text-slate-500 font-semibold uppercase">Encounter Volume</p>
-            <p className="font-bold text-slate-900 mt-0.5 tabular-nums">{activeSnapshot.claim_volume} claims</p>
+            <p className="text-[10px] text-[#042126]/60 font-semibold uppercase">Encounter Volume</p>
+            <p className="font-bold text-[#042126] mt-0.5 tabular-nums">{activeSnapshot.claim_volume} claims</p>
           </div>
           <div>
-            <p className="text-[10px] text-slate-500 font-semibold uppercase">Cumulative Exposure</p>
-            <p className="font-bold text-rose-700 mt-0.5 font-mono tabular-nums">
+            <p className="text-[10px] text-[#042126]/60 font-semibold uppercase">Cumulative Exposure</p>
+            <p className="font-bold text-[#B91C1C] mt-0.5 font-mono tabular-nums">
               ${activeSnapshot.financial_exposure.toLocaleString('en-US', { minimumFractionDigits: 0 })}
             </p>
           </div>
           <div>
-            <p className="text-[10px] text-slate-500 font-semibold uppercase">Risk Level</p>
-            <p className="font-bold text-amber-700 mt-0.5 font-mono tabular-nums">{activeSnapshot.risk_score.toFixed(1)} / 100</p>
+            <p className="text-[10px] text-[#042126]/60 font-semibold uppercase">Risk Level</p>
+            <p className="font-bold text-[#D97706] mt-0.5 font-mono tabular-nums">{activeSnapshot.risk_score.toFixed(1)} / 100</p>
           </div>
         </div>
       )}
@@ -149,25 +149,25 @@ export const SchemeEvolutionTimeline: React.FC<SchemeEvolutionTimelineProps> = (
           <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
             <defs>
               <linearGradient id="exposureGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#dc2626" stopOpacity={0.25} />
-                <stop offset="95%" stopColor="#dc2626" stopOpacity={0.0} />
+                <stop offset="5%" stopColor="#B91C1C" stopOpacity={0.25} />
+                <stop offset="95%" stopColor="#B91C1C" stopOpacity={0.0} />
               </linearGradient>
               <linearGradient id="riskGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#0284c7" stopOpacity={0.25} />
-                <stop offset="95%" stopColor="#0284c7" stopOpacity={0.0} />
+                <stop offset="5%" stopColor="#209B47" stopOpacity={0.25} />
+                <stop offset="95%" stopColor="#209B47" stopOpacity={0.0} />
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-            <XAxis dataKey="name" stroke="#64748b" fontSize={11} />
-            <YAxis stroke="#64748b" fontSize={10} tickFormatter={(v) => `$${v / 1000}k`} />
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(4, 33, 38, 0.08)" />
+            <XAxis dataKey="name" stroke="#042126" opacity={0.6} fontSize={11} />
+            <YAxis stroke="#042126" opacity={0.6} fontSize={10} tickFormatter={(v) => `$${v / 1000}k`} />
             <Tooltip
               content={({ payload, label }) => {
                 if (payload && payload.length > 0) {
                   return (
-                    <div className="bg-white border border-slate-200 p-3 rounded-lg shadow-md text-xs space-y-1">
-                      <p className="font-bold text-slate-900">{label}</p>
-                      <p className="text-rose-700 font-mono font-bold">Exposure: ${payload[0]?.value?.toLocaleString()}</p>
-                      <p className="text-sky-700 font-mono">Risk Score: {payload[1]?.value} / 100</p>
+                    <div className="bg-white border border-[#042126]/10 p-3 rounded-lg shadow-md text-xs space-y-1">
+                      <p className="font-bold text-[#042126]">{label}</p>
+                      <p className="text-[#B91C1C] font-mono font-bold">Exposure: ${payload[0]?.value?.toLocaleString()}</p>
+                      <p className="text-[#209B47] font-mono">Risk Score: {payload[1]?.value} / 100</p>
                     </div>
                   );
                 }
@@ -178,7 +178,7 @@ export const SchemeEvolutionTimeline: React.FC<SchemeEvolutionTimelineProps> = (
               type="monotone" 
               dataKey="exposure" 
               name="Exposure ($)"
-              stroke="#dc2626" 
+              stroke="#B91C1C" 
               strokeWidth={2} 
               fillOpacity={1} 
               fill="url(#exposureGradient)" 
@@ -187,7 +187,7 @@ export const SchemeEvolutionTimeline: React.FC<SchemeEvolutionTimelineProps> = (
               type="monotone" 
               dataKey="risk" 
               name="Risk Score"
-              stroke="#0284c7" 
+              stroke="#209B47" 
               strokeWidth={2} 
               fillOpacity={1} 
               fill="url(#riskGradient)" 

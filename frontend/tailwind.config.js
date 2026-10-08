@@ -7,31 +7,25 @@ export default {
   theme: {
     extend: {
       colors: {
-        brand: {
-          50: '#f0f9ff',
-          100: '#e0f2fe',
-          200: '#bae6fd',
-          300: '#7dd3fc',
-          400: '#38bdf8',
-          500: '#0ea5e9',
-          600: '#0284c7',
-          700: '#0369a1',
-          800: '#075985',
-          900: '#0c4a6e',
-          950: '#082f49',
-        },
-        teal: {
-          50: '#f0fdfa',
-          100: '#ccfbf1',
-          500: '#14b8a6',
-          600: '#0d9488',
-          700: '#0f766e',
+        acentra: {
+          dark: '#042126',       // Obsidian Pine Teal
+          green: '#209B47',      // Forest Healthcare Green
+          greenHover: '#1B843C', // Forest Green Hover
+          teal: '#005F68',       // Deep Ocean Teal
+          mint: '#ACF2E5',       // Pale Seafoam Mint
+          navy: '#15497E',       // Slate Healthcare Navy
+          glacier: '#F2FCFF',    // Glacier Tint
+          white: '#FFFFFF',      // Clean White
         },
         risk: {
-          low: '#16a34a',
-          medium: '#2563eb',
-          high: '#d97706',
-          critical: '#dc2626',
+          critical: '#B91C1C',
+          criticalBg: '#FEE2E2',
+          high: '#D97706',
+          highBg: '#FEF3C7',
+          medium: '#15497E',
+          mediumBg: '#EFF6FF',
+          low: '#209B47',
+          lowBg: '#ACF2E5',
         }
       }
     },

@@ -5,8 +5,8 @@
 @layer base {
   body {
     font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    background-color: #f8fafc;
-    color: #0f172a;
+    background-color: #F2FCFF;
+    color: #042126;
     letter-spacing: -0.01em;
     -webkit-font-smoothing: antialiased;
   }
@@ -22,32 +22,32 @@
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: #F2FCFF;
 }
 ::-webkit-scrollbar-thumb {
   background: #cbd5e1;
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: #005F68;
 }
 
 /* Healthcare Enterprise Surfaces & Panels */
 .health-panel {
   background-color: #ffffff;
-  border: 1px solid #e2e8f0;
-  box-shadow: 0 1px 2px 0 rgba(15, 23, 42, 0.04);
+  border: 1px solid rgba(4, 33, 38, 0.10);
+  box-shadow: 0 1px 3px 0 rgba(4, 33, 38, 0.04);
 }
 
 .health-panel-recessed {
-  background-color: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background-color: #F2FCFF;
+  border: 1px solid rgba(4, 33, 38, 0.10);
 }
 
 .health-panel-elevated {
   background-color: #ffffff;
-  border: 1px solid #cbd5e1;
-  box-shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.06), 0 2px 4px -2px rgba(15, 23, 42, 0.04);
+  border: 1px solid rgba(4, 33, 38, 0.15);
+  box-shadow: 0 4px 6px -1px rgba(4, 33, 38, 0.06), 0 2px 4px -2px rgba(4, 33, 38, 0.04);
 }
 
 /* Tabular number utility */
@@ -57,25 +57,43 @@
 
 /* Clinical Semantic Risk Badges */
 .badge-critical {
-  background-color: #fef2f2;
-  color: #b91c1c;
-  border: 1px solid #fecaca;
+  background-color: #FEE2E2;
+  color: #B91C1C;
+  border: 1px solid #FECACA;
 }
 
 .badge-high {
-  background-color: #fffbeb;
-  color: #b45309;
-  border: 1px solid #fde68a;
+  background-color: #FEF3C7;
+  color: #B45309;
+  border: 1px solid #FDE68A;
 }
 
 .badge-medium {
-  background-color: #eff6ff;
-  color: #1d4ed8;
-  border: 1px solid #bfdbfe;
+  background-color: #EFF6FF;
+  color: #15497E;
+  border: 1px solid #BFDBFE;
 }
 
 .badge-low {
-  background-color: #f0fdf4;
-  color: #15803d;
-  border: 1px solid #bbf7d0;
+  background-color: #E8F8EE;
+  color: #1B843C;
+  border: 1px solid #ACF2E5;
+}
+
+.badge-mint {
+  background-color: rgba(172, 242, 229, 0.35);
+  color: #005F68;
+  border: 1px solid #ACF2E5;
+}
+
+.badge-navy {
+  background-color: rgba(21, 73, 126, 0.08);
+  color: #15497E;
+  border: 1px solid rgba(21, 73, 126, 0.2);
+}
+
+.badge-dark {
+  background-color: rgba(4, 33, 38, 0.08);
+  color: #042126;
+  border: 1px solid rgba(4, 33, 38, 0.2);
 }

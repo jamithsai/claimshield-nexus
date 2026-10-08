@@ -32,8 +32,8 @@ export const NetworkExplorerView: React.FC<NetworkExplorerViewProps> = ({ onSele
     return (
       <div className="flex items-center justify-center min-h-[450px]">
         <div className="flex flex-col items-center space-y-3">
-          <Activity className="w-8 h-8 text-sky-600 animate-spin" />
-          <p className="text-xs font-semibold text-slate-600">Constructing Heterogeneous Network Graph...</p>
+          <Activity className="w-8 h-8 text-[#209B47] animate-spin" />
+          <p className="text-xs font-semibold text-[#042126]/70">Constructing Heterogeneous Network Graph...</p>
         </div>
       </div>
     );
@@ -44,18 +44,18 @@ export const NetworkExplorerView: React.FC<NetworkExplorerViewProps> = ({ onSele
       {/* Header */}
       <div className="health-panel p-5 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center space-x-3.5">
-          <div className="p-2.5 rounded-lg bg-sky-50 text-sky-700 border border-sky-200">
-            <Network className="w-5 h-5" />
+          <div className="p-2.5 rounded-lg bg-[#209B47]/10 text-[#005F68] border border-[#209B47]/30">
+            <Network className="w-5 h-5 text-[#209B47]" />
           </div>
           <div>
-            <h1 className="text-lg font-bold text-slate-900 tracking-tight">Healthcare Network Explorer</h1>
-            <p className="text-xs text-slate-600 mt-0.5">
-              Population topology mapping <span className="font-mono text-slate-900 font-bold">{graphData.total_network_nodes}</span> entities and <span className="font-mono text-slate-900 font-bold">{graphData.total_network_edges}</span> referral/billing connections
+            <h1 className="text-lg font-bold text-[#042126] tracking-tight">Healthcare Network Explorer</h1>
+            <p className="text-xs text-[#042126]/70 mt-0.5">
+              Population topology mapping <span className="font-mono text-[#042126] font-bold">{graphData.total_network_nodes}</span> entities and <span className="font-mono text-[#042126] font-bold">{graphData.total_network_edges}</span> referral/billing connections
             </p>
           </div>
         </div>
         <div className="flex items-center space-x-2">
-          <span className="text-[11px] font-mono text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-200 font-semibold">
+          <span className="text-[11px] font-mono text-[#1B843C] bg-[#E8F8EE] px-2.5 py-1 rounded-md border border-[#ACF2E5] font-semibold">
             PageRank &amp; Centrality Online
           </span>
         </div>
@@ -64,28 +64,28 @@ export const NetworkExplorerView: React.FC<NetworkExplorerViewProps> = ({ onSele
       {/* Suspicious Collusion Clusters Banner */}
       {clusters.length > 0 && (
         <div className="space-y-3">
-          <h3 className="text-xs font-bold text-rose-800 uppercase tracking-wider flex items-center space-x-1.5">
-            <ShieldAlert className="w-4 h-4 text-rose-600" />
+          <h3 className="text-xs font-bold text-[#B91C1C] uppercase tracking-wider flex items-center space-x-1.5">
+            <ShieldAlert className="w-4 h-4 text-[#B91C1C]" />
             <span>Detected Suspicious Collusion Rings &amp; Referral Loops ({clusters.length})</span>
           </h3>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {clusters.map((cl, idx) => (
-              <div key={idx} className="p-4 rounded-xl border border-rose-200 bg-rose-50/50 space-y-2.5">
+              <div key={idx} className="p-4 rounded-xl border border-[#FECACA] bg-[#FEE2E2]/40 space-y-2.5">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-mono font-bold text-rose-800 bg-rose-100 px-2 py-0.5 rounded border border-rose-300">
+                  <span className="text-xs font-mono font-bold text-[#B91C1C] bg-[#FEE2E2] px-2 py-0.5 rounded border border-[#FECACA]">
                     {cl.cluster_id}
                   </span>
-                  <span className="text-[10px] font-bold uppercase text-rose-700">
+                  <span className="text-[10px] font-bold uppercase text-[#B91C1C]">
                     {cl.cluster_type.replace(/_/g, ' ')}
                   </span>
                 </div>
-                <p className="text-xs text-slate-700 leading-relaxed">{cl.description}</p>
+                <p className="text-xs text-[#042126]/80 leading-relaxed">{cl.description}</p>
                 <div className="pt-1">
-                  <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Colluding Entities:</p>
+                  <p className="text-[10px] font-bold text-[#042126]/60 uppercase tracking-wider">Colluding Entities:</p>
                   <div className="flex flex-wrap gap-1.5 mt-1.5">
                     {cl.entity_names.map((name: string, i: number) => (
-                      <span key={i} className="text-[10px] font-medium text-slate-800 bg-white px-2 py-0.5 rounded border border-slate-200 shadow-2xs">
+                      <span key={i} className="text-[10px] font-medium text-[#042126] bg-white px-2 py-0.5 rounded border border-[#042126]/10 shadow-2xs">
                         {name}
                       </span>
                     ))}
