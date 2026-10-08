@@ -1,10 +1,11 @@
 # ClaimShield Nexus — Healthcare Program Integrity & FWA Intelligence Platform
 
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)]()
-[![Tests](https://img.shields.io/badge/tests-29%2F29%20passed%20(100%25)-success.svg)]()
-[![Python](https://img.shields.io/badge/Python-3.13+-blue.svg)]()
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.141-teal.svg)]()
+[![Tests](https://img.shields.io/badge/tests-33%2F33%20passed%20(100%25)-success.svg)]()
+[![Python](https://img.shields.io/badge/Python-3.11+-blue.svg)]()
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.115-teal.svg)]()
 [![React](https://img.shields.io/badge/React-18.3-blue.svg)]()
+[![Deploy to Render](https://img.shields.io/badge/Render-Deploy%20Ready-46E3B7.svg?logo=render&logoColor=white)]()
 [![Compliance](https://img.shields.io/badge/PS3%20Requirements-100%25%20Compliant-emerald.svg)]()
 
 > **Built for the Acentra Health Hiring Hackathon**  
@@ -222,7 +223,39 @@ tests/test_rules.py::test_fwa_rule_engine_unification PASSED             [100%]
 
 ---
 
-## 6. Architecture & Design Documentation
+## 6. Cloud Deployment (Render.com)
+
+ClaimShield Nexus is configured for seamless 1-click cloud deployment on Render as a unified full-stack service.
+
+### Option A: 1-Click Render Blueprint (Recommended)
+1. Fork or push this repository to your GitHub account: `https://github.com/jamithsai/claimshield-nexus.git`.
+2. Go to the [Render Dashboard](https://dashboard.render.com/) and click **New +** → **Blueprint**.
+3. Select the `claimshield-nexus` repository.
+4. Render will automatically read [`render.yaml`](render.yaml) and configure:
+   - **Environment:** Python 3.11 + Node 20
+   - **Build Command:** `./build.sh` (Installs python packages, builds Vite React production bundle)
+   - **Start Command:** `uvicorn backend.main:app --host 0.0.0.0 --port $PORT`
+   - **Health Check Path:** `/api/v1/health`
+5. Click **Apply**. The deployment will build and serve the application live!
+
+### Option B: Manual Web Service Setup
+1. On [Render Dashboard](https://dashboard.render.com/), click **New +** → **Web Service**.
+2. Connect your GitHub repository.
+3. Configure the following fields:
+   - **Runtime:** `Python 3`
+   - **Build Command:** `./build.sh` (or `pip install -r requirements.txt && cd frontend && npm install && npm run build && cd ..`)
+   - **Start Command:** `uvicorn backend.main:app --host 0.0.0.0 --port $PORT`
+   - **Health Check Path:** `/api/v1/health`
+4. Click **Create Web Service**.
+
+### Option C: Containerized Docker Deployment
+If you prefer running in Docker, Render supports Docker deployment directly using our included multi-stage [`Dockerfile`](Dockerfile):
+- **Runtime:** `Docker`
+- **Port:** `$PORT` (automatically mapped)
+
+---
+
+## 7. Architecture & Design Documentation
 - [`ARCHITECTURE.md`](ARCHITECTURE.md): Full system architecture specification & component diagrams.
 - [`REQUIREMENTS_MATRIX.md`](REQUIREMENTS_MATRIX.md): Detailed traceability matrix for all PS3 requirements.
 - [`DATA_MODEL.md`](DATA_MODEL.md): Unified data models, schemas, and relational entities.
@@ -230,3 +263,4 @@ tests/test_rules.py::test_fwa_rule_engine_unification PASSED             [100%]
 - [`SECURITY.md`](SECURITY.md): Threat model, RBAC matrix, and Merkle chain audit architecture.
 - [`MODEL_CARD.md`](MODEL_CARD.md): Machine learning model card and ethical considerations.
 - [`DEMO_FLOW.md`](DEMO_FLOW.md): Step-by-step hackathon presentation script for judges.
+
