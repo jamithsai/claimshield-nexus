@@ -10,6 +10,7 @@ import {
 } from 'recharts';
 import { Clock, TrendingUp, Users, Building, DollarSign, AlertCircle } from 'lucide-react';
 import { SchemeEvolutionSnapshot } from '../types';
+import { useCurrency } from '../context/CurrencyContext';
 
 interface SchemeEvolutionTimelineProps {
   profile?: any;
@@ -20,6 +21,7 @@ export const SchemeEvolutionTimeline: React.FC<SchemeEvolutionTimelineProps> = (
   profile,
   history: directHistory 
 }) => {
+  const { currencySymbol, formatMoney, formatAxisMoney } = useCurrency();
   const history: SchemeEvolutionSnapshot[] = directHistory || profile?.evolution_snapshots || [
     {
       epoch_label: 'Day 0 - Baseline',
@@ -133,7 +135,7 @@ export const SchemeEvolutionTimeline: React.FC<SchemeEvolutionTimelineProps> = (
           <div>
             <p className="text-[10px] text-[#042126]/60 font-semibold uppercase">Cumulative Exposure</p>
             <p className="font-bold text-[#B91C1C] mt-0.5 font-mono tabular-nums">
-              ${activeSnapshot.financial_exposure.toLocaleString('en-US', { minimumFractionDigits: 0 })}
+              {formatMoney(activeSnapshot.financial_exposure, { decimals: 0 })}
             </p>
           </div>
           <div>
@@ -159,14 +161,14 @@ export const SchemeEvolutionTimeline: React.FC<SchemeEvolutionTimelineProps> = (
             </defs>
             <CartesianGrid strokeDasharray="3 3" stroke="rgba(4, 33, 38, 0.08)" />
             <XAxis dataKey="name" stroke="#042126" opacity={0.6} fontSize={11} />
-            <YAxis stroke="#042126" opacity={0.6} fontSize={10} tickFormatter={(v) => `$${v / 1000}k`} />
+            <YAxis stroke="#042126" opacity={0.6} fontSize={10} tickFormatter={(v) => formatAxisMoney(v)} />
             <Tooltip
               content={({ payload, label }) => {
                 if (payload && payload.length > 0) {
                   return (
                     <div className="bg-white border border-[#042126]/10 p-3 rounded-lg shadow-md text-xs space-y-1">
                       <p className="font-bold text-[#042126]">{label}</p>
-                      <p className="text-[#B91C1C] font-mono font-bold">Exposure: ${payload[0]?.value?.toLocaleString()}</p>
+                      <p className="text-[#B91C1C] font-mono font-bold">Exposure: {formatMoney(Number(payload[0]?.value || 0))}</p>
                       <p className="text-[#209B47] font-mono">Risk Score: {payload[1]?.value} / 100</p>
                     </div>
                   );
@@ -177,7 +179,7 @@ export const SchemeEvolutionTimeline: React.FC<SchemeEvolutionTimelineProps> = (
             <Area 
               type="monotone" 
               dataKey="exposure" 
-              name="Exposure ($)"
+              name={`Exposure (${currencySymbol})`}
               stroke="#B91C1C" 
               strokeWidth={2} 
               fillOpacity={1} 

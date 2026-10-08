@@ -17,12 +17,14 @@ import {
 import { SIUCase } from '../types';
 import { api } from '../services/api';
 import { RiskVelocitySpark } from '../components/RiskVelocitySpark';
+import { useCurrency } from '../context/CurrencyContext';
 
 interface SIUQueueViewProps {
   onSelectCase: (caseId: string) => void;
 }
 
 export const SIUQueueView: React.FC<SIUQueueViewProps> = ({ onSelectCase }) => {
+  const { formatMoney } = useCurrency();
   const [cases, setCases] = useState<SIUCase[]>([]);
   const [totalAvailable, setTotalAvailable] = useState(0);
   const [capacity, setCapacity] = useState(10);
@@ -255,7 +257,7 @@ export const SIUQueueView: React.FC<SIUQueueViewProps> = ({ onSelectCase }) => {
 
                       {/* Potential Financial Exposure */}
                       <td className="py-3.5 px-3 text-right font-mono font-bold text-[#042126] tabular-nums">
-                        ${c.potential_financial_exposure.toLocaleString()}
+                        {formatMoney(c.potential_financial_exposure)}
                       </td>
 
                       {/* Impacted Members */}

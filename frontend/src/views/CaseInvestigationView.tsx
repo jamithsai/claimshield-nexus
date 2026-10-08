@@ -35,6 +35,7 @@ import { RiskVelocitySpark } from '../components/RiskVelocitySpark';
 import { EvidenceGraphViewer } from '../components/EvidenceGraphViewer';
 import { RelationshipGraphViewer } from '../components/RelationshipGraphViewer';
 import { DecisionModal } from '../components/DecisionModal';
+import { useCurrency } from '../context/CurrencyContext';
 
 interface CaseInvestigationViewProps {
   caseId: string;
@@ -49,6 +50,7 @@ export const CaseInvestigationView: React.FC<CaseInvestigationViewProps> = ({
   onBackToQueue,
   onSelectCaseByNpi,
 }) => {
+  const { currencySymbol, formatMoney } = useCurrency();
   const [activeTab, setActiveTab] = useState<'overview' | 'genome' | 'evolution' | 'network' | 'evidence' | 'projections' | 'brief' | 'simulator' | 'claims'>('overview');
   const [caseData, setCaseData] = useState<SIUCase | null>(null);
   const [providerDetails, setProviderDetails] = useState<any>(null);
@@ -118,7 +120,7 @@ export const CaseInvestigationView: React.FC<CaseInvestigationViewProps> = ({
 
   const handleCopyBrief = () => {
     if (!brief) return;
-    const text = `CLAIMSHIELD NEXUS SIU INVESTIGATION BRIEF\nCase: ${caseData?.case_id} (${caseData?.target_entity_name})\nRisk Score: ${caseData?.composite_risk_score}/100 (${caseData?.risk_tier})\nExposure: $${caseData?.potential_financial_exposure.toLocaleString()}\n\nEXECUTIVE SUMMARY:\n${brief.executive_summary}\n\nKEY FINDINGS:\n${brief.key_behavioral_findings.join('\n')}\n\nMITIGATING FACTORS:\n${brief.mitigating_factors}\n\nRECOMMENDED ACTIONS:\n${brief.recommended_investigative_actions.join('\n')}\n\nDISCLAIMER:\n${brief.mandatory_disclaimer}`;
+    const text = `CLAIMSHIELD NEXUS SIU INVESTIGATION BRIEF\nCase: ${caseData?.case_id} (${caseData?.target_entity_name})\nRisk Score: ${caseData?.composite_risk_score}/100 (${caseData?.risk_tier})\nExposure: ${formatMoney(caseData?.potential_financial_exposure || 0)}\n\nEXECUTIVE SUMMARY:\n${brief.executive_summary}\n\nKEY FINDINGS:\n${brief.key_behavioral_findings.join('\n')}\n\nMITIGATING FACTORS:\n${brief.mitigating_factors}\n\nRECOMMENDED ACTIONS:\n${brief.recommended_investigative_actions.join('\n')}\n\nDISCLAIMER:\n${brief.mandatory_disclaimer}`;
     navigator.clipboard.writeText(text);
     setCopiedBrief(true);
     setTimeout(() => setCopiedBrief(false), 2500);
@@ -215,7 +217,7 @@ export const CaseInvestigationView: React.FC<CaseInvestigationViewProps> = ({
           <div className="bg-[#F2FCFF] p-2.5 rounded-lg border border-[#042126]/10">
             <span className="text-[11px] text-[#042126]/60 font-semibold uppercase">Potential Exposure</span>
             <p className="text-base font-mono font-bold text-[#042126] mt-0.5 tabular-nums">
-              ${caseData.potential_financial_exposure.toLocaleString()}
+              {formatMoney(caseData.potential_financial_exposure)}
             </p>
           </div>
           <div className="bg-[#F2FCFF] p-2.5 rounded-lg border border-[#042126]/10">
@@ -752,7 +754,7 @@ export const CaseInvestigationView: React.FC<CaseInvestigationViewProps> = ({
                     : 'text-[#042126]/70 hover:text-[#042126]'
                 }`}
               >
-                Projected Financial Exposure ($)
+                Projected Financial Exposure ({currencySymbol})
               </button>
               <button
                 onClick={() => setProjectionMode('escalation')}
@@ -786,7 +788,7 @@ export const CaseInvestigationView: React.FC<CaseInvestigationViewProps> = ({
               </div>
               <p className="text-2xl font-bold font-mono text-[#042126] tabular-nums">
                 {projectionMode === 'financial'
-                  ? `$${(caseData.potential_financial_exposure * 1.35).toLocaleString(undefined, { maximumFractionDigits: 0 })}`
+                  ? formatMoney(caseData.potential_financial_exposure * 1.35, { decimals: 0 })
                   : `${Math.min(100, caseData.composite_risk_score * 1.15).toFixed(1)} / 100`}
               </p>
               <p className="text-[11px] text-[#042126]/60">
@@ -803,7 +805,7 @@ export const CaseInvestigationView: React.FC<CaseInvestigationViewProps> = ({
               </div>
               <p className="text-2xl font-bold font-mono text-[#B45309] tabular-nums">
                 {projectionMode === 'financial'
-                  ? `$${(caseData.potential_financial_exposure * 1.85).toLocaleString(undefined, { maximumFractionDigits: 0 })}`
+                  ? formatMoney(caseData.potential_financial_exposure * 1.85, { decimals: 0 })
                   : `${Math.min(100, caseData.composite_risk_score * 1.32).toFixed(1)} / 100`}
               </p>
               <p className="text-[11px] text-[#042126]/60">
@@ -820,7 +822,7 @@ export const CaseInvestigationView: React.FC<CaseInvestigationViewProps> = ({
               </div>
               <p className="text-2xl font-bold font-mono text-[#B91C1C] tabular-nums">
                 {projectionMode === 'financial'
-                  ? `$${(caseData.potential_financial_exposure * 2.45).toLocaleString(undefined, { maximumFractionDigits: 0 })}`
+                  ? formatMoney(caseData.potential_financial_exposure * 2.45, { decimals: 0 })
                   : `${Math.min(100, caseData.composite_risk_score * 1.48).toFixed(1)} / 100`}
               </p>
               <p className="text-[11px] text-[#042126]/60">
@@ -956,8 +958,8 @@ export const CaseInvestigationView: React.FC<CaseInvestigationViewProps> = ({
                   <th className="py-2.5 px-3">Claim ID</th>
                   <th className="py-2.5 px-3">Service Date</th>
                   <th className="py-2.5 px-3">CPT / HCPCS</th>
-                  <th className="py-2.5 px-3 text-right">Billed Amount</th>
-                  <th className="py-2.5 px-3 text-right">Allowed</th>
+                  <th className="py-2.5 px-3 text-right">Billed ({currencySymbol})</th>
+                  <th className="py-2.5 px-3 text-right">Allowed ({currencySymbol})</th>
                   <th className="py-2.5 px-3">Triggered Rule Violations</th>
                 </tr>
               </thead>
@@ -973,10 +975,10 @@ export const CaseInvestigationView: React.FC<CaseInvestigationViewProps> = ({
                       )}
                     </td>
                     <td className="py-2.5 px-3 text-right font-mono font-bold text-[#042126] tabular-nums">
-                      ${Number(cl.billed_amount || 0).toFixed(2)}
+                      {formatMoney(Number(cl.billed_amount || 0), { decimals: 2 })}
                     </td>
                     <td className="py-2.5 px-3 text-right font-mono text-[#042126]/70 tabular-nums">
-                      ${Number(cl.allowed_amount || 0).toFixed(2)}
+                      {formatMoney(Number(cl.allowed_amount || 0), { decimals: 2 })}
                     </td>
                     <td className="py-2.5 px-3">
                       {cl.triggered_rules && cl.triggered_rules.length > 0 ? (
@@ -1084,7 +1086,7 @@ export const CaseInvestigationView: React.FC<CaseInvestigationViewProps> = ({
               <div className="p-4 rounded-xl bg-[#005F68]/10 border border-[#005F68]/20 space-y-1">
                 <span className="text-xs font-semibold text-[#005F68]">Potential Cost Avoidance</span>
                 <p className="text-2xl font-bold font-mono text-[#042126]">
-                  ${(caseData.potential_financial_exposure * 0.42).toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                  {formatMoney(caseData.potential_financial_exposure * 0.42, { decimals: 0 })}
                 </p>
                 <p className="text-[11px] text-[#005F68]">Pre-payment recovery potential</p>
               </div>

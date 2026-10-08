@@ -11,12 +11,14 @@ import {
   ShieldAlert
 } from 'lucide-react';
 import { EvidenceGraphData, EvidenceNode } from '../types';
+import { useCurrency } from '../context/CurrencyContext';
 
 interface EvidenceGraphViewerProps {
   data: EvidenceGraphData;
 }
 
 export const EvidenceGraphViewer: React.FC<EvidenceGraphViewerProps> = ({ data }) => {
+  const { formatMoney } = useCurrency();
   const [expandedCategories, setExpandedCategories] = useState<Record<string, boolean>>({
     'CAT-RULES': true,
     'CAT-ML': true,
@@ -107,7 +109,7 @@ export const EvidenceGraphViewer: React.FC<EvidenceGraphViewerProps> = ({ data }
                             <span className="text-xs font-bold text-[#B45309]">{rule.label}</span>
                             {rule.excess_usd && (
                               <span className="text-xs font-mono font-bold text-[#B91C1C]">
-                                Potential Excess: ${rule.excess_usd.toLocaleString()}
+                                Potential Excess: {formatMoney(rule.excess_usd)}
                               </span>
                             )}
                           </div>

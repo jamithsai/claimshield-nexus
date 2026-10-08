@@ -38,6 +38,7 @@ import {
 } from 'recharts';
 import { ExecutiveMetrics } from '../types';
 import { api } from '../services/api';
+import { useCurrency } from '../context/CurrencyContext';
 
 interface ExecutiveOverviewViewProps {
   onSelectCase: (caseId: string) => void;
@@ -48,6 +49,7 @@ export const ExecutiveOverviewView: React.FC<ExecutiveOverviewViewProps> = ({
   onSelectCase,
   onNavigateToQueue,
 }) => {
+  const { currencySymbol, formatMoney, formatCompactMoney, formatAxisMoney } = useCurrency();
   const [metrics, setMetrics] = useState<ExecutiveMetrics | null>(null);
   const [trends, setTrends] = useState<any[]>([]);
   const [topCases, setTopCases] = useState<any[]>([]);
@@ -247,7 +249,7 @@ export const ExecutiveOverviewView: React.FC<ExecutiveOverviewViewProps> = ({
                 <span className="text-xs text-[#B45309]/80">Dual-Engine Alerts</span>
               </div>
               <p className="text-[11px] text-[#B45309] font-medium pt-0.5">
-                ${(metrics.flagged_fwa_exposure_usd / 1000).toFixed(1)}k Flagged Financial Exposure
+                {formatCompactMoney(metrics.flagged_fwa_exposure_usd)} Flagged Financial Exposure
               </p>
             </div>
 
@@ -350,7 +352,7 @@ export const ExecutiveOverviewView: React.FC<ExecutiveOverviewViewProps> = ({
               <DollarSign className="w-4 h-4" />
             </div>
             <div className="text-2xl font-bold font-mono text-[#042126] tabular-nums">
-              ${(metrics.flagged_fwa_exposure_usd / 1000).toFixed(1)}k
+              {formatCompactMoney(metrics.flagged_fwa_exposure_usd)}
             </div>
             <p className="text-[11px] text-[#042126]/60 leading-tight">
               Flagged billed amount
@@ -403,7 +405,7 @@ export const ExecutiveOverviewView: React.FC<ExecutiveOverviewViewProps> = ({
                 </div>
                 <div className="flex items-center space-x-1">
                   <span className="w-2.5 h-2.5 rounded-xs bg-[#B91C1C]" />
-                  <span className="text-[#042126]/70">Flagged ($)</span>
+                  <span className="text-[#042126]/70">Flagged ({currencySymbol})</span>
                 </div>
               </div>
             </div>
@@ -442,7 +444,7 @@ export const ExecutiveOverviewView: React.FC<ExecutiveOverviewViewProps> = ({
                       boxShadow: '0 4px 6px -1px rgba(4, 33, 38, 0.08)'
                     }}
                     formatter={(value: any, name: string) => [
-                      name === 'Flagged ($)' ? `$${Number(value).toLocaleString()}` : Number(value).toLocaleString(),
+                      name.startsWith('Flagged') ? formatMoney(Number(value)) : Number(value).toLocaleString(),
                       name
                     ]}
                   />
@@ -458,7 +460,7 @@ export const ExecutiveOverviewView: React.FC<ExecutiveOverviewViewProps> = ({
                   <Area 
                     type="monotone" 
                     dataKey="flagged_amount" 
-                    name="Flagged ($)"
+                    name={`Flagged (${currencySymbol})`}
                     stroke="#B91C1C" 
                     strokeWidth={2}
                     fillOpacity={1} 
@@ -600,7 +602,7 @@ export const ExecutiveOverviewView: React.FC<ExecutiveOverviewViewProps> = ({
                         </span>
                       </td>
                       <td className="py-2.5 px-3 text-right font-mono font-bold text-[#042126] tabular-nums">
-                        ${c.potential_financial_exposure.toLocaleString()}
+                        {formatMoney(c.potential_financial_exposure)}
                       </td>
                       <td className="py-2.5 px-3 text-center">
                         <button

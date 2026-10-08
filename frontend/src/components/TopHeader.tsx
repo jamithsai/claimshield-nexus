@@ -9,6 +9,7 @@ import {
   ShieldAlert
 } from 'lucide-react';
 import { User } from '../types';
+import { CurrencySelector } from './CurrencySelector';
 
 interface TopHeaderProps {
   activeView: string;
@@ -94,8 +95,11 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
           </nav>
         </div>
 
-        {/* Right Side: Synthetic Status Chip, User Persona Pill, Contextual Actions */}
-        <div className="flex items-center space-x-3 flex-shrink-0">
+        {/* Right Side: Currency Selector, Synthetic Status Chip, User Persona Pill, Contextual Actions */}
+        <div className="flex items-center space-x-2.5 flex-shrink-0">
+          {/* Global Currency Preference Switcher */}
+          <CurrencySelector />
+
           {/* Synthetic Data Environment Status */}
           <div className="hidden lg:flex items-center space-x-1.5 px-2.5 py-1 rounded-md bg-[#F2FCFF] border border-[#005F68]/15 text-[11px] font-semibold text-[#005F68]">
             <span className="w-1.5 h-1.5 rounded-full bg-[#209B47]"></span>
