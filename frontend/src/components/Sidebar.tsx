@@ -6,15 +6,16 @@ import {
   Network, 
   Cpu, 
   History, 
-  FileSearch,
+  FileSearch, 
   PanelLeftClose, 
   PanelLeftOpen, 
   Database, 
   UserCheck, 
-  ChevronRight,
-  ShieldAlert,
-  Menu,
-  X
+  ChevronRight, 
+  ShieldAlert, 
+  Menu, 
+  X,
+  Sparkles
 } from 'lucide-react';
 import { User } from '../types';
 
@@ -49,6 +50,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
   };
 
   const navGroups = [
+    {
+      title: 'WALKTHROUGH',
+      items: [
+        { id: 'demo-run', label: 'Demo Run', shortLabel: 'Demo Run', icon: Sparkles },
+      ],
+    },
     {
       title: 'OVERVIEW',
       items: [

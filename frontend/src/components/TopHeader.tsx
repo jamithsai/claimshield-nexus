@@ -30,6 +30,11 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
 }) => {
   const getBreadcrumb = () => {
     switch (activeView) {
+      case 'demo-run':
+        return {
+          workspace: 'WALKTHROUGH',
+          sub: 'Demo Run',
+        };
       case 'overview':
         return {
           workspace: 'OVERVIEW',

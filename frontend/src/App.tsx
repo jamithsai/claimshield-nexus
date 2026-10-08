@@ -7,6 +7,7 @@ import { CaseInvestigationView } from './views/CaseInvestigationView';
 import { NetworkExplorerView } from './views/NetworkExplorerView';
 import { DetectorPerformanceView } from './views/DetectorPerformanceView';
 import { AuditTrailView } from './views/AuditTrailView';
+import { DemoRunView } from './views/DemoRunView';
 import { User } from './types';
 import { api } from './services/api';
 
@@ -116,6 +117,13 @@ export function App() {
 
         {/* Dynamic Workspace Content */}
         <main className="flex-1 max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          {activeView === 'demo-run' && (
+            <DemoRunView
+              onNavigateTo={handleNavigateView}
+              onSelectCase={handleSelectCase}
+            />
+          )}
+
           {activeView === 'overview' && (
             <ExecutiveOverviewView
               onSelectCase={handleSelectCase}
