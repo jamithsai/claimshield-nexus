@@ -13,16 +13,18 @@ import {
 import { EvidenceGraphData, EvidenceNode } from '../types';
 
 interface EvidenceGraphViewerProps {
-  evidenceGraph: EvidenceGraphData;
+  data: EvidenceGraphData;
 }
 
-export const EvidenceGraphViewer: React.FC<EvidenceGraphViewerProps> = ({ evidenceGraph }) => {
+export const EvidenceGraphViewer: React.FC<EvidenceGraphViewerProps> = ({ data }) => {
   const [expandedCategories, setExpandedCategories] = useState<Record<string, boolean>>({
     'CAT-RULES': true,
     'CAT-ML': true,
     'CAT-GRAPH': true,
     'CAT-TEMP': true,
   });
+
+  const [selectedClaimId, setSelectedClaimId] = useState<string | null>(null);
 
   const toggleCategory = (catId: string) => {
     setExpandedCategories((prev) => ({
@@ -31,96 +33,101 @@ export const EvidenceGraphViewer: React.FC<EvidenceGraphViewerProps> = ({ eviden
     }));
   };
 
-  const rootNode = evidenceGraph.nodes.find((n) => n.category === 'ROOT_SCORE') || evidenceGraph.nodes[0];
-  const categoryNodes = evidenceGraph.nodes.filter((n) => n.category === 'SIGNAL_CATEGORY');
-  const ruleNodes = evidenceGraph.nodes.filter((n) => n.category === 'RULE_EVIDENCE');
-  const claimNodes = evidenceGraph.nodes.filter((n) => n.category === 'CLAIM_LEAF');
-  const graphNodes = evidenceGraph.nodes.filter((n) => n.category === 'GRAPH_EVIDENCE');
+  const rootNode = data.nodes.find((n) => n.category === 'ROOT_SCORE') || data.nodes[0];
+  const categoryNodes = data.nodes.filter((n) => n.category === 'SIGNAL_CATEGORY');
+  const ruleNodes = data.nodes.filter((n) => n.category === 'RULE_EVIDENCE');
+  const claimNodes = data.nodes.filter((n) => n.category === 'CLAIM_LEAF');
+  const graphNodes = data.nodes.filter((n) => n.category === 'GRAPH_EVIDENCE');
 
   return (
-    <div className="glass-panel p-5 rounded-xl border border-slate-800">
-      <div className="flex items-center justify-between mb-4">
+    <div className="w-full space-y-4 font-sans">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         <div className="flex items-center space-x-2">
-          <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400">
-            <GitCommit className="w-5 h-5" />
+          <div className="p-1.5 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200">
+            <GitCommit className="w-4 h-4" />
           </div>
           <div>
-            <h3 className="text-sm font-bold text-white uppercase tracking-wider">
-              Evidence Graph (Score Provenance Tree)
+            <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
+              Score Provenance Tree
             </h3>
-            <p className="text-xs text-slate-400">100% Transparent Causal Traceability: Composite Risk Score → Exact Claim IDs</p>
+            <p className="text-[11px] text-slate-500">Transparent Causal Traceability: Composite Risk Score &rarr; Exact Synthetic Claim IDs</p>
           </div>
         </div>
-        <div className="text-right">
-          <span className="text-[11px] font-mono font-bold text-emerald-400 bg-emerald-950/60 border border-emerald-800/50 px-2 py-1 rounded-full">
-            {evidenceGraph.total_evidence_claims_cited} Claim Citations
+        <div>
+          <span className="text-xs font-mono font-semibold text-emerald-800 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-md">
+            {data.total_evidence_claims_cited} Claim Citations Linked
           </span>
         </div>
       </div>
 
       {/* Hierarchical Provenance Explorer */}
-      <div className="space-y-3 bg-slate-900/60 p-4 rounded-xl border border-slate-800/80">
+      <div className="space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
         {/* Root Node */}
-        <div className="flex items-center justify-between p-3 rounded-lg bg-slate-800 border border-slate-700">
+        <div className="flex items-center justify-between p-3.5 rounded-lg bg-white border border-slate-200 shadow-xs">
           <div className="flex items-center space-x-2.5">
-            <ShieldAlert className="w-5 h-5 text-rose-400" />
+            <ShieldAlert className="w-5 h-5 text-rose-600" />
             <div>
-              <p className="text-xs font-bold text-white uppercase">{rootNode.label}</p>
-              <p className="text-[11px] text-slate-400">Target Entity: {evidenceGraph.target_entity}</p>
+              <p className="text-xs font-bold text-slate-900 uppercase">{rootNode?.label || 'Target Composite Risk'}</p>
+              <p className="text-[11px] text-slate-500 font-mono">Target Entity: {data.target_entity}</p>
             </div>
           </div>
-          <span className="text-xs font-mono font-black text-rose-400 px-2 py-0.5 rounded bg-rose-950 border border-rose-800">
-            {rootNode.tier || 'HIGH'}
+          <span className="text-xs font-mono font-bold px-2 py-0.5 rounded badge-critical">
+            {rootNode?.tier || 'CRITICAL'}
           </span>
         </div>
 
         {/* Categories */}
-        <div className="pl-4 space-y-2 border-l-2 border-slate-800 ml-3">
+        <div className="pl-4 space-y-2 border-l-2 border-slate-200 ml-3">
           {categoryNodes.map((cat) => {
             const isExpanded = expandedCategories[cat.id];
             return (
               <div key={cat.id} className="space-y-2">
                 <button
                   onClick={() => toggleCategory(cat.id)}
-                  className="w-full flex items-center justify-between p-2.5 rounded-lg bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 text-left transition-all"
+                  className="w-full flex items-center justify-between p-2.5 rounded-lg bg-white hover:bg-slate-100 border border-slate-200 text-left transition-colors shadow-xs"
                 >
                   <div className="flex items-center space-x-2">
                     {isExpanded ? (
-                      <ChevronDown className="w-4 h-4 text-sky-400" />
+                      <ChevronDown className="w-4 h-4 text-sky-600" />
                     ) : (
                       <ChevronRight className="w-4 h-4 text-slate-400" />
                     )}
-                    <span className="text-xs font-bold text-slate-200">{cat.label}</span>
+                    <span className="text-xs font-bold text-slate-800">{cat.label}</span>
                   </div>
-                  <span className="text-xs font-mono font-semibold text-sky-400">Sub-score: {cat.val}</span>
+                  <span className="text-xs font-mono font-semibold text-sky-700">Sub-score: {cat.val}</span>
                 </button>
 
                 {/* Children Details */}
                 {isExpanded && (
-                  <div className="pl-5 space-y-2 border-l-2 border-sky-900/50 ml-3">
+                  <div className="pl-5 space-y-2 border-l-2 border-sky-200 ml-3">
                     {cat.id === 'CAT-RULES' &&
                       ruleNodes.map((rule) => (
-                        <div key={rule.id} className="p-3 rounded-lg bg-slate-900/90 border border-slate-800 space-y-2">
+                        <div key={rule.id} className="p-3.5 rounded-lg bg-white border border-slate-200 space-y-2 shadow-xs">
                           <div className="flex items-center justify-between">
-                            <span className="text-xs font-bold text-amber-300">{rule.label}</span>
+                            <span className="text-xs font-bold text-amber-800">{rule.label}</span>
                             {rule.excess_usd && (
-                              <span className="text-xs font-mono font-bold text-rose-400">
+                              <span className="text-xs font-mono font-bold text-rose-700">
                                 Potential Excess: ${rule.excess_usd.toLocaleString()}
                               </span>
                             )}
                           </div>
-                          <p className="text-[11px] text-slate-300">{rule.description}</p>
+                          <p className="text-xs text-slate-600">{rule.description}</p>
 
                           {/* Claim leaf list */}
                           <div className="flex flex-wrap gap-1.5 pt-1">
-                            {claimNodes.slice(0, 4).map((claim) => (
-                              <span
+                            {claimNodes.slice(0, 5).map((claim) => (
+                              <button
                                 key={claim.id}
-                                className="inline-flex items-center space-x-1 px-2 py-0.5 rounded bg-slate-800 border border-slate-700 text-[10px] font-mono text-emerald-300"
+                                onClick={() => setSelectedClaimId(claim.id)}
+                                className={`inline-flex items-center space-x-1 px-2 py-0.5 rounded text-[10px] font-mono transition-colors border ${
+                                  selectedClaimId === claim.id
+                                    ? 'bg-sky-100 text-sky-800 border-sky-300 font-bold'
+                                    : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200'
+                                }`}
                               >
-                                <FileText className="w-3 h-3 text-emerald-400" />
+                                <FileText className="w-3 h-3 text-sky-600" />
                                 <span>{claim.claim_id || claim.label}</span>
-                              </span>
+                              </button>
                             ))}
                           </div>
                         </div>
@@ -128,20 +135,20 @@ export const EvidenceGraphViewer: React.FC<EvidenceGraphViewerProps> = ({ eviden
 
                     {cat.id === 'CAT-GRAPH' &&
                       graphNodes.map((gn) => (
-                        <div key={gn.id} className="p-2.5 rounded-lg bg-slate-900/90 border border-slate-800 text-xs text-slate-300 flex items-center space-x-2">
-                          <Network className="w-4 h-4 text-indigo-400" />
+                        <div key={gn.id} className="p-3 rounded-lg bg-white border border-slate-200 text-xs text-slate-700 flex items-center space-x-2 shadow-xs">
+                          <Network className="w-4 h-4 text-sky-600" />
                           <span>{gn.label}</span>
                         </div>
                       ))}
 
                     {cat.id === 'CAT-ML' && (
-                      <div className="p-3 rounded-lg bg-slate-900/90 border border-slate-800 text-xs text-slate-300 space-y-1">
-                        <div className="flex items-center space-x-1.5 text-sky-300 font-semibold">
-                          <Cpu className="w-3.5 h-3.5" />
+                      <div className="p-3 rounded-lg bg-white border border-slate-200 text-xs text-slate-700 space-y-1 shadow-xs">
+                        <div className="flex items-center space-x-1.5 text-sky-800 font-semibold">
+                          <Cpu className="w-3.5 h-3.5 text-sky-600" />
                           <span>Isolation Forest Ensemble Attribution</span>
                         </div>
-                        <p className="text-[11px] text-slate-400">
-                          Identified +4.82 sigma deviation in E&M level billing density and +3.4 sigma in unbundled component ratios.
+                        <p className="text-xs text-slate-500">
+                          Identified +4.82 sigma deviation in evaluation/management code complexity and +3.4 sigma billing acceleration.
                         </p>
                       </div>
                     )}

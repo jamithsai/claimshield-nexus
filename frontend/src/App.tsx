@@ -42,8 +42,8 @@ export function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans">
-      {/* Top Navigation */}
+    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans">
+      {/* Top Healthcare Navigation Bar */}
       <Navbar
         currentUser={currentUser}
         activeView={activeView}
@@ -54,8 +54,8 @@ export function App() {
         onRoleChange={handleRoleChange}
       />
 
-      {/* Main Container */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      {/* Main Content Area */}
+      <main className="flex-1 max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {activeView === 'overview' && (
           <ExecutiveOverviewView
             onSelectCase={handleSelectCase}
@@ -78,7 +78,6 @@ export function App() {
         {activeView === 'network' && (
           <NetworkExplorerView
             onSelectCaseByNpi={(npi) => {
-              // Route to case
               setActiveView('queue');
             }}
           />
@@ -93,12 +92,16 @@ export function App() {
         )}
       </main>
 
-      {/* Enterprise Footer */}
-      <footer className="border-t border-slate-900 bg-slate-950/80 py-4 text-center text-xs text-slate-500">
-        <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-          <p>ClaimShield Nexus • Program Integrity Intelligence Platform</p>
-          <p className="text-[11px] text-slate-600">
-            Engineered for Acentra Health • Multi-Detector Ensemble &amp; SIU Intelligence
+      {/* Institutional Healthcare Enterprise Footer */}
+      <footer className="border-t border-slate-200 bg-white py-4 text-center text-xs text-slate-600">
+        <div className="max-w-[1600px] mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+          <div className="flex items-center space-x-2">
+            <span className="font-semibold text-slate-800">ClaimShield Nexus</span>
+            <span className="text-slate-300">•</span>
+            <span>Healthcare Program Integrity &amp; Payment Integrity Intelligence</span>
+          </div>
+          <p className="text-[11px] text-slate-500 font-mono">
+            Synthetic Benchmark Evaluation • Zero PHI Ingestion • Acentra Health PS3
           </p>
         </div>
       </footer>

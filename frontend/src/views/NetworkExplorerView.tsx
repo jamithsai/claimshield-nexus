@@ -32,30 +32,30 @@ export const NetworkExplorerView: React.FC<NetworkExplorerViewProps> = ({ onSele
     return (
       <div className="flex items-center justify-center min-h-[450px]">
         <div className="flex flex-col items-center space-y-3">
-          <Activity className="w-8 h-8 text-blue-400 animate-spin" />
-          <p className="text-xs font-semibold text-slate-400">Constructing Heterogeneous Network Graph...</p>
+          <Activity className="w-8 h-8 text-sky-600 animate-spin" />
+          <p className="text-xs font-semibold text-slate-600">Constructing Heterogeneous Network Graph...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 font-sans">
       {/* Header */}
-      <div className="cockpit-panel p-5 rounded-xl border border-slate-800 bg-[#0f172a] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="flex items-center space-x-3">
-          <div className="p-2.5 rounded-lg bg-indigo-600/20 text-indigo-400 border border-indigo-500/30">
+      <div className="health-panel p-5 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex items-center space-x-3.5">
+          <div className="p-2.5 rounded-lg bg-sky-50 text-sky-700 border border-sky-200">
             <Network className="w-5 h-5" />
           </div>
           <div>
-            <h1 className="text-base font-bold text-white tracking-tight">Healthcare Heterogeneous Network Explorer</h1>
-            <p className="text-xs text-slate-400 mt-0.5">
-              Population topology mapping <span className="font-mono text-white font-bold">{graphData.total_network_nodes}</span> entities and <span className="font-mono text-white font-bold">{graphData.total_network_edges}</span> referral/billing connections
+            <h1 className="text-lg font-bold text-slate-900 tracking-tight">Healthcare Network Explorer</h1>
+            <p className="text-xs text-slate-600 mt-0.5">
+              Population topology mapping <span className="font-mono text-slate-900 font-bold">{graphData.total_network_nodes}</span> entities and <span className="font-mono text-slate-900 font-bold">{graphData.total_network_edges}</span> referral/billing connections
             </p>
           </div>
         </div>
         <div className="flex items-center space-x-2">
-          <span className="text-[11px] font-mono text-emerald-400 bg-emerald-950/80 px-2.5 py-1 rounded border border-emerald-800">
+          <span className="text-[11px] font-mono text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-200 font-semibold">
             PageRank &amp; Centrality Online
           </span>
         </div>
@@ -64,28 +64,28 @@ export const NetworkExplorerView: React.FC<NetworkExplorerViewProps> = ({ onSele
       {/* Suspicious Collusion Clusters Banner */}
       {clusters.length > 0 && (
         <div className="space-y-3">
-          <h3 className="text-xs font-bold text-rose-400 uppercase tracking-wider flex items-center space-x-1.5">
-            <ShieldAlert className="w-4 h-4" />
+          <h3 className="text-xs font-bold text-rose-800 uppercase tracking-wider flex items-center space-x-1.5">
+            <ShieldAlert className="w-4 h-4 text-rose-600" />
             <span>Detected Suspicious Collusion Rings &amp; Referral Loops ({clusters.length})</span>
           </h3>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {clusters.map((cl, idx) => (
-              <div key={idx} className="cockpit-panel p-4 rounded-xl border border-rose-900/60 bg-rose-950/15 space-y-2.5">
+              <div key={idx} className="p-4 rounded-xl border border-rose-200 bg-rose-50/50 space-y-2.5">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-mono font-bold text-rose-400 bg-rose-950 px-2 py-0.5 rounded border border-rose-800">
+                  <span className="text-xs font-mono font-bold text-rose-800 bg-rose-100 px-2 py-0.5 rounded border border-rose-300">
                     {cl.cluster_id}
                   </span>
-                  <span className="text-[10px] font-bold uppercase text-rose-300">
+                  <span className="text-[10px] font-bold uppercase text-rose-700">
                     {cl.cluster_type.replace(/_/g, ' ')}
                   </span>
                 </div>
-                <p className="text-xs text-slate-300 leading-relaxed">{cl.description}</p>
+                <p className="text-xs text-slate-700 leading-relaxed">{cl.description}</p>
                 <div className="pt-1">
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Colluding Entities:</p>
+                  <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Colluding Entities:</p>
                   <div className="flex flex-wrap gap-1.5 mt-1.5">
                     {cl.entity_names.map((name: string, i: number) => (
-                      <span key={i} className="text-[10px] font-medium text-slate-200 bg-slate-800 px-2 py-0.5 rounded border border-slate-700">
+                      <span key={i} className="text-[10px] font-medium text-slate-800 bg-white px-2 py-0.5 rounded border border-slate-200 shadow-2xs">
                         {name}
                       </span>
                     ))}
@@ -98,7 +98,9 @@ export const NetworkExplorerView: React.FC<NetworkExplorerViewProps> = ({ onSele
       )}
 
       {/* Global Subgraph Visualization */}
-      <RelationshipGraphViewer nodes={graphData.sampled_nodes} edges={graphData.sampled_edges} />
+      <div className="health-panel p-5 rounded-xl">
+        <RelationshipGraphViewer nodes={graphData.sampled_nodes} edges={graphData.sampled_edges} />
+      </div>
     </div>
   );
 };

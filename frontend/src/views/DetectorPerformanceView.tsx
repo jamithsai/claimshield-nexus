@@ -52,7 +52,7 @@ export const DetectorPerformanceView: React.FC = () => {
   if (isLoading || !perfData) {
     return (
       <div className="flex items-center justify-center min-h-[450px]">
-        <Activity className="w-8 h-8 text-blue-400 animate-spin" />
+        <Activity className="w-8 h-8 text-sky-600 animate-spin" />
       </div>
     );
   }
@@ -60,18 +60,18 @@ export const DetectorPerformanceView: React.FC = () => {
   const overlap = perfData.detector_overlap_venn || {};
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 font-sans">
       {/* Header */}
-      <div className="cockpit-panel p-5 rounded-xl border border-slate-800 bg-[#0f172a] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="flex items-center space-x-3">
-          <div className="p-2.5 rounded-lg bg-blue-600/20 text-blue-400 border border-blue-500/30">
+      <div className="health-panel p-5 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex items-center space-x-3.5">
+          <div className="p-2.5 rounded-lg bg-sky-50 text-sky-700 border border-sky-200">
             <Cpu className="w-5 h-5" />
           </div>
           <div>
-            <h1 className="text-base font-bold text-white tracking-tight">
-              Detector Lab &amp; Red-Team Threat Simulator
+            <h1 className="text-lg font-bold text-slate-900 tracking-tight">
+              Detector Lab &amp; Efficacy Evaluation
             </h1>
-            <p className="text-xs text-slate-400 mt-0.5">
+            <p className="text-xs text-slate-600 mt-0.5">
               Evaluates multi-detector consensus, overlap distributions, and adversarial threat resilience.
             </p>
           </div>
@@ -80,130 +80,127 @@ export const DetectorPerformanceView: React.FC = () => {
 
       {/* Multi-Detector Overlap Matrix Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="cockpit-panel p-4 rounded-xl border border-slate-800 text-center space-y-1 bg-[#0f172a]">
-          <p className="text-[10px] text-slate-400 uppercase font-bold">Rule Engine Alone</p>
-          <p className="text-2xl font-bold text-white font-mono tabular-nums">{overlap.rule_engine_only || 14}</p>
-          <p className="text-[10px] text-slate-500">Univariate clinical rule flags</p>
+        <div className="health-panel p-4 rounded-xl text-center space-y-1">
+          <p className="text-[10px] text-slate-500 uppercase font-semibold">Rule Engine Alone</p>
+          <p className="text-2xl font-bold text-slate-900 font-mono tabular-nums">{overlap.rule_engine_only || 14}</p>
+          <p className="text-[10px] text-slate-500">Deterministic clinical rule flags</p>
         </div>
-        <div className="cockpit-panel p-4 rounded-xl border border-slate-800 text-center space-y-1 bg-[#0f172a]">
-          <p className="text-[10px] text-slate-400 uppercase font-bold">ML Isolation Forest Alone</p>
-          <p className="text-2xl font-bold text-blue-400 font-mono tabular-nums">{overlap.ml_isolation_forest_only || 8}</p>
+        <div className="health-panel p-4 rounded-xl text-center space-y-1">
+          <p className="text-[10px] text-slate-500 uppercase font-semibold">ML Isolation Forest Alone</p>
+          <p className="text-2xl font-bold text-sky-700 font-mono tabular-nums">{overlap.ml_isolation_forest_only || 8}</p>
           <p className="text-[10px] text-slate-500">Multivariate statistical outliers</p>
         </div>
-        <div className="cockpit-panel p-4 rounded-xl border border-slate-800 text-center space-y-1 bg-[#0f172a]">
-          <p className="text-[10px] text-slate-400 uppercase font-bold">Graph Network Alone</p>
-          <p className="text-2xl font-bold text-indigo-400 font-mono tabular-nums">{overlap.graph_network_only || 6}</p>
-          <p className="text-[10px] text-slate-500">Pure collusion topology</p>
+        <div className="health-panel p-4 rounded-xl text-center space-y-1">
+          <p className="text-[10px] text-slate-500 uppercase font-semibold">Graph Network Alone</p>
+          <p className="text-2xl font-bold text-teal-700 font-mono tabular-nums">{overlap.graph_network_only || 6}</p>
+          <p className="text-[10px] text-slate-500">Collusion topology outliers</p>
         </div>
-        <div className="cockpit-panel p-4 rounded-xl border border-emerald-900/60 bg-emerald-950/20 text-center space-y-1">
-          <p className="text-[10px] text-emerald-400 uppercase font-bold">Tri-Detector Consensus</p>
-          <p className="text-2xl font-bold text-emerald-300 font-mono tabular-nums">{overlap["tri_detector_consensus (Rule + ML + Graph)"] || 18}</p>
-          <p className="text-[10px] text-emerald-400 font-semibold">96% High-Confidence Yield</p>
+        <div className="p-4 rounded-xl border border-emerald-200 bg-emerald-50 text-center space-y-1">
+          <p className="text-[10px] text-emerald-800 uppercase font-bold">Tri-Detector Consensus</p>
+          <p className="text-2xl font-bold text-emerald-900 font-mono tabular-nums">{overlap["tri_detector_consensus (Rule + ML + Graph)"] || 18}</p>
+          <p className="text-[10px] text-emerald-700">Highest priority SIU alerts</p>
         </div>
       </div>
 
-      {/* Adversarial Red-Team Threat Simulator */}
-      <div className="cockpit-panel p-6 rounded-xl border border-slate-800 space-y-6 bg-[#0f172a]">
-        <div className="flex items-center space-x-2 border-b border-slate-800 pb-3">
-          <div className="p-2 rounded-lg bg-rose-500/10 text-rose-400">
-            <Sparkles className="w-5 h-5" />
+      {/* Red-Team Threat Simulator */}
+      <div className="health-panel p-6 rounded-xl space-y-5">
+        <div className="flex items-center space-x-2">
+          <div className="p-1.5 rounded-lg bg-rose-50 text-rose-700 border border-rose-200">
+            <Zap className="w-4 h-4" />
           </div>
           <div>
-            <h3 className="text-xs font-bold text-white uppercase tracking-wider">
-              FWA Red-Team Threat Simulator (Live Adversarial Stress Test)
-            </h3>
-            <p className="text-[11px] text-slate-400">
-              Inject synthetic novel attack vectors in real-time to benchmark detector response time and sensitivity.
-            </p>
+            <h2 className="text-sm font-bold text-slate-900">Adversarial Efficacy &amp; Red-Team Injection Lab</h2>
+            <p className="text-xs text-slate-500">Inject synthetic evasion patterns to stress-test detector sensitivity and false negative rates.</p>
           </div>
         </div>
 
-        {/* Controls */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 rounded-xl bg-slate-900/90 border border-slate-800">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
           <div>
-            <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
-              Target FWA Threat Archetype
-            </label>
+            <label className="block text-xs font-bold text-slate-700 uppercase mb-1">Target Scheme Type</label>
             <select
               value={schemeType}
               onChange={(e) => setSchemeType(e.target.value)}
-              className="w-full bg-slate-800 border border-slate-700 text-slate-100 text-xs rounded-lg px-3 py-2 focus:outline-none focus:border-blue-500"
+              className="w-full bg-white border border-slate-200 text-slate-800 text-xs rounded-lg p-2.5 focus:border-sky-500 focus:outline-none"
             >
-              <option value="UNBUNDLED_LAB_RING">Coordinated Multi-Lab Panel Splitting</option>
-              <option value="RAPID_UPCODING_SURGE">Sudden High-Volume Level 5 E&amp;M Surge</option>
-              <option value="PHANTOM_CAPACITY_INJECTION">Automated Bot Claim Injection (&gt;30 hrs/day)</option>
+              <option value="UNBUNDLED_LAB_RING">Unbundled Diagnostic Ring</option>
+              <option value="HIGH_VELOCITY_UPCODING">High-Velocity Modifier-25 Upcoding</option>
+              <option value="PHANTOM_SERVICES_BILLING">Phantom Encounters (Dead Provider)</option>
+              <option value="DUPLICATE_TIME_TRAVEL">Temporal Impossible Encounters</option>
             </select>
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
-              Scheme Intensity: <span className="font-mono text-blue-400 font-bold">{intensity}x</span>
+            <label className="block text-xs font-bold text-slate-700 uppercase mb-1">
+              Evasion Stealth Factor: <span className="font-mono text-sky-700 font-bold">{intensity}x</span>
             </label>
             <input
               type="range"
-              min={1.0}
-              max={3.0}
-              step={0.25}
+              min="0.5"
+              max="3.0"
+              step="0.1"
               value={intensity}
-              onChange={(e) => setIntensity(Number(e.target.value))}
-              className="w-full accent-blue-500 mt-2 cursor-pointer"
+              onChange={(e) => setIntensity(parseFloat(e.target.value))}
+              className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-sky-600 mt-2"
             />
           </div>
 
-          <div className="flex items-end">
-            <button
-              onClick={handleRunRedTeam}
-              disabled={isSimulating}
-              className="w-full flex items-center justify-center space-x-2 px-5 py-2.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold transition-all disabled:opacity-50 shadow-sm"
-            >
-              <Play className="w-4 h-4" />
-              <span>{isSimulating ? 'Testing Detectors...' : 'Inject Threat &amp; Benchmark'}</span>
-            </button>
+          <div>
+            <label className="block text-xs font-bold text-slate-700 uppercase mb-1">
+              Injected Encounter Count: <span className="font-mono text-sky-700 font-bold">{claimCount} Claims</span>
+            </label>
+            <input
+              type="range"
+              min="10"
+              max="100"
+              step="5"
+              value={claimCount}
+              onChange={(e) => setClaimCount(parseInt(e.target.value))}
+              className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-sky-600 mt-2"
+            />
           </div>
         </div>
 
-        {/* Live Red Team Result */}
+        <div className="flex justify-end pt-2">
+          <button
+            onClick={handleRunRedTeam}
+            disabled={isSimulating}
+            className="flex items-center space-x-2 px-5 py-2.5 rounded-lg bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold shadow-xs transition-colors disabled:opacity-50"
+          >
+            <Play className="w-4 h-4" />
+            <span>{isSimulating ? 'Injecting Synthetic Threat Stream...' : 'Inject Threat Stream & Run Efficacy Test'}</span>
+          </button>
+        </div>
+
+        {/* Simulator Results Panel */}
         {simResult && (
-          <div className="p-5 rounded-xl bg-slate-900/90 border border-slate-800 space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-              <div className="flex items-center space-x-2">
-                <CheckCircle2 className="w-5 h-5 text-emerald-400" />
-                <span className="text-xs font-bold text-emerald-300 uppercase">
-                  {simResult.detection_outcome}
-                </span>
-              </div>
-              <span className="text-xs font-mono font-bold text-blue-400 bg-blue-950 px-2 py-0.5 rounded border border-blue-800">
-                Evaluation Latency: {simResult.evaluation_latency_ms} ms
+          <div className="mt-4 p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-3">
+            <div className="flex items-center justify-between border-b border-slate-200 pb-2">
+              <span className="text-xs font-bold text-slate-900 uppercase">Detection Result Summary</span>
+              <span className={`px-2.5 py-0.5 rounded text-xs font-mono font-bold ${
+                simResult.detection_status === 'DETECTED' ? 'badge-critical' : 'badge-high'
+              }`}>
+                STATUS: {simResult.detection_status}
               </span>
             </div>
-
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
-              <div className="p-3 rounded-lg bg-slate-950 border border-slate-800">
-                <p className="text-[10px] text-slate-400 font-semibold uppercase">Rule Engine</p>
-                <p className="text-base font-bold text-white font-mono mt-0.5 tabular-nums">
-                  {simResult.detector_responses.rule_engine.score} / 100
+              <div className="p-3 bg-white rounded-lg border border-slate-200">
+                <span className="text-[10px] text-slate-500 uppercase">Ensemble Capture Rate</span>
+                <p className="text-xl font-bold font-mono text-slate-900 mt-0.5">
+                  {(simResult.capture_rate * 100).toFixed(1)}%
                 </p>
-                <p className="text-[10px] text-slate-500">Trigger: {simResult.detector_responses.rule_engine.rule_fired}</p>
               </div>
-              <div className="p-3 rounded-lg bg-slate-950 border border-slate-800">
-                <p className="text-[10px] text-slate-400 font-semibold uppercase">ML Isolation Forest</p>
-                <p className="text-base font-bold text-blue-400 font-mono mt-0.5 tabular-nums">
-                  {simResult.detector_responses.ml_isolation_forest.score} / 100
+              <div className="p-3 bg-white rounded-lg border border-slate-200">
+                <span className="text-[10px] text-slate-500 uppercase">Triggered Detector Layers</span>
+                <p className="text-xs font-semibold text-sky-800 mt-1">
+                  {simResult.triggered_detectors ? simResult.triggered_detectors.join(', ') : 'Rule + ML Ensemble'}
                 </p>
-                <p className="text-[10px] text-slate-500">Outlier path confirmed</p>
               </div>
-              <div className="p-3 rounded-lg bg-slate-950 border border-slate-800">
-                <p className="text-[10px] text-slate-400 font-semibold uppercase">Graph Network</p>
-                <p className="text-base font-bold text-indigo-400 font-mono mt-0.5 tabular-nums">
-                  {simResult.detector_responses.graph_network.score} / 100
+              <div className="p-3 bg-white rounded-lg border border-slate-200">
+                <span className="text-[10px] text-slate-500 uppercase">Estimated SIU Triage Rank</span>
+                <p className="text-xl font-bold font-mono text-amber-800 mt-0.5">
+                  Rank #{simResult.estimated_priority_rank || '3'} in Queue
                 </p>
-                <p className="text-[10px] text-slate-500">Topology anomaly flagged</p>
               </div>
-            </div>
-
-            <div className="p-3 rounded-lg bg-emerald-950/30 border border-emerald-800/40 text-xs text-emerald-300 font-semibold flex items-center justify-between">
-              <span>System Defense Rating: {simResult.resilience_rating}</span>
-              <span className="font-mono text-white">Composite Score: {simResult.resulting_composite_risk}/100</span>
             </div>
           </div>
         )}

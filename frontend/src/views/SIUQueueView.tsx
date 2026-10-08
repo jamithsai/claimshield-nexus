@@ -69,33 +69,33 @@ export const SIUQueueView: React.FC<SIUQueueViewProps> = ({ onSelectCase }) => {
   });
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 font-sans">
       {/* Top Header & Capacity Controller Strip */}
-      <div className="cockpit-panel p-5 rounded-xl border border-slate-800 bg-[#0f172a] space-y-4">
+      <div className="health-panel p-5 rounded-xl space-y-4">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="flex items-center space-x-3">
-            <div className="p-2.5 rounded-lg bg-blue-600/20 text-blue-400 border border-blue-500/30">
+          <div className="flex items-center space-x-3.5">
+            <div className="p-2.5 rounded-lg bg-sky-50 text-sky-700 border border-sky-200">
               <Layers className="w-5 h-5" />
             </div>
             <div>
-              <h1 className="text-base font-bold text-white tracking-tight">SIU Priority Investigation Queue</h1>
-              <p className="text-xs text-slate-400 mt-0.5">
-                Capacity-constrained multi-attribute utility ranking: U = 0.35(Risk) + 0.25(Exposure) + 0.15(Members) + 0.15(Velocity) + 0.10(Evidence)
+              <h1 className="text-lg font-bold text-slate-900 tracking-tight">SIU Priority Investigation Queue</h1>
+              <p className="text-xs text-slate-600 mt-0.5">
+                Capacity-constrained multi-attribute utility ranking: <span className="font-mono text-sky-800 font-semibold">U = 0.35(Risk) + 0.25(Exposure) + 0.15(Members) + 0.15(Velocity) + 0.10(Evidence)</span>
               </p>
             </div>
           </div>
 
           {/* Quick Capacity Limit Buttons */}
-          <div className="flex items-center space-x-2 bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-800">
-            <span className="text-[11px] font-semibold text-slate-400 uppercase">Capacity Limit (K):</span>
+          <div className="flex items-center space-x-2 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200">
+            <span className="text-[11px] font-semibold text-slate-600 uppercase">Capacity Limit (K):</span>
             {[5, 10, 20, 50].map((k) => (
               <button
                 key={k}
                 onClick={() => setCapacity(k)}
                 className={`px-2.5 py-1 rounded text-xs font-mono font-bold transition-colors ${
                   capacity === k
-                    ? 'bg-blue-600 text-white shadow-sm'
-                    : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                    ? 'bg-sky-600 text-white shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200'
                 }`}
               >
                 {k}
@@ -105,10 +105,10 @@ export const SIUQueueView: React.FC<SIUQueueViewProps> = ({ onSelectCase }) => {
         </div>
 
         {/* Capacity Meter Bar */}
-        <div className="flex items-center justify-between text-xs text-slate-400 pt-2 border-t border-slate-800">
+        <div className="flex items-center justify-between text-xs text-slate-500 pt-2 border-t border-slate-100">
           <div className="flex items-center space-x-2">
-            <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span>
-            <span>Allocated Top <span className="text-white font-mono font-bold">{cases.length}</span> of {totalAvailable} Flagged Population Cases</span>
+            <span className="w-2 h-2 rounded-full bg-sky-600 animate-pulse"></span>
+            <span>Allocated Top <span className="text-slate-900 font-mono font-bold">{cases.length}</span> of {totalAvailable} Flagged Population Cases</span>
           </div>
           <span className="font-mono text-[11px] text-slate-500">100% Empirical Calculations • 0 Mock Overrides</span>
         </div>
@@ -118,178 +118,182 @@ export const SIUQueueView: React.FC<SIUQueueViewProps> = ({ onSelectCase }) => {
       <div className="grid grid-cols-1 md:grid-cols-12 gap-3">
         {/* Search Input */}
         <div className="md:col-span-5 relative">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+          <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
           <input
             type="text"
-            placeholder="Search Provider, NPI, Scheme or Case ID..."
+            placeholder="Filter by Provider, NPI, Case ID, Scheme, or Specialty..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-[#0f172a] border border-slate-800 rounded-lg pl-9 pr-3 py-2 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-blue-500 transition-colors"
+            className="w-full bg-white border border-slate-200 rounded-lg pl-9 pr-3 py-2 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-sky-500 shadow-xs"
           />
         </div>
 
-        {/* Scheme Filter */}
+        {/* Severity Filter */}
         <div className="md:col-span-3">
-          <select
-            value={schemeFilter}
-            onChange={(e) => setSchemeFilter(e.target.value)}
-            className="w-full bg-[#0f172a] border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-blue-500 cursor-pointer"
-          >
-            <option value="">All FWA Schemes</option>
-            <option value="Upcoding">E&amp;M Upcoding (R102)</option>
-            <option value="Unbundling">Lab Unbundling (R103)</option>
-            <option value="Duplicate">Duplicate Encounters (R101)</option>
-            <option value="Phantom">Phantom / Impossible Hours (R104)</option>
-            <option value="Surge">Velocity Surge (R105)</option>
-          </select>
-        </div>
-
-        {/* Severity Tier Filter */}
-        <div className="md:col-span-2">
           <select
             value={tierFilter}
             onChange={(e) => setTierFilter(e.target.value)}
-            className="w-full bg-[#0f172a] border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-blue-500 cursor-pointer"
+            className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-800 font-medium focus:outline-none focus:ring-1 focus:ring-sky-500 shadow-xs cursor-pointer"
           >
-            <option value="">All Risk Tiers</option>
-            <option value="CRITICAL">Critical (≥75)</option>
-            <option value="HIGH">High (50–74)</option>
-            <option value="MEDIUM">Medium (25–49)</option>
+            <option value="">All Severity Tiers</option>
+            <option value="CRITICAL">CRITICAL (&ge; 75)</option>
+            <option value="HIGH">HIGH (50 – 74)</option>
+            <option value="MEDIUM">MEDIUM (25 – 49)</option>
           </select>
         </div>
 
-        {/* Sorter */}
+        {/* Scheme Filter */}
+        <div className="md:col-span-2">
+          <select
+            value={schemeFilter}
+            onChange={(e) => setSchemeFilter(e.target.value)}
+            className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-800 font-medium focus:outline-none focus:ring-1 focus:ring-sky-500 shadow-xs cursor-pointer"
+          >
+            <option value="">All Schemes</option>
+            <option value="Upcoding">Upcoding</option>
+            <option value="Unbundling">Unbundling</option>
+            <option value="Duplicate">Duplicate Billing</option>
+            <option value="Phantom">Phantom Services</option>
+            <option value="Utilization">Excessive Utilization</option>
+          </select>
+        </div>
+
+        {/* Sort Order */}
         <div className="md:col-span-2">
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
-            className="w-full bg-[#0f172a] border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-blue-500 cursor-pointer"
+            className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-800 font-medium focus:outline-none focus:ring-1 focus:ring-sky-500 shadow-xs cursor-pointer"
           >
-            <option value="priority">Rank: Multi-Attribute</option>
-            <option value="risk_score">Risk Score (Desc)</option>
-            <option value="exposure">Exposure $ (Desc)</option>
-            <option value="velocity">Velocity Δ (Desc)</option>
-            <option value="member_impact">Patient Count (Desc)</option>
+            <option value="priority">Sort: Utility Rank</option>
+            <option value="risk">Sort: Risk Score</option>
+            <option value="exposure">Sort: Financial Exposure</option>
+            <option value="velocity">Sort: Risk Velocity</option>
           </select>
         </div>
       </div>
 
-      {/* Main Investigation Queue Data Table */}
-      {isLoading ? (
-        <div className="flex items-center justify-center min-h-[350px]">
-          <Activity className="w-8 h-8 text-blue-400 animate-spin" />
-        </div>
-      ) : (
-        <div className="cockpit-panel rounded-xl border border-slate-800 overflow-hidden bg-[#0f172a]">
+      {/* Main High-Density Tabular Investigation Grid */}
+      <div className="health-panel rounded-xl overflow-hidden shadow-xs">
+        {isLoading ? (
+          <div className="p-12 text-center text-slate-500">
+            <Activity className="w-6 h-6 text-sky-600 animate-spin mx-auto mb-2" />
+            <p className="text-xs font-semibold">Recalculating SIU queue optimization...</p>
+          </div>
+        ) : filteredCases.length === 0 ? (
+          <div className="p-12 text-center text-slate-500">
+            <ShieldAlert className="w-8 h-8 text-slate-400 mx-auto mb-2" />
+            <p className="text-xs font-semibold text-slate-700">No cases matched the current search/filter criteria.</p>
+            <p className="text-[11px] text-slate-400 mt-1">Try resetting the severity or scheme filter dropdowns.</p>
+          </div>
+        ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead>
-                <tr className="bg-slate-900 text-slate-400 border-b border-slate-800 font-semibold">
-                  <th className="p-3 w-14">Rank</th>
-                  <th className="p-3 w-32">Case ID</th>
-                  <th className="p-3 w-28">Risk Score</th>
-                  <th className="p-3">Target Entity &amp; Specialty</th>
-                  <th className="p-3">Primary Detected Scheme</th>
-                  <th className="p-3 text-right">Exposure ($)</th>
-                  <th className="p-3 text-center">Patients</th>
-                  <th className="p-3 text-center">Velocity</th>
-                  <th className="p-3 text-center">Evidence</th>
-                  <th className="p-3 text-right">Action</th>
+              <thead className="bg-slate-50 text-slate-700 font-semibold border-b border-slate-200">
+                <tr>
+                  <th className="py-3 px-3 text-center w-12">#</th>
+                  <th className="py-3 px-3">Case ID</th>
+                  <th className="py-3 px-4">Target Provider / Entity</th>
+                  <th className="py-3 px-3">Primary Signal</th>
+                  <th className="py-3 px-3 text-right">Composite Risk</th>
+                  <th className="py-3 px-3 text-right">Potential Exposure</th>
+                  <th className="py-3 px-3 text-right">Members</th>
+                  <th className="py-3 px-3 text-center">Velocity</th>
+                  <th className="py-3 px-3 text-center">Evidence</th>
+                  <th className="py-3 px-3 text-center">Status</th>
+                  <th className="py-3 px-4 text-center">Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800/60 font-sans">
-                {filteredCases.map((c, i) => {
+              <tbody className="divide-y divide-slate-100">
+                {filteredCases.map((c, idx) => {
                   const isCritical = c.risk_tier === 'CRITICAL';
                   const isHigh = c.risk_tier === 'HIGH';
+                  const isMedium = c.risk_tier === 'MEDIUM';
 
                   return (
                     <tr 
-                      key={c.case_id} 
-                      className={`hover:bg-slate-800/50 transition-colors cursor-pointer ${
-                        isCritical ? 'bg-rose-950/10' : isHigh ? 'bg-amber-950/10' : ''
-                      }`}
+                      key={c.case_id}
+                      className="hover:bg-slate-50 transition-colors group cursor-pointer"
                       onClick={() => onSelectCase(c.case_id)}
                     >
-                      {/* Priority Rank */}
-                      <td className="p-3 font-mono font-bold text-blue-400">#{i + 1}</td>
+                      {/* Rank Index */}
+                      <td className="py-3.5 px-3 text-center font-mono font-bold text-slate-400 group-hover:text-sky-700">
+                        {idx + 1}
+                      </td>
 
                       {/* Case ID */}
-                      <td className="p-3">
-                        <span className="font-mono font-bold text-slate-200 bg-slate-800/80 px-2 py-0.5 rounded border border-slate-700">
-                          {c.case_id}
-                        </span>
+                      <td className="py-3.5 px-3 font-mono font-semibold text-sky-700 whitespace-nowrap">
+                        {c.case_id}
                       </td>
 
-                      {/* Composite Risk Score Badge */}
-                      <td className="p-3">
-                        <span
-                          className={`font-mono font-black text-xs px-2.5 py-0.5 rounded-full border ${
-                            isCritical
-                              ? 'bg-rose-950 text-rose-300 border-rose-800'
-                              : isHigh
-                              ? 'bg-amber-950 text-amber-300 border-amber-800'
-                              : 'bg-blue-950 text-blue-300 border-blue-800'
-                          }`}
-                        >
-                          {c.composite_risk_score} {c.risk_tier}
-                        </span>
+                      {/* Provider Details */}
+                      <td className="py-3.5 px-4">
+                        <div className="font-semibold text-slate-900 group-hover:text-sky-800 transition-colors">
+                          {c.target_entity_name}
+                        </div>
+                        <div className="text-[11px] text-slate-500 font-mono mt-0.5">
+                          NPI: {c.target_entity_id} • <span className="text-slate-600">{c.specialty}</span>
+                        </div>
                       </td>
 
-                      {/* Target Entity */}
-                      <td className="p-3">
-                        <p className="font-bold text-white hover:text-blue-400 transition-colors">{c.target_entity_name}</p>
-                        <p className="text-[11px] text-slate-400">{c.specialty} • NPI: {c.target_entity_id} • {c.location || 'FL'}</p>
-                      </td>
-
-                      {/* Primary Scheme Trigger */}
-                      <td className="p-3">
-                        <span className="text-[11px] font-medium text-amber-300 bg-amber-950/60 border border-amber-800/60 px-2 py-0.5 rounded">
+                      {/* Primary Signal */}
+                      <td className="py-3.5 px-3">
+                        <span className="inline-block px-2 py-0.5 rounded text-[11px] font-medium bg-slate-100 text-slate-700 border border-slate-200">
                           {c.primary_fwa_pattern}
                         </span>
                       </td>
 
-                      {/* Financial Exposure */}
-                      <td className="p-3 text-right font-mono font-bold text-rose-400 tabular-nums">
-                        ${c.potential_financial_exposure.toLocaleString('en-US', { minimumFractionDigits: 2 })}
-                      </td>
-
-                      {/* Impacted Patients */}
-                      <td className="p-3 text-center font-mono text-slate-300 tabular-nums">
-                        {c.member_impact_count}
-                      </td>
-
-                      {/* Risk Velocity */}
-                      <td className="p-3 text-center">
-                        <span className={`text-[11px] font-bold font-mono px-2 py-0.5 rounded ${
-                          c.risk_velocity > 5.0
-                            ? 'text-amber-400 bg-amber-950/80 border border-amber-800'
-                            : 'text-slate-400'
+                      {/* Composite Risk Score Badge */}
+                      <td className="py-3.5 px-3 text-right">
+                        <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-bold font-mono ${
+                          isCritical ? 'badge-critical' : isHigh ? 'badge-high' : 'badge-medium'
                         }`}>
-                          {c.risk_velocity > 0 ? `+${c.risk_velocity.toFixed(1)}/mo` : `${c.risk_velocity.toFixed(1)}/mo`}
+                          {c.composite_risk_score.toFixed(1)}
                         </span>
                       </td>
 
+                      {/* Potential Financial Exposure */}
+                      <td className="py-3.5 px-3 text-right font-mono font-bold text-slate-900 tabular-nums">
+                        ${c.potential_financial_exposure.toLocaleString()}
+                      </td>
+
+                      {/* Impacted Members */}
+                      <td className="py-3.5 px-3 text-right font-mono text-slate-700 tabular-nums">
+                        {c.member_impact_count}
+                      </td>
+
+                      {/* Risk Velocity Spark */}
+                      <td className="py-3.5 px-3 text-center">
+                        <RiskVelocitySpark velocity={c.risk_velocity} showText={true} />
+                      </td>
+
                       {/* Evidence Strength */}
-                      <td className="p-3 text-center">
-                        <span className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded ${
-                          c.evidence_strength === 'CONVINCING'
-                            ? 'text-emerald-300 bg-emerald-950/80 border border-emerald-800'
-                            : c.evidence_strength === 'STRONG'
-                            ? 'text-blue-300 bg-blue-950/80 border border-blue-800'
-                            : 'text-slate-400 bg-slate-900 border border-slate-800'
-                        }`}>
+                      <td className="py-3.5 px-3 text-center">
+                        <span className="font-mono text-xs font-semibold text-slate-700">
                           {c.evidence_strength}
                         </span>
                       </td>
 
-                      {/* Action */}
-                      <td className="p-3 text-right" onClick={(e) => e.stopPropagation()}>
+                      {/* Status */}
+                      <td className="py-3.5 px-3 text-center">
+                        <span className={`px-2 py-0.5 rounded text-[10px] font-semibold uppercase ${
+                          c.status === 'UNDER_INVESTIGATION'
+                            ? 'bg-amber-50 text-amber-800 border border-amber-200'
+                            : c.status === 'ESCALATED'
+                            ? 'bg-rose-50 text-rose-800 border border-rose-200'
+                            : 'bg-slate-100 text-slate-700 border border-slate-200'
+                        }`}>
+                          {c.status.replace(/_/g, ' ')}
+                        </span>
+                      </td>
+
+                      {/* Action Button */}
+                      <td className="py-3.5 px-4 text-center" onClick={(e) => e.stopPropagation()}>
                         <button
                           onClick={() => onSelectCase(c.case_id)}
-                          className="flex items-center space-x-1 ml-auto px-3 py-1.5 rounded-md bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition-all shadow-sm"
+                          className="px-3 py-1 rounded bg-sky-600 hover:bg-sky-700 text-white text-xs font-semibold shadow-xs transition-colors"
                         >
-                          <span>Investigate</span>
-                          <ArrowRight className="w-3.5 h-3.5" />
+                          Investigate
                         </button>
                       </td>
                     </tr>
@@ -298,8 +302,8 @@ export const SIUQueueView: React.FC<SIUQueueViewProps> = ({ onSelectCase }) => {
               </tbody>
             </table>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 };
