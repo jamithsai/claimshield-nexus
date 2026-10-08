@@ -27,8 +27,7 @@ import {
   ShieldAlert,
   HelpCircle,
   Zap,
-  Flame,
-  Award
+  Flame
 } from 'lucide-react';
 import { useCurrency } from '../context/CurrencyContext';
 import { api } from '../services/api';
@@ -554,17 +553,6 @@ export const DemoRunView: React.FC<DemoRunViewProps> = ({
                 </div>
               </div>
             </div>
-          </div>
-
-          {/* Judge Evaluation Callout */}
-          <div className="bg-[#E8F8EE] border border-[#209B47]/40 p-5 rounded-2xl space-y-2">
-            <div className="flex items-center space-x-2 text-[#1B843C]">
-              <Award className="w-5 h-5 text-[#209B47]" />
-              <h4 className="font-bold text-xs uppercase tracking-wider">What Judges Look For in Stage 1</h4>
-            </div>
-            <p className="text-xs text-[#042126]/80 leading-relaxed">
-              <strong>Zero False Confidence:</strong> Many AI fraud tools generate ungrounded risk numbers. ClaimShield Nexus anchors every alert in deterministic statutory rules (CMS NCCI) combined with an explainable 10-D Isolation Forest, ensuring 100% auditability and legal defensibility under 42 CFR § 455.
-            </p>
           </div>
         </div>
       )}
