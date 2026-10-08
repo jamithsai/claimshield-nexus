@@ -25,7 +25,8 @@ import {
   ChevronDown,
   ChevronRight,
   Sparkles,
-  Info
+  Info,
+  RotateCcw
 } from 'lucide-react';
 import { SIUCase, User, AIBrief, EvidenceGraphData } from '../types';
 import { api } from '../services/api';
@@ -77,9 +78,17 @@ export const CaseInvestigationView: React.FC<CaseInvestigationViewProps> = ({
   // Counterfactual Simulator State
   const [cfExcludedEntities, setCfExcludedEntities] = useState<string[]>([]);
   const [cfResult, setCfResult] = useState<any>(null);
+  const [lastSimulatedEntities, setLastSimulatedEntities] = useState<string[]>([]);
   const [isSimulating, setIsSimulating] = useState(false);
+  const [simError, setSimError] = useState<string | null>(null);
 
   useEffect(() => {
+    // Reset simulation state whenever the active caseId changes
+    setCfExcludedEntities([]);
+    setCfResult(null);
+    setLastSimulatedEntities([]);
+    setSimError(null);
+
     async function loadCaseData() {
       setIsLoading(true);
       try {
@@ -108,16 +117,27 @@ export const CaseInvestigationView: React.FC<CaseInvestigationViewProps> = ({
   }, [caseId]);
 
   const handleRunCounterfactual = async () => {
-    if (!caseData || cfExcludedEntities.length === 0) return;
+    if (!caseData || cfExcludedEntities.length === 0 || isSimulating) return;
     setIsSimulating(true);
+    setSimError(null);
     try {
-      const res = await api.runCounterfactual(caseData.case_id, cfExcludedEntities);
+      const currentSelection = [...cfExcludedEntities];
+      const res = await api.runCounterfactual(caseData.case_id, currentSelection);
       setCfResult(res);
+      setLastSimulatedEntities(currentSelection);
     } catch (err: any) {
-      alert(`Simulation failed: ${err.message}`);
+      console.error('Simulation failed', err);
+      setSimError(err.message || 'Simulation failed. Please verify selections and retry.');
     } finally {
       setIsSimulating(false);
     }
+  };
+
+  const handleResetCounterfactual = () => {
+    setCfExcludedEntities([]);
+    setCfResult(null);
+    setLastSimulatedEntities([]);
+    setSimError(null);
   };
 
   const handleCopyBrief = () => {
@@ -1037,11 +1057,22 @@ export const CaseInvestigationView: React.FC<CaseInvestigationViewProps> = ({
       {/* ==================== TAB 9: WHAT-IF SIMULATOR ==================== */}
       {activeTab === 'simulator' && (
         <div className="health-panel p-6 rounded-xl space-y-6">
-          <div>
-            <h2 className="text-sm font-bold text-[#042126]">Counterfactual What-If Remediation Simulator</h2>
-            <p className="text-xs text-[#042126]/60 mt-0.5">
-              Simulate risk reduction and potential financial recovery when excluding collusive facilities or non-compliant billing modifiers.
-            </p>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#042126]/10 pb-4">
+            <div>
+              <h2 className="text-sm font-bold text-[#042126]">Counterfactual What-If Remediation Sandbox</h2>
+              <p className="text-xs text-[#042126]/60 mt-0.5">
+                Simulate risk reduction and potential financial recovery when excluding collusive facilities or auditing non-compliant billing patterns.
+              </p>
+            </div>
+            {(cfExcludedEntities.length > 0 || cfResult) && (
+              <button
+                onClick={handleResetCounterfactual}
+                className="self-start sm:self-auto px-3 py-1.5 rounded-lg border border-[#042126]/15 bg-white hover:bg-[#F2FCFF] text-xs font-semibold text-[#042126]/80 flex items-center space-x-1.5 transition-colors cursor-pointer"
+              >
+                <RotateCcw className="w-3.5 h-3.5 text-[#005F68]" />
+                <span>Reset Simulation</span>
+              </button>
+            )}
           </div>
 
           <div className="p-3 rounded-lg bg-[#F2FCFF] border border-[#042126]/10 text-xs text-[#042126]/80 flex items-start space-x-2.5">
@@ -1053,12 +1084,30 @@ export const CaseInvestigationView: React.FC<CaseInvestigationViewProps> = ({
           </div>
 
           <div className="p-4 rounded-xl bg-[#F2FCFF] border border-[#042126]/10 space-y-4">
-            <h3 className="text-xs font-bold text-[#042126] uppercase">Select Entity or Rule Intervention to Exclude:</h3>
+            <div className="flex items-center justify-between">
+              <h3 className="text-xs font-bold text-[#042126] uppercase">Select Entity or Policy Interventions to Simulate:</h3>
+              <span className="text-[11px] text-[#042126]/60">
+                {cfExcludedEntities.length} selected
+              </span>
+            </div>
+
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               {[
-                { id: 'R102_UPCODING', label: 'Enforce Modifier-25 Audit (R102)' },
-                { id: 'FACILITY_COLLUSION', label: 'Isolate Shared Clinic Billing' },
-                { id: 'UNBUNDLED_LABS', label: 'Automate NCCI Edit Unbundling (R103)' },
+                { 
+                  id: 'R102_UPCODING', 
+                  label: 'Enforce Modifier-25 Audit (R102)',
+                  desc: 'Audit & withhold claims billed with Modifier-25 upcoding on same-day E/M encounters.'
+                },
+                { 
+                  id: 'FACILITY_COLLUSION', 
+                  label: 'Isolate Shared Clinic Billing',
+                  desc: 'Isolate cross-referral collusion network and exclude shared facility billing.'
+                },
+                { 
+                  id: 'UNBUNDLED_LABS', 
+                  label: 'Automate NCCI Edit Unbundling (R103)',
+                  desc: 'Enforce National Correct Coding Initiative unbundling edits on lab/toxicology panels.'
+                },
               ].map((item) => {
                 const isSelected = cfExcludedEntities.includes(item.id);
                 return (
@@ -1071,65 +1120,147 @@ export const CaseInvestigationView: React.FC<CaseInvestigationViewProps> = ({
                         setCfExcludedEntities([...cfExcludedEntities, item.id]);
                       }
                     }}
-                    className={`p-3 rounded-lg border text-xs font-semibold text-left transition-colors cursor-pointer ${
+                    className={`p-3 rounded-lg border text-xs text-left transition-all cursor-pointer flex flex-col justify-between space-y-2 ${
                       isSelected
                         ? 'bg-[#209B47]/10 border-[#209B47] text-[#005F68] shadow-xs'
                         : 'bg-white border-[#042126]/15 text-[#042126] hover:bg-[#F2FCFF]'
                     }`}
                   >
-                    <div className="flex items-center justify-between">
-                      <span>{item.label}</span>
-                      <span className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center ${
-                        isSelected ? 'bg-[#209B47] border-[#209B47] text-white text-[9px]' : 'border-[#042126]/20'
+                    <div className="flex items-start justify-between gap-2">
+                      <span className="font-semibold">{item.label}</span>
+                      <span className={`w-4 h-4 rounded-full border flex-shrink-0 flex items-center justify-center transition-colors ${
+                        isSelected ? 'bg-[#209B47] border-[#209B47] text-white text-[10px]' : 'border-[#042126]/20 bg-white'
                       }`}>
                         {isSelected && '✓'}
                       </span>
                     </div>
+                    <p className="text-[11px] text-[#042126]/60 leading-relaxed">{item.desc}</p>
                   </button>
                 );
               })}
             </div>
 
-            <div className="flex items-center justify-between pt-2">
-              <span className="text-xs text-[#042126]/60">
-                Selected {cfExcludedEntities.length} counterfactual interventions
-              </span>
-              <button
-                onClick={handleRunCounterfactual}
-                disabled={cfExcludedEntities.length === 0 || isSimulating}
-                className="px-4 py-2 rounded-lg bg-[#209B47] hover:bg-[#1B843C] disabled:bg-[#042126]/10 disabled:text-[#042126]/40 text-white text-xs font-semibold transition-colors flex items-center space-x-1.5 shadow-xs cursor-pointer"
-              >
-                <Play className="w-3.5 h-3.5" />
-                <span>{isSimulating ? 'Recalculating...' : 'Run Simulation'}</span>
-              </button>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2">
+              <div className="flex items-center space-x-2">
+                <span className="text-xs text-[#042126]/70">
+                  {cfExcludedEntities.length === 0 
+                    ? 'Select one or more interventions to run a what-if simulation' 
+                    : `Configured for ${cfExcludedEntities.length} intervention${cfExcludedEntities.length > 1 ? 's' : ''}`}
+                </span>
+                {cfResult && JSON.stringify(lastSimulatedEntities.slice().sort()) !== JSON.stringify([...cfExcludedEntities].sort()) && (
+                  <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[#D97706]/15 text-[#D97706] border border-[#D97706]/30 animate-pulse">
+                    Selection changed — re-run to update
+                  </span>
+                )}
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={handleRunCounterfactual}
+                  disabled={cfExcludedEntities.length === 0 || isSimulating}
+                  className="px-4 py-2 rounded-lg bg-[#209B47] hover:bg-[#1B843C] disabled:bg-[#042126]/10 disabled:text-[#042126]/40 text-white text-xs font-semibold transition-colors flex items-center space-x-1.5 shadow-xs cursor-pointer"
+                >
+                  <Play className="w-3.5 h-3.5" />
+                  <span>{isSimulating ? 'Recalculating...' : 'Run Simulation'}</span>
+                </button>
+              </div>
             </div>
           </div>
 
+          {/* Error Message */}
+          {simError && (
+            <div className="p-4 rounded-xl bg-[#FEE2E2] border border-[#FCA5A5] text-xs text-[#B91C1C] flex items-center space-x-2">
+              <AlertTriangle className="w-4 h-4 flex-shrink-0" />
+              <span>{simError}</span>
+            </div>
+          )}
+
           {/* Simulation Output */}
           {cfResult && (
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
-              <div className="p-4 rounded-xl bg-[#E8F8EE] border border-[#ACF2E5] space-y-1">
-                <span className="text-xs font-semibold text-[#1B843C]">Simulated Risk Delta</span>
-                <p className="text-2xl font-bold font-mono text-[#042126]">
-                  -{cfResult.risk_score_delta?.toFixed(1) || '32.4'}%
-                </p>
-                <p className="text-[11px] text-[#1B843C]">Risk drops into Moderate tier</p>
+            <div className="space-y-4 pt-1">
+              {/* Simulation Meta Header */}
+              <div className="p-3.5 rounded-xl bg-white border border-[#042126]/10 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+                <div className="flex items-center space-x-2">
+                  <span className="font-mono font-bold text-[#005F68]">{cfResult.simulation_id}</span>
+                  <span className="text-[#042126]/40">•</span>
+                  <span className="text-[#042126]/80 font-medium">Target: <strong className="text-[#042126]">{cfResult.target_entity}</strong></span>
+                </div>
+                <div className="flex flex-wrap items-center gap-1.5">
+                  <span className="text-[11px] text-[#042126]/60">Active Interventions:</span>
+                  {(cfResult.excluded_entities || []).map((ent: string, idx: number) => (
+                    <span key={idx} className="px-2 py-0.5 rounded font-mono text-[10px] font-bold bg-[#209B47]/15 text-[#1B843C] border border-[#209B47]/30">
+                      {ent}
+                    </span>
+                  ))}
+                </div>
               </div>
 
-              <div className="p-4 rounded-xl bg-[#005F68]/10 border border-[#005F68]/20 space-y-1">
-                <span className="text-xs font-semibold text-[#005F68]">Potential Cost Avoidance</span>
-                <p className="text-2xl font-bold font-mono text-[#042126]">
-                  {formatMoney(caseData.potential_financial_exposure * 0.42, { decimals: 0 })}
-                </p>
-                <p className="text-[11px] text-[#005F68]">Pre-payment recovery potential</p>
+              {/* 3 Metrics Cards */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="p-4 rounded-xl bg-[#E8F8EE] border border-[#ACF2E5] space-y-1">
+                  <span className="text-xs font-semibold text-[#1B843C]">Simulated Risk Delta</span>
+                  <p className="text-2xl font-bold font-mono text-[#042126]">
+                    -{cfResult.simulated_metrics?.risk_reduction_percentage?.toFixed(1) ?? '0.0'}%
+                  </p>
+                  <p className="text-[11px] text-[#1B843C]">
+                    Baseline: {cfResult.baseline_metrics?.risk_score?.toFixed(1) ?? caseData.composite_risk_score.toFixed(1)} → Simulated: {cfResult.simulated_metrics?.risk_score?.toFixed(1) ?? '0.0'}
+                  </p>
+                </div>
+
+                <div className="p-4 rounded-xl bg-[#005F68]/10 border border-[#005F68]/20 space-y-1">
+                  <span className="text-xs font-semibold text-[#005F68]">Potential Cost Avoidance</span>
+                  <p className="text-2xl font-bold font-mono text-[#042126]">
+                    {formatMoney(cfResult.simulated_metrics?.potential_cost_avoidance_usd ?? 0, { decimals: 0 })}
+                  </p>
+                  <p className="text-[11px] text-[#005F68]">
+                    Residual Exposure: {formatMoney(cfResult.simulated_metrics?.financial_exposure_usd ?? 0, { decimals: 0 })}
+                  </p>
+                </div>
+
+                <div className="p-4 rounded-xl bg-[#F2FCFF] border border-[#042126]/10 space-y-1">
+                  <span className="text-xs font-semibold text-[#042126]/70">Residual Risk Profile</span>
+                  <p className="text-2xl font-bold font-mono text-[#042126]">
+                    {(cfResult.simulated_metrics?.risk_score ?? 0).toFixed(1)} / 100
+                  </p>
+                  <p className="text-[11px] text-[#042126]/60">
+                    Tier: <span className="font-bold text-[#005F68]">{cfResult.baseline_metrics?.risk_tier || caseData.risk_tier}</span> → <span className="font-bold text-[#209B47]">{(cfResult.simulated_metrics?.risk_score ?? 0) < 40 ? 'LOW' : (cfResult.simulated_metrics?.risk_score ?? 0) < 70 ? 'MODERATE' : 'HIGH'}</span>
+                  </p>
+                </div>
               </div>
 
-              <div className="p-4 rounded-xl bg-[#F2FCFF] border border-[#042126]/10 space-y-1">
-                <span className="text-xs font-semibold text-[#042126]/70">Residual Risk Score</span>
-                <p className="text-2xl font-bold font-mono text-[#042126]">
-                  {Math.max(10, caseData.composite_risk_score - 32.4).toFixed(1)} / 100
-                </p>
-                <p className="text-[11px] text-[#042126]/60">Post-mitigation profile</p>
+              {/* Network Topology Impact Subpanel */}
+              {cfResult.network_topology_impact && (
+                <div className="p-4 rounded-xl bg-[#F2FCFF] border border-[#042126]/10 space-y-2">
+                  <h4 className="text-xs font-bold text-[#042126] uppercase">Network Topology Impact</h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                    <div className="p-2.5 rounded-lg bg-white border border-[#042126]/10">
+                      <span className="text-[11px] text-[#042126]/60">Referral Loop Status:</span>
+                      <p className={`font-mono font-bold mt-0.5 ${
+                        cfResult.network_topology_impact.referral_loop_status === 'BROKEN' ? 'text-[#209B47]' : 'text-[#D97706]'
+                      }`}>
+                        {cfResult.network_topology_impact.referral_loop_status}
+                      </p>
+                    </div>
+                    <div className="p-2.5 rounded-lg bg-white border border-[#042126]/10">
+                      <span className="text-[11px] text-[#042126]/60">Severed Collusion Edges:</span>
+                      <p className="font-mono font-bold text-[#042126] mt-0.5">
+                        {cfResult.network_topology_impact.severed_collusion_edges_count} Edges
+                      </p>
+                    </div>
+                    <div className="p-2.5 rounded-lg bg-white border border-[#042126]/10">
+                      <span className="text-[11px] text-[#042126]/60">Isolated Subgraphs Formed:</span>
+                      <p className="font-mono font-bold text-[#042126] mt-0.5">
+                        {cfResult.network_topology_impact.isolated_clusters_formed} Cluster(s)
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Disclaimer */}
+              <div className="p-3 rounded-lg bg-[#F2FCFF] border border-[#005F68]/20 text-[11px] text-[#005F68]">
+                <p className="font-semibold mb-0.5">Compliance Notice:</p>
+                <p className="text-[#042126]/70">{cfResult.disclaimer}</p>
               </div>
             </div>
           )}

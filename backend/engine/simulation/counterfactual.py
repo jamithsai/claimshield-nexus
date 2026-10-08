@@ -20,13 +20,26 @@ class CounterfactualSimulator:
         excluded_set: Set[str] = set(excluded_entity_ids)
         provider_claims = db.get_claims_for_provider(case.target_entity_id)
         
-        # 1. Filter claims that involve any of the excluded entities (facility or referring NPI)
-        remaining_claims = [
-            c for c in provider_claims
-            if c.facility_id not in excluded_set 
-            and c.referring_provider_npi not in excluded_set
-            and c.rendering_provider_npi not in excluded_set
-        ]
+        # 1. Filter claims that involve excluded entities or targeted policy/rule interventions
+        def is_claim_excluded(c) -> bool:
+            # Direct entity matching (facility, referring NPI, rendering NPI, billing NPI)
+            if c.facility_id in excluded_set or c.referring_provider_npi in excluded_set or c.rendering_provider_npi in excluded_set or c.billing_provider_npi in excluded_set:
+                return True
+            # Modifier-25 E/M Upcoding Intervention (R102)
+            if any(k in excluded_set for k in ["R102_UPCODING", "R102", "UPCODING", "MODIFIER_25"]):
+                if "25" in c.modifier_codes or (c.synthetic_scheme_tag and "UPCODING" in c.synthetic_scheme_tag) or c.procedure_code in ["99215", "99285"]:
+                    return True
+            # Shared Clinic / Referral Kickback Collusion Intervention
+            if any(k in excluded_set for k in ["FACILITY_COLLUSION", "COLLUSION", "SHARED_CLINIC"]):
+                if c.synthetic_scheme_tag in ["COORDINATED_COLLUSION_RING", "FACILITY_COLLUSION"] or (c.referring_provider_npi and c.referring_provider_npi != c.rendering_provider_npi):
+                    return True
+            # Automate NCCI Edit Unbundling Intervention (R103)
+            if any(k in excluded_set for k in ["UNBUNDLED_LABS", "UNBUNDLING", "R103"]):
+                if (c.synthetic_scheme_tag and "UNBUNDLE" in c.synthetic_scheme_tag) or c.procedure_code in ["80048", "82565", "84520", "80307"]:
+                    return True
+            return False
+
+        remaining_claims = [c for c in provider_claims if not is_claim_excluded(c)]
         
         # 2. Recalculate financial exposure on remaining claims
         remaining_flagged_exposure = sum(
@@ -48,7 +61,7 @@ class CounterfactualSimulator:
         severed_edges_count = 0
         for cycle in graph_engine.referral_cycles:
             if case.target_entity_id in cycle:
-                if any(ent in cycle for ent in excluded_set):
+                if any(ent in cycle for ent in excluded_set) or any(k in excluded_set for k in ["FACILITY_COLLUSION", "COLLUSION", "SHARED_CLINIC"]):
                     cycle_broken = True
                     severed_edges_count += len(cycle)
                     
