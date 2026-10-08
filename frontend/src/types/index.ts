@@ -41,7 +41,7 @@ export interface RiskProjection {
   projected_member_impact: number;
   ci_low_usd: number;
   ci_high_usd: number;
-  trajectory_classification: 'STATIC' | 'MODERATE_GROWTH' | 'ACCELERATING_ESCALATION';
+  trajectory_classification: 'STATIC' | 'MODERATE_GROWTH' | 'ACCELERATING_ESCALATION' | 'DECELERATING';
   disclaimer: string;
 }
 

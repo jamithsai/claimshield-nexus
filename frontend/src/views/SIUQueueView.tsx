@@ -166,9 +166,10 @@ export const SIUQueueView: React.FC<SIUQueueViewProps> = ({ onSelectCase }) => {
             className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-800 font-medium focus:outline-none focus:ring-1 focus:ring-sky-500 shadow-xs cursor-pointer"
           >
             <option value="priority">Sort: Utility Rank</option>
-            <option value="risk">Sort: Risk Score</option>
+            <option value="risk_score">Sort: Risk Score</option>
             <option value="exposure">Sort: Financial Exposure</option>
             <option value="velocity">Sort: Risk Velocity</option>
+            <option value="member_impact">Sort: Impacted Beneficiaries</option>
           </select>
         </div>
       </div>

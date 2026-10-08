@@ -102,7 +102,7 @@ class RiskProjection(BaseModel):
     projected_member_impact: int
     ci_low_usd: float
     ci_high_usd: float
-    trajectory_classification: Literal["STATIC", "MODERATE_GROWTH", "ACCELERATING_ESCALATION"]
+    trajectory_classification: Literal["STATIC", "MODERATE_GROWTH", "ACCELERATING_ESCALATION", "DECELERATING"]
     disclaimer: str = "Statistical projection for prioritization only; not a factual certainty."
 
 class RuleTriggerEvent(BaseModel):

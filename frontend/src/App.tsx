@@ -41,6 +41,20 @@ export function App() {
     setActiveView('case-detail');
   };
 
+  const handleSelectCaseByNpi = async (npi: string) => {
+    try {
+      const q = await api.getQueue(100, 'priority');
+      const matched = q.cases.find(c => c.target_entity_id === npi);
+      if (matched) {
+        handleSelectCase(matched.case_id);
+      } else {
+        setActiveView('queue');
+      }
+    } catch {
+      setActiveView('queue');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans">
       {/* Top Healthcare Navigation Bar */}
@@ -77,9 +91,7 @@ export function App() {
 
         {activeView === 'network' && (
           <NetworkExplorerView
-            onSelectCaseByNpi={(npi) => {
-              setActiveView('queue');
-            }}
+            onSelectCaseByNpi={handleSelectCaseByNpi}
           />
         )}
 

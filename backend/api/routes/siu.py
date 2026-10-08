@@ -14,16 +14,17 @@ router = APIRouter(prefix="/siu", tags=["SIU Queue & Prioritization"])
 @router.get("/queue")
 def get_prioritized_queue(
     capacity: int = Query(20, ge=1, le=100),
-    sort_by: str = Query("priority", pattern="^(priority|risk_score|exposure|velocity|member_impact)$"),
+    sort_by: str = Query("priority", pattern="^(priority|risk|risk_score|exposure|velocity|member_impact)$"),
     tier: Optional[str] = Query(None),
     fwa_pattern: Optional[str] = Query(None),
     current_user: User = Depends(get_current_user)
 ) -> Dict[str, Any]:
     cases = db.list_cases()
+    normalized_sort = "risk_score" if sort_by == "risk" else sort_by
     result = SIUPrioritizer.rank_and_allocate_queue(
         cases=cases,
         capacity=capacity,
-        sort_by=sort_by,
+        sort_by=normalized_sort,
         tier_filter=tier,
         scheme_filter=fwa_pattern
     )

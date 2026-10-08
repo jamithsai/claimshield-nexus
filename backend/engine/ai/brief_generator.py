@@ -13,12 +13,20 @@ class AIEvidenceBriefGenerator:
     def generate_brief(case: SIUCase, sample_claims: List[Claim]) -> Dict[str, Any]:
         brief_id = f"BRF-{case.case_id.replace('CASE-', '')}"
         
+        # Format dynamic velocity descriptor
+        if case.risk_velocity > 15.0:
+            vel_desc = f"an accelerating velocity of +{case.risk_velocity:.1f} points"
+        elif case.risk_velocity < -10.0:
+            vel_desc = f"a decelerating velocity of {case.risk_velocity:.1f} points"
+        else:
+            vel_desc = f"a stable velocity of {case.risk_velocity:+.1f} points"
+
         # 1. Executive Summary Construction
         summary = (
             f"Anomalous billing and network behavioral patterns were detected for {case.target_entity_name} "
             f"({case.specialty or 'Healthcare Provider'}, located in {case.location or 'FL'}). "
             f"The entity exhibits a composite risk score of {case.composite_risk_score}/100 ({case.risk_tier} Tier) "
-            f"with an accelerating velocity of +{case.risk_velocity:.1f} points over the 90-day observation window. "
+            f"with {vel_desc} over the 90-day observation window. "
             f"Total potential financial exposure is estimated at ${case.potential_financial_exposure:,.2f} "
             f"across {case.member_impact_count} impacted program beneficiaries."
         )

@@ -93,7 +93,20 @@ def record_investigator_decision(
     if not case:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Case {case_id} not found")
         
-    case.status = "UNDER_INVESTIGATION" if "AUDIT" in req.decision else "ESCALATED"
+    disp_upper = req.disposition.upper()
+    dec_upper = req.decision.upper()
+    
+    if "FALSE_POSITIVE" in disp_upper or "CLEAR" in disp_upper or "FALSE_POSITIVE" in dec_upper:
+        case.status = "CLEARED_FALSE_POSITIVE"
+    elif "REFERRED" in disp_upper or "LEGAL" in disp_upper or "LAW_ENFORCEMENT" in disp_upper or "LE" in disp_upper:
+        case.status = "REFERRED_LE"
+    elif "ESCALAT" in dec_upper or "ESCALAT" in disp_upper:
+        case.status = "ESCALATED"
+    elif "AUDIT" in dec_upper or "AUDIT" in disp_upper or "INVESTIGAT" in dec_upper or "CONFIRMED" in disp_upper:
+        case.status = "UNDER_INVESTIGATION"
+    else:
+        case.status = "ASSIGNED"
+
     case.investigator_notes = req.investigator_notes
     case.feedback_disposition = req.disposition
     case.updated_at = datetime.datetime.now(datetime.timezone.utc).isoformat()

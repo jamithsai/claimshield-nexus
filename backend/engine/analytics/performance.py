@@ -11,7 +11,28 @@ class DetectorPerformanceCenter:
     def calculate_performance_metrics(cases: List[SIUCase]) -> Dict[str, Any]:
         total_cases = len(cases)
         if total_cases == 0:
-            return {}
+            return {
+                "total_flagged_cases_evaluated": 0,
+                "detector_overlap_venn": {
+                    "rule_engine_only": 0,
+                    "ml_isolation_forest_only": 0,
+                    "graph_network_only": 0,
+                    "rule_and_ml": 0,
+                    "rule_and_graph": 0,
+                    "ml_and_graph": 0,
+                    "tri_detector_consensus (Rule + ML + Graph)": 0
+                },
+                "estimated_detector_efficiency": {
+                    "rule_engine_precision_est": 0.0,
+                    "ml_isolation_forest_precision_est": 0.0,
+                    "graph_network_precision_est": 0.0,
+                    "ensemble_consensus_precision_est": 0.0,
+                    "overall_fwa_population_coverage": 0.0
+                },
+                "calibration_insights": [
+                    "No cases currently available for performance evaluation."
+                ]
+            }
             
         rule_only = 0
         ml_only = 0

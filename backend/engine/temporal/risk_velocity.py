@@ -21,7 +21,10 @@ class RiskVelocityEngine:
             classification = "ACCELERATING_ESCALATION"
         elif delta_risk > 15.0:
             classification = "MODERATE_GROWTH"
+        elif delta_risk < -10.0:
+            classification = "DECELERATING"
         else:
             classification = "STATIC"
             
         return round(delta_risk, 1), classification
+
