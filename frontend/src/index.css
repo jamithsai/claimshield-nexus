@@ -1,0 +1,53 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background-color: #0b132b;
+    color: #f8fafc;
+    letter-spacing: -0.01em;
+  }
+  code, pre, .font-mono {
+    font-family: 'JetBrains Mono', 'Geist Mono', monospace;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* Institutional Enterprise Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0b132b;
+}
+::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #334155;
+}
+
+/* High-Density Enterprise Cockpit Panel */
+.cockpit-panel {
+  background-color: #1e293b;
+  border: 1px solid #334155;
+}
+
+.cockpit-panel-elevated {
+  background-color: #334155;
+  border: 1px solid #475569;
+}
+
+.cockpit-panel-dark {
+  background-color: #0f172a;
+  border: 1px solid #1e293b;
+}
+
+/* Tabular number utility */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
