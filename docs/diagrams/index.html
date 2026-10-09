@@ -271,6 +271,10 @@
         <span class="tab-num">03</span>
         <span>Cryptographic Audit Sequence</span>
       </button>
+      <button class="tab-btn" onclick="loadDiagram('tech_stack.html', this)">
+        <span class="tab-num">04</span>
+        <span>Complete Tech Stack</span>
+      </button>
     </div>
 
     <div class="tab-actions">
@@ -329,6 +333,16 @@
         </div>
         <button class="card-btn" onclick="loadDiagram('sequence.html')">View Sequence Diagram</button>
       </div>
+
+      <div class="card">
+        <div>
+          <div class="card-title">04 • Complete Tech Stack</div>
+          <p class="card-desc">
+            Comprehensive framework manifest across React 18, TypeScript, Three.js WebGL, Python 3.13, FastAPI, Pydantic v2, Isolation Forest ML, NetworkX, and SHA-256 Merkle cryptography.
+          </p>
+        </div>
+        <button class="card-btn" onclick="loadDiagram('tech_stack.html')">View Tech Stack</button>
+      </div>
     </div>
   </main>
 
@@ -344,7 +358,8 @@
       const titles = {
         'architecture.html': 'ClaimShield Nexus System Architecture (Interactive Viewer)',
         'workflow.html': 'ClaimShield Nexus SIU Investigation Workflow (Interactive Viewer)',
-        'sequence.html': 'ClaimShield Nexus Decision & Cryptographic Audit Sequence (Interactive Viewer)'
+        'sequence.html': 'ClaimShield Nexus Decision & Cryptographic Audit Sequence (Interactive Viewer)',
+        'tech_stack.html': 'ClaimShield Nexus Complete Tech Stack (Interactive Manifest)'
       };
       
       const titleSpan = document.getElementById('frame-title').querySelector('span');
