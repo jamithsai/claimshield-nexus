@@ -79,17 +79,27 @@ def get_temporal_trends(current_user: User = Depends(get_current_user)) -> List[
         
         normal_vol = sum(1 for c in epoch_claims if c.synthetic_scheme_tag is None)
         flagged_vol = sum(1 for c in epoch_claims if c.synthetic_scheme_tag is not None)
+        total_vol = normal_vol + flagged_vol
         exposure_val = sum(c.paid_amount for c in epoch_claims if c.synthetic_scheme_tag is not None)
         
         # Risk progression based on flagged volume ratio in epoch
         flagged_ratio = (flagged_vol / max(1, len(epoch_claims)))
         epoch_risk = round(min(95.0, 30.0 + (flagged_ratio * 120.0)), 1)
         
+        d_start = (d_min + datetime.timedelta(days=start_off)).isoformat()
+        d_end = (d_min + datetime.timedelta(days=end_off)).isoformat()
+
         trends.append({
             "epoch": label,
+            "date": label,
+            "date_start": d_start,
+            "date_end": d_end,
             "normal_volume": normal_vol,
             "flagged_volume": flagged_vol,
+            "total_claims": total_vol,
+            "total_encounters": total_vol,
             "exposure_usd": round(exposure_val, 2),
+            "flagged_amount": round(exposure_val, 2),
             "avg_risk": epoch_risk
         })
         

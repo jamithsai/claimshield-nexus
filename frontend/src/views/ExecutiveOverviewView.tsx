@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { 
   DollarSign, 
   ShieldAlert, 
@@ -83,6 +83,27 @@ export const ExecutiveOverviewView: React.FC<ExecutiveOverviewViewProps> = ({
       el.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   };
+
+  // Chart Data with robust fallback normalization
+  const chartData = useMemo(() => {
+    if (!trends || trends.length === 0) return [];
+    return trends.map((t, idx) => {
+      const epochLabel = t.epoch || t.date || `Day ${idx * 30}`;
+      const totalEncounters = t.total_claims ?? t.total_encounters ?? ((t.normal_volume || 0) + (t.flagged_volume || 0));
+      const flaggedExposure = t.flagged_amount ?? t.exposure_usd ?? 0;
+      const avgRisk = t.avg_risk ?? 0;
+      return {
+        ...t,
+        epoch: epochLabel,
+        displayLabel: epochLabel,
+        total_claims: totalEncounters,
+        total_encounters: totalEncounters,
+        flagged_amount: flaggedExposure,
+        exposure_usd: flaggedExposure,
+        avg_risk: avgRisk,
+      };
+    });
+  }, [trends]);
 
   if (isLoading || !metrics) {
     return (
@@ -412,7 +433,7 @@ export const ExecutiveOverviewView: React.FC<ExecutiveOverviewViewProps> = ({
 
             <div className="h-[230px] w-full pt-1">
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={trends} margin={{ top: 8, right: 10, left: -20, bottom: 0 }}>
+                <AreaChart data={chartData} margin={{ top: 8, right: 15, left: -10, bottom: 0 }}>
                   <defs>
                     <linearGradient id="claimVolumeGradient" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="5%" stopColor="#209B47" stopOpacity={0.25} />
@@ -425,14 +446,22 @@ export const ExecutiveOverviewView: React.FC<ExecutiveOverviewViewProps> = ({
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(4, 33, 38, 0.08)" />
                   <XAxis 
-                    dataKey="date" 
+                    dataKey="epoch" 
                     stroke="#042126" 
                     tick={{ fill: 'rgba(4, 33, 38, 0.65)', fontSize: 10 }}
-                    tickFormatter={(d) => d.slice(5)} 
                   />
                   <YAxis 
-                    stroke="#042126" 
-                    tick={{ fill: 'rgba(4, 33, 38, 0.65)', fontSize: 10 }} 
+                    yAxisId="left"
+                    stroke="#209B47" 
+                    tick={{ fill: 'rgba(4, 33, 38, 0.65)', fontSize: 10 }}
+                    tickFormatter={(v) => v >= 1000 ? `${(v / 1000).toFixed(1)}k` : `${v}`}
+                  />
+                  <YAxis 
+                    yAxisId="right"
+                    orientation="right"
+                    stroke="#B91C1C" 
+                    tick={{ fill: 'rgba(185, 28, 28, 0.75)', fontSize: 10 }}
+                    tickFormatter={(v) => formatCompactMoney(v)}
                   />
                   <Tooltip 
                     contentStyle={{ 
@@ -444,11 +473,12 @@ export const ExecutiveOverviewView: React.FC<ExecutiveOverviewViewProps> = ({
                       boxShadow: '0 4px 6px -1px rgba(4, 33, 38, 0.08)'
                     }}
                     formatter={(value: any, name: string) => [
-                      name.startsWith('Flagged') ? formatMoney(Number(value)) : Number(value).toLocaleString(),
+                      name.startsWith('Flagged') ? formatMoney(Number(value)) : `${Number(value).toLocaleString()} encounters`,
                       name
                     ]}
                   />
                   <Area 
+                    yAxisId="left"
                     type="monotone" 
                     dataKey="total_claims" 
                     name="Total Encounters"
@@ -458,6 +488,7 @@ export const ExecutiveOverviewView: React.FC<ExecutiveOverviewViewProps> = ({
                     fill="url(#claimVolumeGradient)" 
                   />
                   <Area 
+                    yAxisId="right"
                     type="monotone" 
                     dataKey="flagged_amount" 
                     name={`Flagged (${currencySymbol})`}

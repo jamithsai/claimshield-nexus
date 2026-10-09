@@ -32,6 +32,19 @@ def test_overview_metrics(client):
     assert data["flagged_fwa_exposure_usd"] > 0
     assert "detected_schemes_breakdown" in data
 
+def test_overview_trends(client):
+    res = client.get("/api/v1/overview/trends")
+    assert res.status_code == 200
+    data = res.json()
+    assert len(data) >= 4
+    for epoch in data:
+        assert "epoch" in epoch
+        assert "total_claims" in epoch
+        assert "flagged_amount" in epoch
+        assert "exposure_usd" in epoch
+        assert "avg_risk" in epoch
+        assert epoch["total_claims"] >= 0
+
 def test_siu_queue_prioritization(client):
     res = client.get("/api/v1/siu/queue?capacity=15&sort_by=priority")
     assert res.status_code == 200
