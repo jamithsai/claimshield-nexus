@@ -91,8 +91,11 @@ export const DemoRunView: React.FC<DemoRunViewProps> = ({
         if (q.cases && q.cases.length > 0) {
           setSelectedCase(q.cases[0]);
         }
-        setNetworkData(g);
-        setTrends(t);
+        setNetworkData({
+          nodes: g?.nodes || g?.sampled_nodes || [],
+          edges: g?.edges || g?.sampled_edges || [],
+        });
+        setTrends(t || []);
       } catch (err) {
         console.error('Failed to load demo data', err);
       } finally {

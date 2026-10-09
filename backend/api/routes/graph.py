@@ -76,5 +76,7 @@ def get_full_graph_overview(current_user: User = Depends(get_current_user)) -> D
         "total_network_nodes": len(graph_engine.G.nodes),
         "total_network_edges": len(graph_engine.G.edges),
         "sampled_nodes": nodes,
-        "sampled_edges": edges
+        "sampled_edges": edges,
+        "nodes": nodes,
+        "edges": edges
     }
