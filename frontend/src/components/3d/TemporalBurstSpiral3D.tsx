@@ -11,21 +11,15 @@ import {
 import { useCurrency } from '../../context/CurrencyContext';
 import { 
   Clock, 
-  TrendingUp, 
   RotateCcw, 
   Play, 
   Pause, 
-  Zap, 
-  ShieldAlert, 
-  Users, 
-  Building2, 
-  Sparkles,
   ChevronRight
 } from 'lucide-react';
 import { SchemeEvolutionSnapshot } from '../../types';
 
 interface TemporalBurstSpiral3DProps {
-  history?: SchemeEvolutionSnapshot[];
+  history?: SchemeEvolutionSnapshot[] | any[];
   className?: string;
 }
 
@@ -37,7 +31,52 @@ export const TemporalBurstSpiral3D: React.FC<TemporalBurstSpiral3DProps> = ({
   const { formatMoney } = useCurrency();
 
   const history: SchemeEvolutionSnapshot[] = useMemo(() => {
-    if (directHistory && directHistory.length > 0) return directHistory;
+    if (directHistory && Array.isArray(directHistory) && directHistory.length > 0) {
+      return directHistory.map((item: any, idx: number) => {
+        const rawLabel = item.epoch_label || (item.epoch ? `${item.epoch} - Evolution` : `Epoch ${idx + 1} - Timeline`);
+        const riskScore = typeof item.risk_score === 'number'
+          ? item.risk_score
+          : (typeof item.avg_risk === 'number'
+            ? item.avg_risk
+            : (typeof item.composite_risk_score === 'number' ? item.composite_risk_score : 50.0));
+        const financialExposure = typeof item.financial_exposure === 'number'
+          ? item.financial_exposure
+          : (typeof item.exposure_usd === 'number'
+            ? item.exposure_usd
+            : (typeof item.potential_financial_exposure === 'number' ? item.potential_financial_exposure : 25000 * (idx + 1)));
+        const claimVolume = typeof item.claim_volume === 'number'
+          ? item.claim_volume
+          : (((item.normal_volume || 0) + (item.flagged_volume || 0)) || (45 * (idx + 1)));
+        const activeProviders = typeof item.active_providers_count === 'number'
+          ? item.active_providers_count
+          : Math.max(1, idx + 1);
+        const activeFacilities = typeof item.active_facilities_count === 'number'
+          ? item.active_facilities_count
+          : Math.max(1, Math.floor(idx / 2) + 1);
+        const activeMembers = typeof item.active_members_count === 'number'
+          ? item.active_members_count
+          : Math.max(10, 35 * (idx + 1));
+        const dateStart = item.date_start || `2025-${String(Math.min(12, 10 + idx)).padStart(2, '0')}-01`;
+        const dateEnd = item.date_end || `2025-${String(Math.min(12, 10 + idx)).padStart(2, '0')}-28`;
+        const dominantSchemes = Array.isArray(item.dominant_schemes) && item.dominant_schemes.length > 0
+          ? item.dominant_schemes
+          : (item.dominant_fwa_pattern ? [item.dominant_fwa_pattern] : ['Volume Surge & Scheme Evolution']);
+
+        return {
+          epoch_label: rawLabel,
+          epoch_index: typeof item.epoch_index === 'number' ? item.epoch_index : idx,
+          date_start: dateStart,
+          date_end: dateEnd,
+          active_providers_count: activeProviders,
+          active_facilities_count: activeFacilities,
+          active_members_count: activeMembers,
+          claim_volume: claimVolume,
+          financial_exposure: financialExposure,
+          risk_score: riskScore,
+          dominant_schemes: dominantSchemes,
+        };
+      });
+    }
 
     return [
       {
@@ -95,11 +134,29 @@ export const TemporalBurstSpiral3D: React.FC<TemporalBurstSpiral3DProps> = ({
     ];
   }, [directHistory]);
 
-  const [activeEpochIndex, setActiveEpochIndex] = useState<number>(history.length - 1);
+  const [activeEpochIndex, setActiveEpochIndex] = useState<number>(() => Math.max(0, history.length - 1));
   const [isPlaying, setIsPlaying] = useState(false);
   const [isAutoRotate, setIsAutoRotate] = useState(false);
 
-  const activeSnapshot = history[activeEpochIndex] || history[0];
+  useEffect(() => {
+    if (activeEpochIndex >= history.length) {
+      setActiveEpochIndex(Math.max(0, history.length - 1));
+    }
+  }, [history.length, activeEpochIndex]);
+
+  const activeSnapshot: SchemeEvolutionSnapshot = history[activeEpochIndex] || history[0] || {
+    epoch_label: 'Day 0 - Baseline',
+    epoch_index: 0,
+    date_start: '2025-10-01',
+    date_end: '2025-10-31',
+    active_providers_count: 1,
+    active_facilities_count: 1,
+    active_members_count: 38,
+    claim_volume: 42,
+    financial_exposure: 12400,
+    risk_score: 18.5,
+    dominant_schemes: ['Normal Baseline Practice'],
+  };
 
   // Scene references
   const sceneRef = useRef<THREE.Scene | null>(null);
@@ -223,7 +280,8 @@ export const TemporalBurstSpiral3D: React.FC<TemporalBurstSpiral3DProps> = ({
       epochPositions.push(point);
 
       const isBurst = idx === history.length - 1;
-      const isCritical = epoch.risk_score >= 75;
+      const riskVal = typeof epoch.risk_score === 'number' ? epoch.risk_score : 50;
+      const isCritical = riskVal >= 75;
 
       const sphereGeo = new THREE.SphereGeometry(isBurst ? 4.2 : 3.0, 32, 32);
       const sphereMat = new THREE.MeshStandardMaterial({
@@ -247,8 +305,9 @@ export const TemporalBurstSpiral3D: React.FC<TemporalBurstSpiral3DProps> = ({
       scene.add(ring);
 
       // Billboard Text Pin for Epoch
+      const shortLabel = (epoch.epoch_label || `Epoch ${idx + 1}`).split(' - ')[0];
       const sprite = createTextSprite(
-        `${epoch.epoch_label.split(' - ')[0]} • ${epoch.risk_score.toFixed(0)} Risk`,
+        `${shortLabel} • ${riskVal.toFixed(0)} Risk`,
         {
           fontSize: 20,
           fontColor: '#FFFFFF',
@@ -421,28 +480,31 @@ export const TemporalBurstSpiral3D: React.FC<TemporalBurstSpiral3DProps> = ({
 
       {/* Bottom Epoch Scrubber Buttons */}
       <div className="absolute bottom-4 left-4 right-4 sm:right-auto z-10 flex items-center space-x-1 bg-[#050811]/90 p-1.5 rounded-2xl border border-white/10 backdrop-blur-md overflow-x-auto shadow-2xl">
-        {history.map((ep, idx) => (
-          <button
-            key={idx}
-            onClick={() => {
-              setActiveEpochIndex(idx);
-              setIsPlaying(false);
-            }}
-            className={`flex items-center space-x-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
-              activeEpochIndex === idx
-                ? 'bg-[#3186FF] text-white shadow-lg font-bold border border-[#38BDF8]'
-                : 'text-white/70 hover:text-white hover:bg-white/10'
-            }`}
-          >
-            <Clock className="w-3.5 h-3.5" />
-            <span>{ep.epoch_label.split(' - ')[0]}</span>
-            {idx === history.length - 1 && (
-              <span className="px-1.5 py-0.2 rounded text-[9px] font-mono font-bold bg-[#EF4444] text-white">
-                BURST
-              </span>
-            )}
-          </button>
-        ))}
+        {history.map((ep, idx) => {
+          const shortLabel = (ep.epoch_label || `Epoch ${idx + 1}`).split(' - ')[0];
+          return (
+            <button
+              key={idx}
+              onClick={() => {
+                setActiveEpochIndex(idx);
+                setIsPlaying(false);
+              }}
+              className={`flex items-center space-x-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
+                activeEpochIndex === idx
+                  ? 'bg-[#3186FF] text-white shadow-lg font-bold border border-[#38BDF8]'
+                  : 'text-white/70 hover:text-white hover:bg-white/10'
+              }`}
+            >
+              <Clock className="w-3.5 h-3.5" />
+              <span>{shortLabel}</span>
+              {idx === history.length - 1 && (
+                <span className="px-1.5 py-0.2 rounded text-[9px] font-mono font-bold bg-[#EF4444] text-white">
+                  BURST
+                </span>
+              )}
+            </button>
+          );
+        })}
       </div>
 
       {/* Top-Right Floating Velocity HUD Inspector */}
@@ -452,18 +514,18 @@ export const TemporalBurstSpiral3D: React.FC<TemporalBurstSpiral3DProps> = ({
             <div>
               <div className="flex items-center space-x-1.5">
                 <span className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase ${
-                  activeSnapshot.risk_score >= 75
+                  (activeSnapshot.risk_score ?? 0) >= 75
                     ? 'bg-[#EF4444]/20 text-[#EF4444] border border-[#EF4444]/40'
-                    : activeSnapshot.risk_score >= 45
+                    : (activeSnapshot.risk_score ?? 0) >= 45
                     ? 'bg-[#F59E0B]/20 text-[#F59E0B] border border-[#F59E0B]/40'
                     : 'bg-[#209B47]/20 text-[#209B47] border border-[#209B47]/40'
                 }`}>
-                  {activeSnapshot.epoch_label.split(' - ')[1] || 'EPOCH WINDOW'}
+                  {(activeSnapshot.epoch_label || 'EPOCH').split(' - ')[1] || (activeSnapshot.epoch_label || 'EPOCH WINDOW')}
                 </span>
               </div>
-              <h3 className="font-bold text-sm text-white mt-1">{activeSnapshot.epoch_label}</h3>
+              <h3 className="font-bold text-sm text-white mt-1">{activeSnapshot.epoch_label || 'Epoch Window'}</h3>
               <p className="text-[11px] text-[#ACF2E5] font-mono mt-0.5">
-                {activeSnapshot.date_start} &rarr; {activeSnapshot.date_end}
+                {activeSnapshot.date_start || '2025-10-01'} &rarr; {activeSnapshot.date_end || '2026-01-31'}
               </p>
             </div>
           </div>
@@ -473,14 +535,14 @@ export const TemporalBurstSpiral3D: React.FC<TemporalBurstSpiral3DProps> = ({
             <div className="p-2.5 rounded-xl bg-white/5 border border-white/10 space-y-0.5">
               <span className="text-[10px] text-white/50 uppercase font-semibold">Cumulative Exposure</span>
               <p className="text-base font-bold font-mono text-[#FBBF24] tabular-nums">
-                {formatMoney(activeSnapshot.financial_exposure)}
+                {formatMoney(activeSnapshot.financial_exposure || 0)}
               </p>
             </div>
 
             <div className="p-2.5 rounded-xl bg-white/5 border border-white/10 space-y-0.5">
               <span className="text-[10px] text-white/50 uppercase font-semibold">Risk Level</span>
               <p className="text-base font-bold font-mono text-[#EF4444] tabular-nums">
-                {activeSnapshot.risk_score.toFixed(1)} <span className="text-[10px] text-white/40">/ 100</span>
+                {(activeSnapshot.risk_score ?? 0).toFixed(1)} <span className="text-[10px] text-white/40">/ 100</span>
               </p>
             </div>
           </div>
@@ -489,12 +551,12 @@ export const TemporalBurstSpiral3D: React.FC<TemporalBurstSpiral3DProps> = ({
           <div className="p-2.5 rounded-xl bg-white/5 border border-white/10 space-y-1.5 text-[11px]">
             <div className="flex items-center justify-between">
               <span className="text-white/60">Encounter Volume:</span>
-              <span className="font-mono font-bold text-white tabular-nums">{activeSnapshot.claim_volume} Claims</span>
+              <span className="font-mono font-bold text-white tabular-nums">{activeSnapshot.claim_volume ?? 0} Claims</span>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-white/60">Linked Network Entities:</span>
               <span className="font-mono font-bold text-[#ACF2E5] tabular-nums">
-                {activeSnapshot.active_providers_count} Prov • {activeSnapshot.active_facilities_count} Fac
+                {activeSnapshot.active_providers_count ?? 0} Prov • {activeSnapshot.active_facilities_count ?? 0} Fac
               </span>
             </div>
           </div>
@@ -505,7 +567,7 @@ export const TemporalBurstSpiral3D: React.FC<TemporalBurstSpiral3DProps> = ({
               Dominant Scheme Evolution
             </span>
             <p className="text-white/90 font-medium">
-              {activeSnapshot.dominant_schemes?.join(', ') || (activeSnapshot as any).dominant_fwa_pattern || 'Collusive Ring Burst'}
+              {activeSnapshot.dominant_schemes?.join(', ') || (activeSnapshot as any)?.dominant_fwa_pattern || 'Collusive Ring Burst'}
             </p>
           </div>
         </div>

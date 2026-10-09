@@ -17,6 +17,8 @@ import {
   Activity
 } from 'lucide-react';
 
+import { ThreeDErrorBoundary } from './ThreeDErrorBoundary';
+
 export type Studio3DMode = 'GALAXY' | 'TOPOGRAPHY' | 'SPIRAL' | '2D_PLANAR';
 
 interface IntelligenceStudio3DProps {
@@ -133,35 +135,37 @@ export const IntelligenceStudio3D: React.FC<IntelligenceStudio3DProps> = ({
         </div>
       </div>
 
-      {/* Main Active 3D / 2D Canvas Workspace */}
+      {/* Main Active 3D / 2D Canvas Workspace with Localized Error Boundary */}
       <div className="w-full">
-        {activeMode === 'GALAXY' && (
-          <CollusionGalaxy3D 
-            nodes={nodes} 
-            edges={edges} 
-            onSelectCaseByNpi={onSelectCaseByNpi} 
-          />
-        )}
-
-        {activeMode === 'TOPOGRAPHY' && (
-          <RiskTopography3D />
-        )}
-
-        {activeMode === 'SPIRAL' && (
-          <TemporalBurstSpiral3D 
-            history={history} 
-          />
-        )}
-
-        {activeMode === '2D_PLANAR' && (
-          <div className="health-panel p-5 rounded-2xl bg-white border border-[#042126]/10">
-            <RelationshipGraphViewer 
+        <ThreeDErrorBoundary key={activeMode} fallbackTitle={`${activeMode} 3D View Unavailable`}>
+          {activeMode === 'GALAXY' && (
+            <CollusionGalaxy3D 
               nodes={nodes} 
               edges={edges} 
               onSelectCaseByNpi={onSelectCaseByNpi} 
             />
-          </div>
-        )}
+          )}
+
+          {activeMode === 'TOPOGRAPHY' && (
+            <RiskTopography3D />
+          )}
+
+          {activeMode === 'SPIRAL' && (
+            <TemporalBurstSpiral3D 
+              history={history} 
+            />
+          )}
+
+          {activeMode === '2D_PLANAR' && (
+            <div className="health-panel p-5 rounded-2xl bg-white border border-[#042126]/10">
+              <RelationshipGraphViewer 
+                nodes={nodes} 
+                edges={edges} 
+                onSelectCaseByNpi={onSelectCaseByNpi} 
+              />
+            </div>
+          )}
+        </ThreeDErrorBoundary>
       </div>
 
       {/* Interactive Guidance Strip */}

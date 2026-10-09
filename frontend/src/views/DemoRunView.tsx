@@ -962,7 +962,7 @@ export const DemoRunView: React.FC<DemoRunViewProps> = ({
             <IntelligenceStudio3D
               nodes={networkData.nodes}
               edges={networkData.edges}
-              history={trends}
+              history={selectedCase?.evolution_history && selectedCase.evolution_history.length > 0 ? selectedCase.evolution_history : trends}
               defaultMode="GALAXY"
               allow2DFallback={true}
             />
