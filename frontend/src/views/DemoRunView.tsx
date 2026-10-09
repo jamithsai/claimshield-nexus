@@ -166,10 +166,12 @@ export const DemoRunView: React.FC<DemoRunViewProps> = ({
   ];
 
   const [isSubmittingBlock, setIsSubmittingBlock] = useState<boolean>(false);
+  const [submissionError, setSubmissionError] = useState<string | null>(null);
 
   const handleSimulateDisposition = async () => {
     const targetCaseId = selectedCase?.case_id || cases[0]?.case_id || 'CASE-2026-8000';
     setIsSubmittingBlock(true);
+    setSubmissionError(null);
     try {
       const res = await api.submitDecision(targetCaseId, {
         decision: 'ESCALATE_TO_FORMAL_AUDIT',
@@ -191,17 +193,11 @@ export const DemoRunView: React.FC<DemoRunViewProps> = ({
         user: 'investigator@acentra.com (SIU Senior Lead)',
         sealed: true,
       });
-      setMerkleVerified(true);
+      setMerkleVerified(!v.is_tampered && (v.status === 'VALID_MERKLE_CHAIN' || v.status === 'VALID'));
     } catch (err: any) {
       console.error('Failed to submit demo disposition', err);
-      setSimulatedBlock({
-        hash: '12120e8da50122112fd637d33d643f78f45a4d5f17b565219355395e6b2e1ee4',
-        parentHash: 'ace2cdcb954ad4583e17098a7826eae60c5db4ea9b7011d36ca49621546265c9',
-        timestamp: new Date().toISOString(),
-        action: selectedDisposition,
-        user: 'investigator@acentra.com (SIU Senior Lead)',
-        sealed: true,
-      });
+      setSubmissionError(err.message || 'Failed to seal disposition to audit ledger.');
+      setSimulatedBlock(null);
     } finally {
       setIsSubmittingBlock(false);
     }
@@ -211,9 +207,9 @@ export const DemoRunView: React.FC<DemoRunViewProps> = ({
     setIsVerifyingMerkle(true);
     try {
       const res = await api.verifyAuditIntegrity();
-      setMerkleVerified(res.is_valid !== undefined ? res.is_valid : true);
+      setMerkleVerified(!res.is_tampered && (res.status === 'VALID_MERKLE_CHAIN' || res.status === 'VALID'));
     } catch {
-      setMerkleVerified(true);
+      setMerkleVerified(false);
     } finally {
       setIsVerifyingMerkle(false);
     }
@@ -1027,6 +1023,14 @@ export const DemoRunView: React.FC<DemoRunViewProps> = ({
                 </button>
               </div>
 
+              {/* Submission Error Banner */}
+              {submissionError && (
+                <div className="p-3 rounded-xl bg-[#FEE2E2] border border-[#FCA5A5] text-xs text-[#B91C1C] flex items-center space-x-2">
+                  <AlertOctagon className="w-4 h-4 flex-shrink-0" />
+                  <span>{submissionError}</span>
+                </div>
+              )}
+
               {/* Cryptographic Block Result */}
               {simulatedBlock && (
                 <div className="p-4 rounded-xl bg-[#042126] text-white space-y-2 font-mono text-[11px] animate-fadeIn">
@@ -1060,13 +1064,23 @@ export const DemoRunView: React.FC<DemoRunViewProps> = ({
                 </div>
 
                 {merkleVerified !== null && (
-                  <div className="p-4 rounded-xl bg-[#E8F8EE] border border-[#209B47]/40 flex items-center space-x-3 text-xs">
-                    <CheckCircle2 className="w-5 h-5 text-[#209B47] flex-shrink-0" />
-                    <div>
-                      <span className="font-bold text-[#1B843C] block">Cryptographic Chain Verified Valid (100% Immutable)</span>
-                      <span className="text-[#042126]/70">Zero broken parent hashes detected across all audit entries.</span>
+                  merkleVerified ? (
+                    <div className="p-4 rounded-xl bg-[#E8F8EE] border border-[#209B47]/40 flex items-center space-x-3 text-xs">
+                      <CheckCircle2 className="w-5 h-5 text-[#209B47] flex-shrink-0" />
+                      <div>
+                        <span className="font-bold text-[#1B843C] block">Cryptographic Chain Verified Valid (100% Immutable)</span>
+                        <span className="text-[#042126]/70">Zero broken parent hashes detected across all audit entries.</span>
+                      </div>
                     </div>
-                  </div>
+                  ) : (
+                    <div className="p-4 rounded-xl bg-[#FEE2E2] border border-[#B91C1C]/40 flex items-center space-x-3 text-xs">
+                      <AlertOctagon className="w-5 h-5 text-[#B91C1C] flex-shrink-0" />
+                      <div>
+                        <span className="font-bold text-[#B91C1C] block">Merkle Chain Integrity Warning</span>
+                        <span className="text-[#042126]/70">Audit ledger verification reported a hash mismatch or broken chain.</span>
+                      </div>
+                    </div>
+                  )
                 )}
 
                 <div className="space-y-2 text-xs">

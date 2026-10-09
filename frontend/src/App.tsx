@@ -15,6 +15,7 @@ export function App() {
   const [activeView, setActiveView] = useState<string>('overview');
   const [selectedCaseId, setSelectedCaseId] = useState<string | null>(null);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [isAuthReady, setIsAuthReady] = useState<boolean>(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(() => {
     return localStorage.getItem('cs_sidebar_collapsed') === 'true';
   });
@@ -28,6 +29,8 @@ export function App() {
         setCurrentUser(res.user);
       } catch (err) {
         console.error('Failed to init user', err);
+      } finally {
+        setIsAuthReady(true);
       }
     }
     initUser();
@@ -83,6 +86,17 @@ export function App() {
       setSelectedCaseId(null);
     }
   };
+
+  if (!isAuthReady) {
+    return (
+      <div className="min-h-screen bg-[#F2FCFF] flex items-center justify-center font-sans">
+        <div className="flex flex-col items-center space-y-3 p-8 bg-white border border-[#042126]/10 rounded-2xl shadow-sm">
+          <div className="w-8 h-8 border-2 border-[#209B47] border-t-transparent rounded-full animate-spin" />
+          <p className="text-xs font-semibold text-[#042126]/80">Initializing ClaimShield Nexus Intelligence Suite...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#F2FCFF] text-[#042126] flex font-sans">
